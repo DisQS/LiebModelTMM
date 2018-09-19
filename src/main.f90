@@ -492,14 +492,15 @@ northo_loop: &
               ! do the TM multiplication
               SELECT CASE(IDimenFlag)
               CASE(3)
-                 CALL TMMult3D( PsiA, PsiB, Ilayer, &
+                 PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)
-                 CALL TMMult3D( PsiB, PsiA, Ilayer+1, &
+                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)              
               CASE DEFAULT
-                 CALL TMMult2D( PsiA, PsiB, Ilayer, &
+                 CALL TMMultLieb2DAtoB( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)              
-                 CALL TMMult2D( PsiB, PsiA, Ilayer+1, &
+                 CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)
               END SELECT
               
