@@ -1,0 +1,23 @@
+general:
+  build_dir: src
+
+dependencies:
+  pre:
+    - sudo apt-get update
+    - sudo apt-get install libblas-dev libblas-dev 
+    
+checkout:
+  post:
+    - echo $CIRCLE_SHA1 $CIRCLE_BRANCH $CIRCLE_BUILD_NUM $CIRCLE_USERNAME
+    
+compile:
+  override:
+    - cd ../LiebModelTMM/src/;pwd;make clean; make
+    - make clean; pwd; ls -al
+
+test:
+  pre:
+    - cd ../tests/; ../../felix-$CIRCLE_SHA1/tmseLMxD.GF | tee terminal_log.txt 
+
+  post:
+    - diff -W132 -s 0001_E0200.raw ./target/0001_E0200.raw || true

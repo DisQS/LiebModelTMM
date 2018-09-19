@@ -93,7 +93,7 @@ SUBROUTINE Input( IErr )
   IErr = 0
   ILine= 0
   
-  OPEN(UNIT= IChInp, ERR= 120, FILE= "tmseXd.inp",&
+  OPEN(UNIT= IChInp, ERR= 120, FILE= "tmseLMxD.inp",&
        STATUS= 'OLD')
   
   ILine= ILine+1
@@ -457,7 +457,7 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
        FILE=TRIM(filename))
 
   IChList(1)= IChOut
-  !IChList(2)= IChOutPsi
+  IChList(2)= IChOutPsi
   
   DO 1000 ICh= 1, 1
      
@@ -715,7 +715,7 @@ SUBROUTINE WriteOutputPsi(&
 
   ! wavefunctions
 
-    IF( IWriteFlag.GE.1 ) THEN
+    IF( IWriteFlag.GE.MAXWriteFlag+1 ) THEN
         
         DO jState= 1, 1
            
@@ -1088,7 +1088,7 @@ SUBROUTINE SaveCurrentParameters( &
   ! WRITE out the input parameter
   
   OPEN(UNIT= IChtmp, ERR= 10, STATUS= 'UNKNOWN',&
-       FILE="tmseXd.tmp")
+       FILE="tmseLMxD.tmp")
 
   WRITE(IChtmp,100,ERR=20) IWidth, flux
 100 FORMAT(I15.1,F18.9)
@@ -1143,7 +1143,7 @@ SUBROUTINE ReloadCurrentParameters( &
   ! WRITE out the input parameter
         
   OPEN(UNIT= IChtmp, ERR= 10, STATUS= 'OLD',&
-       FILE="tmseXd.tmp")
+       FILE="tmseLMxD.tmp")
 
   READ(IChtmp,100,ERR=20,END=30) IWidth, flux
 100 FORMAT(I15.1,F18.9)

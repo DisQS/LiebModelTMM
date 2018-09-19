@@ -78,9 +78,9 @@ OBJ = common_modules.o application_modules.o random.o main.o util.o inout.o etim
 %.o: %.F
 	$(FC) $(F77FLAGS) -DF77 -c $< -I$(INCLUDEDIR) $(LIBFLAGS)
 
-all:	tmseXd.GF
+all:	tmseLMxD.GF
  
-tmseXd.GF: $(OBJ)
+tmseLMxD.GF: $(OBJ)
 	$(F90) $(F90FLAGS) -o $@ $(OBJ) $(LIBFLAGS)
 
 clean:
