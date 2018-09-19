@@ -55,7 +55,7 @@ jobs:
         - v1-dep-
     # This is based on your 1.0 configuration file or project settings
     - run: sudo apt-get update
-    - run: sudo apt-get install libblas-dev libblas-dev
+    - run: sudo apt-get install libblas-dev liblapack-dev
     #- run: sudo apt-get install libcr-dev mpich2 mpich2-doc
     #- run: sudo apt-get install libfftw3-dev libfftw3-doc
     # Save dependency cache
@@ -76,7 +76,8 @@ jobs:
     #   This would typically go in either a build or a build-and-test job when using workflows
     # This is based on your 1.0 configuration file or project settings
     #- run: cd ./felix-${CIRCLE_SHA1}/;pwd;make clean; make
-    - run: cd src; make clean; pwd; ls -al
+    - run: cd src; make -f makefile.GF clean; pwd; ls -al
+    - run: cd src; make -f makefile.GF
     # Test
     #   This would typically be a build job when using workflows, possibly combined with build
     # This is based on your 1.0 configuration file or project settings
