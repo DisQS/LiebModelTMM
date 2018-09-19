@@ -26,80 +26,82 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
-  INTEGER iSite, jState, ISeedDummy
+  INTEGER iSiteL,iSiteS, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(2*M)
   REAL(KIND=CKIND) new, PsiLeft, PsiRight
   
   !PRINT*,"DBG: TMMultLieb2DAtoB()"
 
   ! create the new onsite potential
-  DO iSite=1,M   
+  DO iSiteS=1,2*M   
      SELECT CASE(IRNGFlag)
      CASE(0)
-        OnsitePotVec(iSite)= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePotVec(iSiteS)= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(1)
-        OnsitePotVec(iSite)= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePotVec(iSiteS)= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(2)
-        OnsitePotVec(iSite)= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        OnsitePotVec(iSiteS)= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
   END DO
      
   ! to the TMM
-  DO iSite=1,M
+  DO iSiteL=1,M
      
      !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
 
      OnsitePot= &
-          OnsitePotVec(iSite) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
+          OnsitePotVec(iSiteL) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
+
+     iSiteS= 2*iSiteL-1
      
      DO jState=1,M
         
         !PRINT*,"jState, iSite", jState, iSite,
-        
-        SELECT CASE(iSite)
-        CASE(1)
+
+        IF (iSiteL.EQ.1) THEN
+
            IF (IBCFlag.EQ.0) THEN
               PsiLeft= ZERO            ! hard wall BC
               OnsiteLeft= ZERO
            ELSE IF (IBCFlag.EQ.1) THEN
               PsiLeft= PSI_A(jState,M)  ! periodic BC
-              OnsiteLeft= OnsitePotVec(2*M)
+              OnsiteLeft= OnsitePot + 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
               PsiLeft= -PSI_A(jState,M) ! antiperiodic BC
-              OnsiteLeft= OnsitePotVec(2*M)
+              OnsiteLeft= OnsitePot + 1.D0/OnsitePotVec(2*M)
            ENDIF
-        CASE DEFAULT
-           PsiLeft= PSI_A(jState,iSite-1)/OnsitePotVec(2*iSite-1 -1)
-           OnsiteLeft= OnsiteRight + 1.D0/OnsitePotVec(2*(iSite-1))
-        END SELECT
-        
-        SELECT CASE(iSite)
-        CASE(1)
+        ELSE
+           PsiLeft= PSI_A(jState,iSiteL-1)/OnsitePotVec(iSiteS -1)
+           OnsiteLeft= OnsitePot + 1.D0/OnsitePotVec(iSiteS -1)
+        END IF
+
+        IF (iSiteL.EQ.M) THEN
+
            IF (IBCFlag.EQ.0) THEN
               PsiRight= ZERO            ! hard wall BC
               OnsiteRight= ZERO
            ELSE IF (IBCFlag.EQ.1) THEN
               PsiRight= PSI_A(jState,1)  ! periodic BC
-              OnsiteRight= OnsitePotVec(2*M)
+              OnsiteRight= OnsitePot + 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
               PsiRight= -PSI_A(jState,1) ! antiperiodic BC
-              OnsiteRight= OnsitePotVec(2*M)
+              OnsiteRight= OnsitePot + 1.D0/OnsitePotVec(2*M)
            ENDIF
-        CASE DEFAULT
-           PsiRight= PSI_A(jState,iSite+1)/OnsitePotVec(2*iSite-1 +1)
-           OnsiteRight= OnsiteRight + 1.D0/OnsitePotVec(2*(iSite+1))
-        END SELECT
+        ELSE
+           PsiRight= PSI_A(jState,iSiteL+1)/OnsitePotVec(iSiteS +1)
+           OnsiteRight= OnsitePot + 1.D0/OnsitePotVec(iSiteS +1)
+        END IF
         
-        new= ( OnsitePot * PSI_A(jState,iSite) &
+        new= ( OnsitePot * PSI_A(jState,iSiteL) &
              + Kappa * ( PsiLeft + PsiRight ) &
-             - PSI_B(jState,iSite) )
+             - PSI_B(jState,iSiteL) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= new
+        PSI_B(jState,iSiteL)= new
         
      ENDDO ! jState
   ENDDO ! iSite
