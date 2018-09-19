@@ -36,11 +36,11 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO iSiteS=1,2*M   
      SELECT CASE(IRNGFlag)
      CASE(0)
-        OnsitePotVec(iSiteS)= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePotVec(iSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(1)
-        OnsitePotVec(iSiteS)= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePotVec(iSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(2)
-        OnsitePotVec(iSiteS)= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        OnsitePotVec(iSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
   END DO
      
@@ -154,11 +154,11 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      ! create the new onsite potential
      SELECT CASE(IRNGFlag)
      CASE(0)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(1)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(2)
-        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
      
      !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
