@@ -484,7 +484,7 @@ tmm_loop: &
         DO Iter1= 1, MAX( (NOfIter)/(NOfOrtho), 1)
         
 northo_loop: &
-           DO Iter2= 1, NOfOrtho, 2
+           DO Iter2= 1, NOfOrtho, 3
 
               ! Ilayer is the current horizontal position
               Ilayer= (Iter1-1)*NOfOrtho+Iter2
@@ -496,11 +496,13 @@ northo_loop: &
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)              
+                      Energy, DiagDis, IWidth)
               CASE DEFAULT
-                 CALL TMMultLieb2DAtoB( PsiA, PsiB, Ilayer, &
+                 CALL TMMultLieb2DAtoB1( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)              
-                 CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, &
+                 CALL TMMultLieb2DB1toB2( PsiB, PsiA, Ilayer+1, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2DB2toA( PsiA, PsiB, Ilayer+2, &
                       Energy, DiagDis, IWidth)
               END SELECT
               
