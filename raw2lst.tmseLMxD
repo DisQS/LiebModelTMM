@@ -1,0 +1,7 @@
+#!/bin/bash
+# convert .raw files with exponent E into .dat files with exponent *10^
+
+for n in *.raw; do
+  echo $n "->" `basename $n .raw`.lst
+  sed "s/{/ /g" $n | sed "s/}/ /g" | sed "s/,/ /g" | sed "s/;/ /g" | tail -n+26 >`basename $n .raw`.lst
+done
