@@ -28,7 +28,7 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER iSiteL,iSiteS, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(2*M)
-  REAL(KIND=CKIND) new, PsiLeft, PsiRight
+  REAL(KIND=CKIND) new , PsiLeft, PsiRight
   
   !PRINT*,"DBG: TMMultLieb2DAtoB()"
 
@@ -48,11 +48,12 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO iSiteL=1,M
      
      !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
-
-     OnsitePot= &
-          OnsitePotVec(iSiteL) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
-
      iSiteS= 2*iSiteL-1
+     
+     OnsitePot= &
+          OnsitePotVec(iSiteS) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
+     
+    
      
      DO jState=1,M
         
@@ -65,14 +66,14 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               OnsiteLeft= ZERO
            ELSE IF (IBCFlag.EQ.1) THEN
               PsiLeft= PSI_A(jState,M)  ! periodic BC
-              OnsiteLeft= OnsitePot + 1.D0/OnsitePotVec(2*M)
+              OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
               PsiLeft= -PSI_A(jState,M) ! antiperiodic BC
-              OnsiteLeft= OnsitePot + 1.D0/OnsitePotVec(2*M)
+              OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ENDIF
         ELSE
            PsiLeft= PSI_A(jState,iSiteL-1)/OnsitePotVec(iSiteS -1)
-           OnsiteLeft= OnsitePot + 1.D0/OnsitePotVec(iSiteS -1)
+           OnsiteLeft= 1.D0/OnsitePotVec(iSiteS -1)
         END IF
 
         IF (iSiteL.EQ.M) THEN
@@ -89,11 +90,11 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            ENDIF
         ELSE
            PsiRight= PSI_A(jState,iSiteL+1)/OnsitePotVec(iSiteS +1)
-           OnsiteRight= OnsitePot + 1.D0/OnsitePotVec(iSiteS +1)
+           OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
         END IF
         
-        new= ( OnsitePot * PSI_A(jState,iSiteL) &
-             + Kappa * ( PsiLeft + PsiRight ) &
+        new =(( OnsitePot+OnsiteLeft+OnsiteRight ) * PSI_A(jState,iSiteL) &
+             - Kappa * ( PsiLeft + PsiRight ) &
              - PSI_B(jState,iSiteL) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
