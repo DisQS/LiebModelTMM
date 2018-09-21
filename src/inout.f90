@@ -361,18 +361,20 @@ CHARACTER*50 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal)
   IF( fluxVal.GE.-1.0D-10 ) THEN
 
      WRITE(FileNameAvg, 100) &
+          "L",IDimenFlag,"_",&
           IWidth,"_",&
           fluxStr,NINT(100.0D0*ABS(fluxVal)),&
           ".raw"
-100  FORMAT(I4.4,A1,A1,I4.4,A4)
+100  FORMAT(A1,I2.2,A1,I4.4,A1,A1,I4.4,A4)
 
   ELSE
 
      WRITE(FileNameAvg, 200)                         &
+          "L",IDimenFlag,"_",&
           IWidth,"_",&
           fluxStr,"-",NINT(100.0D0*ABS(fluxVal)),&
           ".raw"
-200  FORMAT(I4.4,A1,A1,A1,I4.4,A4)
+200  FORMAT(A1,I2.2,A1,I4.4,A1,A1,A1,I4.4,A4)
 
   ENDIF
 
