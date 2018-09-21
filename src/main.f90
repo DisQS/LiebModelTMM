@@ -134,7 +134,7 @@ PROGRAM TMSEXd
   
   INTEGER IWidth, IWidthSquared, IWidthRL, Width0_X, &
        IChannelMax, index,jndex,kndex,lndex, jjndex,kkndex, andex,bndex, &
-       Iter1,Iter2, NOfG,iG, Ilayer, TMM_CONVERGED
+       Iter1,Iter2, iStep, NOfG,iG, Ilayer, TMM_CONVERGED
   
   REAL(KIND=RKIND) flux, flux0,flux1,dflux, &
        fluxRL,flux0_X, fluxVal
@@ -477,31 +477,72 @@ flux_loop: &
         CALL SRANDOM(ISeed)
         
         !--------------------------------------------------------------
+        ! select right size of step in NOrtho loop
+        !--------------------------------------------------------------
+        SELECT CASE(IDimenFlag)
+        CASE(21,31)
+           iStep=2
+        CASE (22,32)
+           iStep=3
+        CASE DEFAULT
+           PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
+           STOP
+        END SELECT
+
+        IF(MOD(NOfOrtho,iStep).NE.0) THEN
+           PRINT*,"tmseLMxD: WRNG, iStep=", iStep, " is not integer divisor of NOrtho=", NOfOrtho
+           NOfOrtho= MAX(1,(NOfOrtho/iStep)*iStep)
+           PRINT*,"tmseLMxD: NOrtho=", NOfOrtho, " taken as new value."
+        END IF
+
+        !--------------------------------------------------------------
         ! iteration loop
         !--------------------------------------------------------------
-        
+
 tmm_loop: &
         DO Iter1= 1, MAX( (NOfIter)/(NOfOrtho), 1)
         
 northo_loop: &
-           DO Iter2= 1, NOfOrtho, 2
+           DO Iter2= 1, NOfOrtho, iStep
 
               ! Ilayer is the current horizontal position
               Ilayer= (Iter1-1)*NOfOrtho+Iter2
 
               ! do the TM multiplication
               SELECT CASE(IDimenFlag)
-              CASE(3)
-                 PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
-                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)              
-              CASE DEFAULT
+              CASE(21)
                  CALL TMMultLieb2DAtoB( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)              
                  CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)
+              CASE (22)
+                 CALL TMMultLieb2DAtoB1( PsiA, PsiB, Ilayer, &
+                      Energy, DiagDis, IWidth)              
+                 CALL TMMultLieb2DB1toB2( PsiB, PsiA, Ilayer+1, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2DB2toA( PsiA, PsiB, Ilayer+2, &
+                      Energy, DiagDis, IWidth)
+              CASE(31)
+                 PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
+                      Energy, DiagDis, IWidth)
+              CASE(32)
+                 PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
+                      Energy, DiagDis, IWidth)
+!!$                 CALL TMMultLieb3DAtoB1( PsiA, PsiB, Ilayer, &
+!!$                      Energy, DiagDis, IWidth)              
+!!$                 CALL TMMultLieb3DB1toB2( PsiB, PsiA, Ilayer+1, &
+!!$                      Energy, DiagDis, IWidth)
+!!$                 CALL TMMultLieb3DB2toA( PsiA, PsiB, Ilayer+2, &
+!!$                      Energy, DiagDis, IWidth)
+              CASE DEFAULT
+                 PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
+                 STOP
               END SELECT
               
               !CALL Swap( PsiA, PsiB, IWidth)
