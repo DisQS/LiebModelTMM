@@ -200,24 +200,24 @@ PROGRAM TMSEXd
      PRINT*,"-------------------------------------------------------"
   ENDIF
   
-  !--------------------------------------------------------------------
-  ! making sure that D=1 is handled correctly
-  !--------------------------------------------------------------------
-
-  IF (IDimenFlag.EQ.1) THEN
-     IF(Width0.NE.1 .OR. Width1.NE.1) THEN
-        PRINT*,"main: ERR, Width0=",Width0, &
-             " & Width1=", Width1, &
-             " not permissible when IDimenFlag=", IDimenFlag
-        IErr=IErr+1
-     ENDIF
-     IF(IBCFlag.GT.0) THEN
-        PRINT*,"main: ERR, IBCGlag=",IBCFlag, &
-             " not permissible when IDimenFlag=", IDimenFlag
-        IErr=IErr+1
-     ENDIF
-     IF(IERR.GT.0) STOP 
-  ENDIF
+!!$  !--------------------------------------------------------------------
+!!$  ! making sure that D=1 is handled correctly
+!!$  !--------------------------------------------------------------------
+!!$
+!!$  IF (IDimenFlag.EQ.1) THEN
+!!$     IF(Width0.NE.1 .OR. Width1.NE.1) THEN
+!!$        PRINT*,"main: ERR, Width0=",Width0, &
+!!$             " & Width1=", Width1, &
+!!$             " not permissible when IDimenFlag=", IDimenFlag
+!!$        IErr=IErr+1
+!!$     ENDIF
+!!$     IF(IBCFlag.GT.0) THEN
+!!$        PRINT*,"main: ERR, IBCGlag=",IBCFlag, &
+!!$             " not permissible when IDimenFlag=", IDimenFlag
+!!$        IErr=IErr+1
+!!$     ENDIF
+!!$     IF(IERR.GT.0) STOP 
+!!$  ENDIF
   
   !--------------------------------------------------------------------
   ! select the quantity to be varied
@@ -294,8 +294,16 @@ PROGRAM TMSEXd
      !--------------------------------------------------------------
      ! Calculate IWidthSquared if doing 3D TMM
      !--------------------------------------------------------------
-     
-     IF(IDimenFlag.EQ.3) IWidthSquared = IWidth*IWidth
+
+     SELECT CASE(IDimenFlag)
+     CASE(21,22)
+        CONTINUE
+     CASE(31,32)
+        IWidthSquared = IWidth*IWidth
+     CASE DEFAULT
+        PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
+        STOP
+     END SELECT
      
      !--------------------------------------------------------------
      ! open the AVG files
@@ -346,21 +354,9 @@ PROGRAM TMSEXd
      !--------------------------------------------------------------
      ! allocate the memory for the TMM, gamma and RND vectors
      !--------------------------------------------------------------
-     
-     SELECT CASE(IDimenFlag)
-     !3D case
-     CASE(3)
-        ALLOCATE(PsiA(IWidthSquared,IWidthSquared), STAT = IErr)
-        ALLOCATE(PsiB(IWidthSquared,IWidthSquared), STAT = IErr)
-        
-        ALLOCATE(nGamma(IWidthSquared), STAT = IErr)
-     
-        ALLOCATE(gamma(IWidthSquared), STAT = IErr)
-        ALLOCATE(gamma2(IWidthSquared), STAT = IErr)
-        ALLOCATE(acc_variance(IWidthSquared), STAT = IErr)
 
-     !2D/1D case
-     CASE DEFAULT
+     SELECT CASE(IDimenFlag)
+     CASE(21,22)
         ALLOCATE(PsiA(IWidth,IWidth), STAT = IErr)
         ALLOCATE(PsiB(IWidth,IWidth), STAT = IErr)
         
@@ -369,7 +365,37 @@ PROGRAM TMSEXd
         ALLOCATE(gamma(IWidth), STAT = IErr)
         ALLOCATE(gamma2(IWidth), STAT = IErr)
         ALLOCATE(acc_variance(IWidth), STAT = IErr)
+     CASE(31,32)
+        PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
+        STOP
+     CASE DEFAULT
+        PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
+        STOP
      END SELECT
+        
+!!$     SELECT CASE(IDimenFlag)
+!!$     !3D case
+!!$     CASE(3)
+!!$        ALLOCATE(PsiA(IWidthSquared,IWidthSquared), STAT = IErr)
+!!$        ALLOCATE(PsiB(IWidthSquared,IWidthSquared), STAT = IErr)
+!!$        
+!!$        ALLOCATE(nGamma(IWidthSquared), STAT = IErr)
+!!$     
+!!$        ALLOCATE(gamma(IWidthSquared), STAT = IErr)
+!!$        ALLOCATE(gamma2(IWidthSquared), STAT = IErr)
+!!$        ALLOCATE(acc_variance(IWidthSquared), STAT = IErr)
+!!$
+!!$     !2D/1D case
+!!$     CASE DEFAULT
+!!$        ALLOCATE(PsiA(IWidth,IWidth), STAT = IErr)
+!!$        ALLOCATE(PsiB(IWidth,IWidth), STAT = IErr)
+!!$        
+!!$        ALLOCATE(nGamma(IWidth), STAT = IErr)
+!!$     
+!!$        ALLOCATE(gamma(IWidth), STAT = IErr)
+!!$        ALLOCATE(gamma2(IWidth), STAT = IErr)
+!!$        ALLOCATE(acc_variance(IWidth), STAT = IErr)
+!!$     END SELECT
      
      !PRINT*, "DBG: IErr=", IErr
      IF( IErr.NE.0 ) THEN
@@ -432,36 +458,26 @@ flux_loop: &
         !--------------------------------------------------------------
         
         ! reset the wave vectors
-        PsiA= ZERO
-        PsiB= ZERO
+        PsiA        = ZERO
+        PsiB        = ZERO
+        !reset the gamma sum approximants for a SINGLE
+        !configuration
+        gamma       = ZERO
+        gamma2      = ZERO
+        acc_variance= ZERO
         
-        ! Select case for 3D. Otherwise 1D or 2D
         SELECT CASE(IDimenFlag)
-        CASE(3)
-           !reset the gamma sum approximants for a SINGLE
-           !configuration
-           DO iG=1,IWidthSquared
-              gamma(iG)          = 0.0D0
-              gamma2(iG)         = 0.0D0
-              acc_variance(iG)   = 0.0D0            
-           ENDDO
-          
-           DO index=1,IWidthSquared
-              PsiA(index,index)= ONE
-           ENDDO        
-        
-        CASE DEFAULT
-           !reset the gamma sum approximants for a SINGLE
-           !configuration
-           DO iG=1,IWidth
-              gamma(iG)          = 0.0D0
-              gamma2(iG)         = 0.0D0
-              acc_variance(iG)   = 0.0D0            
-           ENDDO
-          
+        CASE(21,22)
            DO index=1,IWidth
               PsiA(index,index)= ONE
            ENDDO
+        CASE(31,32)
+           DO index=1,IWidthSquared
+              PsiA(index,index)= ONE
+           ENDDO        
+        CASE DEFAULT
+           PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
+           STOP           
         END SELECT
         
         !PRINT *, 'DBG: PsiA=', PsiA
@@ -555,43 +571,45 @@ northo_loop: &
            ! renormalize via Gram-Schmidt
            !-------------------------------------------------------
            SELECT CASE(IDimenFlag)
-           CASE(3)
+           CASE(21,22)
+              CALL ReNorm(PsiA,PsiB,gamma,gamma2,IWidth)
+           CASE(31,32)
               CALL ReNorm(PsiA,PsiB,gamma,gamma2,IWidthSquared)
            CASE DEFAULT
-              CALL ReNorm(PsiA,PsiB,gamma,gamma2,IWidth)
-             
-              CALL WriteOutputPsi( Iter1, IWidth, &
-                    PsiA, IErr)
-                 !PRINT*, "DBG: IErr=", IErr
-                 IF( IErr.NE.0 ) THEN
-                     PRINT*,"main: error in WriteOutputAvg()"
-                  STOP
-                 ENDIF 
-
+              PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
+              STOP
            END SELECT
+           
+!!$              CALL WriteOutputPsi( Iter1, IWidth, &
+!!$                    PsiA, IErr)
+!!$                 !PRINT*, "DBG: IErr=", IErr
+!!$                 IF( IErr.NE.0 ) THEN
+!!$                     PRINT*,"main: error in WriteOutputAvg()"
+!!$                  STOP
+!!$                 ENDIF 
            
            IF(IWriteFlag.GE.MAXWriteFLAG+1) THEN   
               PRINT*,"DBG: Orth,iL,PsiA", iLayer, PsiA
               PRINT*,"DBG: Orth,iL,PsiB", iLayer, PsiB; !PAUSE
            ENDIF
 
-           !-------------------------------------------------------
-           ! sort the eigenvalues by LARGEST first AND also
-           ! resort the eigenvectors accordingly
-           !-------------------------------------------------------           
-           
-           IF (ISortFlag.EQ.1) THEN
-           
-              SELECT CASE(IDimenFlag)  
-              !3D case
-              CASE(3)
-                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidthSquared)
-              !2D/1D case
-              CASE DEFAULT
-                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidth)
-              END SELECT           
-              
-           ENDIF
+!!$           !-------------------------------------------------------
+!!$           ! sort the eigenvalues by LARGEST first AND also
+!!$           ! resort the eigenvectors accordingly
+!!$           !-------------------------------------------------------           
+!!$           
+!!$           IF (ISortFlag.EQ.1) THEN
+!!$           
+!!$              SELECT CASE(IDimenFlag)  
+!!$              !3D case
+!!$              CASE(3)
+!!$                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidthSquared)
+!!$              !2D/1D case
+!!$              CASE DEFAULT
+!!$                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidth)
+!!$              END SELECT           
+!!$              
+!!$           ENDIF
            
            !--------------------------------------------------------
            ! "Iter1" counts the number of actual renormalizations
@@ -603,22 +621,7 @@ northo_loop: &
            !-----------------------------------------------------------
            
            SELECT CASE(IDimenFlag)
-           !3D case
-           CASE(3)
-              DO iG=1, IWidthSquared
-                
-                 nGamma(IWidthSquared+1-iG)= gamma(iG)/REAL(NOfOrtho*Iter1)
-                
-                 acc_variance(IWidthSquared+1-iG)=             &
-                      SQRT( ABS(                        &
-                      (gamma2(iG)/REAL(Iter1) -         &
-                      (gamma(iG)/REAL(Iter1))**2 )      &
-                      / REAL( MAX(Iter1-1,1) )          &
-                      )) / ABS( gamma(iG)/REAL(Iter1) )
-              ENDDO           
-
-           !2D/1D case
-           CASE DEFAULT
+           CASE(21,22)
               DO iG=1, IWidth
                 
                  nGamma(IWidth+1-iG)= gamma(iG)/REAL(NOfOrtho*Iter1)
@@ -630,6 +633,21 @@ northo_loop: &
                       / REAL( MAX(Iter1-1,1) )          &
                       )) / ABS( gamma(iG)/REAL(Iter1) )
               ENDDO           
+           CASE(31,32)              
+              DO iG=1, IWidthSquared
+                
+                 nGamma(IWidthSquared+1-iG)= gamma(iG)/REAL(NOfOrtho*Iter1)
+                
+                 acc_variance(IWidthSquared+1-iG)=             &
+                      SQRT( ABS(                        &
+                      (gamma2(iG)/REAL(Iter1) -         &
+                      (gamma(iG)/REAL(Iter1))**2 )      &
+                      / REAL( MAX(Iter1-1,1) )          &
+                      )) / ABS( gamma(iG)/REAL(Iter1) )
+              ENDDO           
+           CASE DEFAULT
+              PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
+              STOP
            END SELECT
            
            !-----------------------------------------------------------
