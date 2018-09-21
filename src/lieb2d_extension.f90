@@ -1,3 +1,4 @@
+! --------------------------------------------------------------------
 ! Multiplication of the transfer matrix onto the vector (PSI_A,PSI_B), 
 ! giving (PSI_B,PSI_A) so that the structure of the transfer matrix 
 ! can be exploited
@@ -14,11 +15,9 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   ! (PSI_A, PSI_B) on input, (PSI_B,PSI_A) on output
   
   IMPLICIT NONE
-
   
   INTEGER Ilayer,           &! current # TM multiplications
        M                     ! strip width
-       
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
        En                    ! energy
@@ -29,7 +28,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(3*M)
   REAL(KIND=CKIND) new , PsiLeft, PsiRight
   
-  !PRINT*,"DBG: TMMultLieb2DAtoB()"
+  !PRINT*,"DBG: TMMultLieb2DAtoB1()"
 
   ! create the new onsite potential
   DO iSiteS=1,3*M   
@@ -54,9 +53,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      iSiteS= 3*iSiteL-2
      
      OnsitePot= &
-          OnsitePotVec(iSiteS) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
-     
-    
+          OnsitePotVec(iSiteS) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)    
      
      DO jState=1,M
         
@@ -69,44 +66,44 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               OnsiteLeft= ZERO
            ELSE IF (IBCFlag.EQ.1) THEN
               PsiLeft= 1.0D0*PSI_A(jState,M)    &
-                     /( OnsitePotVec(2*M -1)*OnsitePotVec(2*M)-1.0D0 )  ! periodic BC
-              OnsiteLeft= 1.0d0*OnsitePotVec(2*M -1)      &
-                        /( OnsitePotVec(2*M -1)*OnsitePotVec(2*M)-1.0D0 )
+                     /( OnsitePotVec(3*M -1)*OnsitePotVec(3*M)-1.0D0 )  ! periodic BC
+              OnsiteLeft= 1.0d0*OnsitePotVec(3*M -1)      &
+                        /( OnsitePotVec(3*M -1)*OnsitePotVec(3*M) - 1.0D0 )
            ELSE IF (IBCFlag.EQ.2) THEN
               PsiLeft= 1.0D0*PSI_A(jState,M)    &
-                     /( OnsitePotVec(2*M -1)*OnsitePotVec(2*M)-1.0D0 ) ! antiperiodic BC
-              OnsiteLeft= 1.0d0*OnsitePotVec(2*M -1)      &
-                        /( OnsitePotVec(2*M -1)*OnsitePotVec(2*M)-1.0D0 )
+                     /( OnsitePotVec(3*M -1)*OnsitePotVec(3*M)-1.0D0 ) ! antiperiodic BC
+              OnsiteLeft= 1.0d0*OnsitePotVec(3*M -1)      &
+                        /( OnsitePotVec(3*M -1)*OnsitePotVec(3*M) - 1.0D0 )
            ENDIF
         ELSE
            PsiLeft=1.0D0*PSI_A(jState,iSiteL-1)    &
-                   /( OnsitePotVec(iSiteS -2)*OnsitePotVec(iSiteS -1)-1.0D0 )
+                   /( OnsitePotVec(iSiteS -2)*OnsitePotVec(iSiteS -1) - 1.0D0 )
            OnsiteLeft= 1.0d0*OnsitePotVec(isiteS -2)      &
-                      /( OnsitePotVec(iSiteS -2)*OnsitePotVec(iSiteS -1)-1.0D0 )
+                      /( OnsitePotVec(iSiteS -2)*OnsitePotVec(iSiteS -1) - 1.0D0 )
         END IF
 
         IF (iSiteL.EQ.M) THEN
 
            IF (IBCFlag.EQ.0) THEN
               PsiRight= ZERO            ! hard wall BC
-              OnsiteRight= 1.0d0*OnsitePotVec(isiteS +2)     &
-                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1)-1.0D0 )
+              OnsiteRight= 1.0d0*OnsitePotVec(iSiteS +2)     &
+                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1) - 1.0D0 )
            ELSE IF (IBCFlag.EQ.1) THEN
               PsiRight= 1.0D0*PSI_A(jState,1)    &
-                    /( OnsitePotVec(iSiteS +1)*OnsitePotVec(iSiteS +2)-1.0D0 )    ! periodic BC
-              OnsiteRight= 1.0d0*OnsitePotVec(isiteS +2)     &
-                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1)-1.0D0 )
+                    /( OnsitePotVec(iSiteS +1)*OnsitePotVec(iSiteS +2) - 1.0D0 )    ! periodic BC
+              OnsiteRight= 1.0d0*OnsitePotVec(iSiteS +2)     &
+                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1) - 1.0D0 )
            ELSE IF (IBCFlag.EQ.2) THEN
               PsiRight= - 1.0D0*PSI_A(jState,1)    &
                     /( OnsitePotVec(iSiteS +1)*OnsitePotVec(iSiteS +2)-1.0D0 )! antiperiodic BC
-              OnsiteRight=1.0d0*OnsitePotVec(isiteS +2)     &
-                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1)-1.0D0 )
+              OnsiteRight=1.0d0*OnsitePotVec(iSiteS +2)     &
+                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1) - 1.0D0 )
            ENDIF
         ELSE
            PsiRight= 1.0D0*PSI_A(jState,iSiteL+1)    &
                     /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1)-1.0D0 )           
-           OnsiteRight= 1.0d0*OnsitePotVec(isiteS +2)     &
-                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1)-1.0D0 )
+           OnsiteRight= 1.0d0*OnsitePotVec(iSiteS +2)     &
+                       /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1) - 1.0D0 )
         END IF
         
         new =(( OnsitePot+OnsiteLeft+OnsiteRight )/PSI_A(jState,iSiteL) &
