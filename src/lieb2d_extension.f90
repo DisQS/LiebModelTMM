@@ -28,7 +28,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(3*M)
   REAL(KIND=CKIND) new , PsiLeft, PsiRight
   
-  !PRINT*,"DBG: TMMultLieb2DAtoB1()"
+  PRINT*,"DBG: TMMultLieb2DAtoB1()"
 
   ! create the new onsite potential
   DO iSiteS=1,3*M   
@@ -161,7 +161,7 @@ SUBROUTINE TMMultLieb2DB2toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot
   REAL(KIND=CKIND) new, PsiLeft, PsiRight
   
-  !PRINT*,"DBG: TMMultLieb2DBtoA()"
+  PRINT*,"DBG: TMMultLieb2DB2toA()"
   
   DO iSite=1,M
      
@@ -235,7 +235,7 @@ SUBROUTINE TMMultLieb2DB1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot
   REAL(KIND=CKIND) new, PsiLeft, PsiRight
   
-  !PRINT*,"DBG: TMMultLieb2DBtoA()"
+  PRINT*,"DBG: TMMultLieb2DB1toB2()"
 
   CALL TMMultLieb2DB2toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
     
