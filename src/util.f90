@@ -407,22 +407,26 @@ SUBROUTINE Swap( PSI_A, PSI_B, M)
   USE MyNumbers
   
   INTEGER M
-  REAL(KIND=RKIND) PSI_A(M,M), PSI_B(M,M)
+  REAL(KIND=RKIND) PSI_A(M,M), PSI_B(M,M), PSI_dummy(M,M)
   
   INTEGER jState, index
   REAL(KIND=RKIND) dummy
   
   !	PRINT*,"DBG: Swap()"
   
-  DO jState=1,M
-     DO index=1,M
-        
-        dummy              = PSI_B(index,jState)
-        PSI_B(index,jState)= PSI_A(index,jState)
-        PSI_A(index,jState)= dummy
-        
-     ENDDO
-  ENDDO
+!!$  DO jState=1,M
+!!$     DO index=1,M
+!!$        
+!!$        dummy              = PSI_B(index,jState)
+!!$        PSI_B(index,jState)= PSI_A(index,jState)
+!!$        PSI_A(index,jState)= dummy
+!!$        
+!!$     ENDDO
+!!$  ENDDO
+
+  PSI_dummy= PSI_A
+  PSI_A    = PSI_B
+  PSI_B    = PSI_dummy
   
   RETURN
   

@@ -234,11 +234,13 @@ SUBROUTINE Input( IErr )
      PRINT*,"Input(): Width0 > Width1 and dWidth>0"
      IErr= 1
   ENDIF
-  
-  IF( IDimenFlag.GT.MAXDimenFlag .OR. IDimenFlag.LT.MINDimenFlag ) THEN
+
+  SELECT CASE(IDimenFlag)
+  CASE(21,22,32,33)
+  CASE DEFAULT
      PRINT*,"Input(): IDimenFlag=",IDimenFlag," outside allowed range!"
      IErr= 1
-  ENDIF
+  END SELECT
 
   IF( IBCFlag.GT.MAXBCFlag ) THEN
      PRINT*,"Input(): IBCFlag > MAXBCFlag (=",&

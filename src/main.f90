@@ -522,6 +522,7 @@ northo_loop: &
                       Energy, DiagDis, IWidth)
                  CALL TMMultLieb2DB2toA( PsiA, PsiB, Ilayer+2, &
                       Energy, DiagDis, IWidth)
+                 CALL Swap( PsiA, PsiB, IWidth)
               CASE(31)
                  PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
@@ -540,6 +541,7 @@ northo_loop: &
 !!$                      Energy, DiagDis, IWidth)
 !!$                 CALL TMMultLieb3DB2toA( PsiA, PsiB, Ilayer+2, &
 !!$                      Energy, DiagDis, IWidth)
+!!$                 CALL Swap( PsiA, PsiB, IWidth)
               CASE DEFAULT
                  PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
                  STOP
