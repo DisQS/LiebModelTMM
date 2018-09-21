@@ -88,7 +88,7 @@ jobs:
     #- run: diff -W132 -y -s ./samples/GaAs_short/iteration_log.txt ./samples/GaAs_short/sample_outputs/iteration_log.txt || true
     #- run: diff -W132 -y -s ./samples/GaAs_short/terminal_log.txt ./samples/GaAs_short/sample_outputs/terminal_log.txt  || true
     - run: cd tests/; ../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
-    - run: cd tests/; diff -W132 -s 0001_E0200.raw ./target/0001_E0200.raw || true
+    - run: cd tests/; diff -W132 -s 0004_D0050.raw ./target/0004_D0050.raw || true
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
     # Save test results
