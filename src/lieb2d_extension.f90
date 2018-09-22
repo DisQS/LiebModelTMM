@@ -28,7 +28,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(3*M)
   REAL(KIND=CKIND) new , PsiLeft, PsiRight
   
-  PRINT*,"DBG: TMMultLieb2DAtoB1()"
+  !PRINT*,"DBG: TMMultLieb2DAtoB1()"
 
   ! create the new onsite potential
   DO iSiteS=1,3*M   
@@ -106,14 +106,14 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                        /( OnsitePotVec(iSiteS +2)*OnsitePotVec(iSiteS +1) - 1.0D0 )
         END IF
         
-        new =(( OnsitePot+OnsiteLeft+OnsiteRight )/PSI_A(jState,iSiteL) &
+        new =(( OnsitePot-OnsiteLeft-OnsiteRight )*PSI_A(jState,iSiteL) &
              - Kappa * ( PsiLeft + PsiRight ) &
              - PSI_B(jState,iSiteL) )
         
-        !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
-        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
-        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
-        !        new
+!!$        PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
+!!$        PRINT*, iSiteL, jState, En, OnsitePot, PsiLeft, PsiRight, &
+!!$                PSI_A(iSiteL,jState), PSI_B(iSiteL,jState), &
+!!$                new
         
         PSI_B(jState,iSiteL)= new
         
@@ -161,7 +161,7 @@ SUBROUTINE TMMultLieb2DB2toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot
   REAL(KIND=CKIND) new, PsiLeft, PsiRight
   
-  PRINT*,"DBG: TMMultLieb2DB2toA()"
+  !PRINT*,"DBG: TMMultLieb2DB2toA()"
   
   DO iSite=1,M
      
@@ -235,7 +235,7 @@ SUBROUTINE TMMultLieb2DB1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot
   REAL(KIND=CKIND) new, PsiLeft, PsiRight
   
-  PRINT*,"DBG: TMMultLieb2DB1toB2()"
+  !PRINT*,"DBG: TMMultLieb2DB1toB2()"
 
   CALL TMMultLieb2DB2toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
     
