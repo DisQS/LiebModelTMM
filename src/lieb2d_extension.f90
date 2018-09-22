@@ -110,10 +110,10 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
              - Kappa * ( PsiLeft + PsiRight ) &
              - PSI_B(jState,iSiteL) )
         
-        !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
-        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
-        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
-        !        new
+        PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
+        PRINT*, iSiteL, jState, En, OnsitePot, PsiLeft, PsiRight, &
+                PSI_A(iSiteL,jState), PSI_B(iSiteL,jState), &
+                new
         
         PSI_B(jState,iSiteL)= new
         
