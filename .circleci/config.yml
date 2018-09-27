@@ -78,17 +78,18 @@ jobs:
     #- run: cd ./felix-${CIRCLE_SHA1}/;pwd;make clean; make
     - run: cd src; make -f makefile.GF clean; pwd; ls -al
     - run: cd src; make -f makefile.GF
-    # Test
-    #   This would typically be a build job when using workflows, possibly combined with build
-    # This is based on your 1.0 configuration file or project settings
-    #- run: cd ./samples/GaAs_short; ../../felix-$CIRCLE_SHA1/felix.INT64NGNU.d | tee terminal_log.txt
-    #- run: cd ./samples/SrTiO3_short; ../../felix-$CIRCLE_SHA1/felix.INT64NGNU.d | tee terminal_log.txt
-    # This is based on your 1.0 configuration file or project settings
-    #- run: diff -W132 -s ./samples/GaAs_short/GaAs_I0000_085nm_070x070/GaAs_085nm_070x070_+0+0+0.bin ./samples/GaAs_short/sample_outputs/GaAs_I0000_085nm_070x070/GaAs_085nm_070x070_+0+0+0.bin || true
-    #- run: diff -W132 -y -s ./samples/GaAs_short/iteration_log.txt ./samples/GaAs_short/sample_outputs/iteration_log.txt || true
-    #- run: diff -W132 -y -s ./samples/GaAs_short/terminal_log.txt ./samples/GaAs_short/sample_outputs/terminal_log.txt  || true
-    - run: cd tests/; ../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
-    - run: cd tests/; diff -W132 -s 0004_D0050.raw ./target/0004_D0050.raw || true
+    # Test Lieb21
+    - run: cd tests/lieb21/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
+    - run: cd tests/lieb21/; diff -W132 -s L21_0004_D0050.raw ./target/L21_0004_D0050.raw || true
+    # Test Lieb22
+    - run: cd tests/lieb22/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
+    - run: cd tests/lieb22/; diff -W132 -s L22_0004_D0050.raw ./target/L22_0004_D0050.raw || true
+    # Test Lieb31
+    #- run: cd tests/lieb31/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
+    #- run: cd tests/lieb31/; diff -W132 -s L31_0004_D0050.raw ./target/L31_0004_D0050.raw || true
+    # Test Lieb32
+    #- run: cd tests/lieb32/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
+    #- run: cd tests/lieb32/; diff -W132 -s L32_0004_D0050.raw ./target/L32_0004_D0050.raw || true
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
     # Save test results
