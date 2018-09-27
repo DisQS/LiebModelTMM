@@ -236,7 +236,10 @@ SUBROUTINE Input( IErr )
   ENDIF
 
   SELECT CASE(IDimenFlag)
-  CASE(21,22,32,33)
+  CASE(21,22)
+  CASE(31,32)
+     PRINT*,"Input(): IDimenFlag=",IDimenFlag," outside allowed range!"
+     IErr= 1
   CASE DEFAULT
      PRINT*,"Input(): IDimenFlag=",IDimenFlag," outside allowed range!"
      IErr= 1
