@@ -366,8 +366,14 @@ PROGRAM TMSEXd
         ALLOCATE(gamma2(IWidth), STAT = IErr)
         ALLOCATE(acc_variance(IWidth), STAT = IErr)
      CASE(31,32)
-        PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
-        STOP
+        ALLOCATE(PsiA(IWidthSquared,IWidthSquared), STAT = IErr)
+        ALLOCATE(PsiB(IWidthSquared,IWidthSquared), STAT = IErr)
+        
+        ALLOCATE(nGamma(IWidthSquared), STAT = IErr)
+     
+        ALLOCATE(gamma(IWidthSquared), STAT = IErr)
+        ALLOCATE(gamma2(IWidthSquared), STAT = IErr)
+        ALLOCATE(acc_variance(IWidthSquared), STAT = IErr)
      CASE DEFAULT
         PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
         STOP
