@@ -1,5 +1,5 @@
 # Veusz saved document (version 3.0.1)
-# Saved at 2018-10-02T04:27:44.821572
+# Saved at 2018-10-02T06:41:08.680723
 
 AddImportPath(u'/home/bob-tom/Projects/LiebModelTMM/graph')
 SetDataExpression(u'M=10:loc length', u'1/col2', linked=True)
@@ -291,6 +291,36 @@ ImportString(u'col5(numeric)','''
 1.377551e-03
 1.572973e-03
 1.813734e-03
+1.568122e-03
+1.365304e-03
+1.312634e-03
+1.289788e-03
+1.339322e-03
+1.567670e-03
+3.502720e-03
+1.222832e-02
+1.875633e-02
+2.421637e-02
+3.792810e-02
+7.288402e-02
+1.315564e-01
+1.208139e-01
+3.579596e-02
+7.740130e-03
+4.217498e-03
+3.777315e-03
+4.071750e-03
+4.948436e-03
+6.548177e-03
+9.081265e-03
+1.093975e-02
+1.351046e-02
+2.273224e-02
+5.857964e-02
+2.598768e-01
+5.138234e-01
+6.432388e-01
+7.419891e-01
 ''')
 ImportString(u'col6(numeric)','''
 7.369096e-01
@@ -359,13 +389,17 @@ Set('colorTheme', 'default-latest')
 Set('StyleSheet/axis-function/autoRange', 'next-tick')
 Add('page', name='page1', autoadd=False)
 To('page1')
-Set('width', '26.616cm')
-Set('height', '20.265cm')
+Set('width', '25.266cm')
+Set('height', '18.863cm')
 Add('graph', name='graph1', autoadd=False)
 To('graph1')
 Add('axis', name='x', autoadd=False)
+To('x')
+Set('label', u'energy')
+To('..')
 Add('axis', name='y', autoadd=False)
 To('y')
+Set('label', u'localization length')
 Set('direction', 'vertical')
 To('..')
 Add('xy', name='xy1', autoadd=False)
