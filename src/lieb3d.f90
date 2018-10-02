@@ -24,106 +24,131 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=RKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
+  INTEGER i,j,K,jstate, ISeedDummy
+  REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown,OnsitePotVec(2*M,2*M)
   REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown
   
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
-  
-  DO iSite=1,M*M
      
      ! create the new onsite potential
-     SELECT CASE(IRNGFlag)
-     CASE(0)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
-        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
-     END SELECT
+  DO i=1,2*M
+     DO j=1,2*M
+        SELECT CASE(IRNGFlag)
+        CASE(0)
+           OnsitePotVec(i,j)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        CASE(1)
+           OnsitePotVec(i,j)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        CASE(2)
+           OnsitePotVec(i,j)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        END SELECT
+
+        IF( ABS(OnsitePotVec(i,j)).LT.TINY) THEN
+           OnsitePotVec(i,j)= SIGN(TINY,OnsitePotVec(i,j))
+        END IF
+     END DO
+  END DO
+  
      
-     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
-     
-     DO jState=1,M*M
+  !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
+
+  !to the TMM
+  DO j=1,2*M,2
+     DO i=1,2*M,2
+       
+        K=(j/2)*M+(i+1)/2
+        OnsitePot=OnsitePotVec(i,j)
         
-        !PRINT*,"jState, iSite", jState, iSite,
-         
-        ! PsiLeft
-        !IF (iSite.EQ.1) THEN
-        IF (MOD(iSite,M).EQ.1) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiLeft= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiLeft= PSI_A(jState,iSite+M-1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(jState,iSite+M-1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           !PRINT*,"DBG: iSite=",iSite
-           PsiLeft= PSI_A(jState,iSite-1)
-        ENDIF
+        DO jstate=1,M*M
 
-        ! PsiRight        
-        !IF (iSite.EQ.M) THEN
-        IF (MOD(iSite,M).EQ.0) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiRight= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(jState,iSite-M+1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(jState,iSite-M+1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiRight= PSI_A(jState,iSite+1)
-        ENDIF
+           !PsiLeft
+           IF (K<=M) THEN
 
-        ! PsiUp
-        IF (iSite.GT.(M-1)*M) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiUp= CZERO                ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiUp= PSI_A(jState,iSite-(M-1)*M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiUp= -PSI_A(jState,iSite-(M-1)*M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiUp= PSI_A(jState,iSite+M)
-        ENDIF
+              IF (IBCFlag.EQ.0) THEN
+                 PsiLeft= ZERO            ! hard wall BC
+                 OnsiteLeft= ZERO
+              ELSE IF (IBCFlag.EQ.1) THEN
+                 OnsiteLeft=1.0D0/OnsitePotVec(i,2*M)    ! periodic BC
+                 PsiLeft=1.0D0/OnsitePotVec(i,2*M)*Psi_A(jstate,K+M**2-M) 
+              ELSE IF (IBCFlag.EQ.2) THEN
+                 OnsiteLeft=1.0D0/OnsitePotVec(i,2*M)   ! antiperiodic BC
+                 PsiLeft=-1.0D0/OnsitePotVec(i,2*M)*Psi_A(jstate,K+M**2-M)    
+              ENDIF
+           ELSE
+              OnsiteLeft=1.0D0/OnsitePotVec(i,j-1)
+              PsiLeft=1.0D0/OnsitePotVec(i,j-1)*Psi_A(jstate,K-M)
+           END IF
 
-        ! PsiDown        
-        IF (iSite.LT.(M+1)) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiDown= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiDown= PSI_A(jState,iSite+(M-1)*M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiDown= -PSI_A(jState,iSite+(M-1)*M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiDown= PSI_A(jState,iSite-M)
-        ENDIF        
+           !PsiRight
+           IF (K>M*(M-1)) THEN
+
+              IF (IBCFlag.EQ.0) THEN
+                 OnsiteRight= 1.0D0/OnsitePotVec(i,j+1)    ! hard wall BC
+                 PsiRight= ZERO        
+              ELSE IF (IBCFlag.EQ.1) THEN
+                 OnsiteRight= 1.0D0/OnsitePotVec(i,j+1)    ! periodic BC
+                 PsiRight= 1.0D0/OnsitePotVec(i,j+1)*Psi_A(jstate,mod(K,M))
+              ELSE IF (IBCFlag.EQ.2) THEN
+                 OnsiteRight= 1.0D0/OnsitePotVec(i,j+1)    ! antiperiodic BC
+                 PsiRight= -1.0D0/OnsitePotVec(i,j+1)*Psi_A(jstate,mod(K,M))  
+              ENDIF
+           ELSE
+              OnsiteRight=1.0D0/OnsitePotVec(i,j+1)
+              PsiRight=1.0D0/OnsitePotVec(i,j+1)*Psi_A(jstate,K+M)
+           END IF
+
+           !PsiUp
+           IF (mod(K,M).EQ.1) THEN
+
+              IF (IBCFlag.EQ.0) THEN
+                 OnsiteUp=ZERO      ! hard wall BC
+                 PsiUp=ZERO
+              ELSE IF (IBCFlag.EQ.1) THEN
+                 OnsiteUp=1.0D0/OnsitePotVec(2*M,j)     ! periodic BC
+                 PsiUp=1.0D0/OnsitePotVec(2*M,j)*Psi_A(jstate,K+M-1)
+              ELSE IF (IBCFlag.EQ.2) THEN
+                 OnsiteUp=1.0D0/OnsitePotVec(2*M,j)     ! antiperiodic BC
+                 PsiUp=-1.0D0/OnsitePotVec(2*M,j)*Psi_A(jstate,K+M-1)
+                 
+              ENDIF
+           ELSE
+              OnsiteUp=1.0D0/OnsitePotVec(i-1,j)
+              PsiUp=1.0D0/OnsitePotVec(i-1,j)*Psi_A(jstate,K-1)
+           END IF
+
+           !PsiDown
+           IF (mod(K,M).EQ.M) THEN
+
+              IF (IBCFlag.EQ.0) THEN
+                 OnsiteDown=1.0D0/OnsitePotVec(i+1,j)  ! hard wall BC
+                 PsiDown=ZERO                 
+              ELSE IF (IBCFlag.EQ.1) THEN
+                 OnsiteDown=1.0D0/OnsitePotVec(i+1,j)   ! periodic BC
+                 PsiDown=1.0D0/OnsitePotVec(i+1,j)*Psi_A(jstate,K-M+1)
+              ELSE IF (IBCFlag.EQ.2) THEN
+                 OnsiteDown=1.0D0/OnsitePotVec(i+1,j)   ! antiperiodic BC
+                 PsiDown=-1.0D0/OnsitePotVec(i+1,j)*Psi_A(jstate,K-M+1)                 
+              ENDIF
+           ELSE
+              OnsiteDown=1.0D0/OnsitePotVec(i+1,j)
+              PsiDown=1.0D0/OnsitePotVec(i+1,j)*Psi_A(jstate,K+1)
+           END IF    
+        END DO
         
-        new= ( OnsitePot * PSI_A(jState,iSite) &
+        new= ( OnsitePot + OnsiteLeft + OnsiteRight + OnsiteUp +  OnsiteDown ) * Psi_A(jstate,K)&
              - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
-             - PSI_B(jState,iSite) )
+             - PSI_B(jstate,K) 
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= new
+        PSI_B(jstate,K)= new
         
-     ENDDO ! jState
-  ENDDO ! iSite
+     ENDDO !jtate
+  ENDDO ! i
+!ENDDO!j
+
   
   !PRINT*,"PSIA(1,1),(2,1),(1,2),(2,2)",&
   !      PSI_A(1,1),PSI_A(2,1),PSI_A(1,2),PSI_A(2,2)
@@ -156,11 +181,11 @@ SUBROUTINE TMMultLieb3DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
        En                    ! energy
   
-  REAL(KIND=RKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
+  REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
   INTEGER iSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown
+  REAL(KIND=CKIND) new
   
   !PRINT*,"DBG: TMMultLieb3DBtoA()"
   
@@ -169,11 +194,11 @@ SUBROUTINE TMMultLieb3DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      ! create the new onsite potential
      SELECT CASE(IRNGFlag)
      CASE(0)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(1)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(2)
-        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
      
      !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
@@ -181,72 +206,8 @@ SUBROUTINE TMMultLieb3DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      DO jState=1,M*M
         
         !PRINT*,"jState, iSite", jState, iSite,
-         
-        ! PsiLeft
-        !IF (iSite.EQ.1) THEN
-        IF (MOD(iSite,M).EQ.1) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiLeft= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiLeft= PSI_A(jState,iSite+M-1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(jState,iSite+M-1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           !PRINT*,"DBG: iSite=",iSite
-           PsiLeft= PSI_A(jState,iSite-1)
-        ENDIF
-
-        ! PsiRight        
-        !IF (iSite.EQ.M) THEN
-        IF (MOD(iSite,M).EQ.0) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiRight= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(jState,iSite-M+1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(jState,iSite-M+1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiRight= PSI_A(jState,iSite+1)
-        ENDIF
-
-        ! PsiUp
-        IF (iSite.GT.(M-1)*M) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiUp= CZERO                ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiUp= PSI_A(jState,iSite-(M-1)*M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiUp= -PSI_A(jState,iSite-(M-1)*M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiUp= PSI_A(jState,iSite+M)
-        ENDIF
-
-        ! PsiDown        
-        IF (iSite.LT.(M+1)) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiDown= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiDown= PSI_A(jState,iSite+(M-1)*M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiDown= -PSI_A(jState,iSite+(M-1)*M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiDown= PSI_A(jState,iSite-M)
-        ENDIF        
         
         new= ( OnsitePot * PSI_A(jState,iSite) &
-             - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
              - PSI_B(jState,iSite) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
@@ -259,10 +220,12 @@ SUBROUTINE TMMultLieb3DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      ENDDO ! jState
   ENDDO ! iSite
   
-  !PRINT*,"PSIA(1,1),(2,1),(1,2),(2,2)",&
-  !      PSI_A(1,1),PSI_A(2,1),PSI_A(1,2),PSI_A(2,2)
+  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
+        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
+
+  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
+        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
   
   RETURN
 END SUBROUTINE TMMultLieb3DBtoA
 
-  
