@@ -296,9 +296,9 @@ PROGRAM TMSEXd
      !--------------------------------------------------------------
 
      SELECT CASE(IDimenFlag)
-     CASE(21,22)
+     CASE(21,22,31)
         CONTINUE
-     CASE(31,32)
+     CASE(32)
         IWidthSquared = IWidth*IWidth
      CASE DEFAULT
         PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
@@ -546,7 +546,7 @@ northo_loop: &
                       Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidth)
               CASE(31)
-                 PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
+                 !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
