@@ -109,7 +109,7 @@
 !
 !********************************************************************
 
-PROGRAM TMSEXd
+PROGRAM TMSELMxD
 
   !--------------------------------------------------------------------
   ! parameter and global variable definitions
@@ -820,4 +820,4 @@ northo_loop: &
   
   STOP "TMSEXd $Revision: 1.4 $"
   
-END PROGRAM TMSEXd
+END PROGRAM TMSELMxD
