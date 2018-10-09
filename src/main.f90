@@ -109,7 +109,7 @@
 !
 !********************************************************************
 
-PROGRAM TMSEXd
+PROGRAM TMSELMxD
 
   !--------------------------------------------------------------------
   ! parameter and global variable definitions
@@ -366,8 +366,14 @@ PROGRAM TMSEXd
         ALLOCATE(gamma2(IWidth), STAT = IErr)
         ALLOCATE(acc_variance(IWidth), STAT = IErr)
      CASE(31,32)
-        PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
-        STOP
+        ALLOCATE(PsiA(IWidthSquared,IWidthSquared), STAT = IErr)
+        ALLOCATE(PsiB(IWidthSquared,IWidthSquared), STAT = IErr)
+        
+        ALLOCATE(nGamma(IWidthSquared), STAT = IErr)
+     
+        ALLOCATE(gamma(IWidthSquared), STAT = IErr)
+        ALLOCATE(gamma2(IWidthSquared), STAT = IErr)
+        ALLOCATE(acc_variance(IWidthSquared), STAT = IErr)
      CASE DEFAULT
         PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
         STOP
@@ -540,9 +546,9 @@ northo_loop: &
                       Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidth)
               CASE(31)
-                 PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
-                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)
+                 !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer,Energy,DiagDis,IWidth) 
+                        
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)
               CASE(32)
@@ -814,4 +820,4 @@ northo_loop: &
   
   STOP "TMSEXd $Revision: 1.4 $"
   
-END PROGRAM TMSEXd
+END PROGRAM TMSELMxD
