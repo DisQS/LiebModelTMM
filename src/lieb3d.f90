@@ -30,7 +30,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
      
-     ! create the new onsite potential
+  ! create the new onsite potential
   DO iSite=1,2*M
      DO jSite=1,2*M
         SELECT CASE(IRNGFlag)
@@ -48,7 +48,6 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      END DO
   END DO
   
-     
   !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
 
   !to the TMM
@@ -57,7 +56,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         indexK=(jSite/2)*M+(iSite+1)/2
         OnsitePot=OnsitePotVec(iSite,jSite)
-        PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
+        !PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
         
         DO jstate=1,M*M
            
@@ -134,7 +133,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PsiDown=1.0D0/OnsitePotVec(iSite+1,jSite)*Psi_A(jstate,indexK+1)
            END IF
 
-           PRINT*,"DBG2: jState,iSite, jSite, indexK", jState, iSite, jSite, indexK
+           !PRINT*,"DBG2: jState,iSite, jSite, indexK", jState, iSite, jSite, indexK
            new= ( OnsitePot + OnsiteLeft + OnsiteRight + OnsiteUp +  OnsiteDown ) * Psi_A(jstate,indexK)&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
                 - PSI_B(jstate,indexK) 
