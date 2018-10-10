@@ -63,7 +63,7 @@ LIBFLAGS  =  -llapack -lblas
 PRINT1 = a2ps -g -o-
 PRINT2 = > tmseSd.ps # | fleet -odouble
 
-OBJ = common_modules.o application_modules.o random.o util.o main.o lieb2d.o lieb2d_extension.o lieb3d.o inout.o etime.o 
+OBJ = common_modules.o application_modules.o random.o util.o main.o lieb2d.o lieb2d_extension.o lieb3d.o lieb3d_extension.o inout.o etime.o 
 
 %.o: %.f90
 	$(F90) $(F90FLAGS) -DF90 -c $< $(LIBFLAGS)
