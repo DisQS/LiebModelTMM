@@ -88,8 +88,8 @@ jobs:
     - run: cd tests/lieb31/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
     - run: cd tests/lieb31/; diff -W132 -s L31_0004_D0150.raw ./target/L31_0004_D0150.raw || true
     # Test Lieb32
-    #- run: cd tests/lieb32/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
-    #- run: cd tests/lieb32/; diff -W132 -s L32_0004_D0050.raw ./target/L32_0004_D0050.raw || true
+    - run: cd tests/lieb32/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
+    - run: cd tests/lieb32/; diff -W132 -s L32_0004_D0150.raw ./target/L32_0004_D0150.raw || true
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
     # Save test results
