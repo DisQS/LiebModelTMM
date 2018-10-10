@@ -378,31 +378,7 @@ PROGRAM TMSELMxD
         PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
         STOP
      END SELECT
-        
-!!$     SELECT CASE(IDimenFlag)
-!!$     !3D case
-!!$     CASE(3)
-!!$        ALLOCATE(PsiA(IWidthSquared,IWidthSquared), STAT = IErr)
-!!$        ALLOCATE(PsiB(IWidthSquared,IWidthSquared), STAT = IErr)
-!!$        
-!!$        ALLOCATE(nGamma(IWidthSquared), STAT = IErr)
-!!$     
-!!$        ALLOCATE(gamma(IWidthSquared), STAT = IErr)
-!!$        ALLOCATE(gamma2(IWidthSquared), STAT = IErr)
-!!$        ALLOCATE(acc_variance(IWidthSquared), STAT = IErr)
-!!$
-!!$     !2D/1D case
-!!$     CASE DEFAULT
-!!$        ALLOCATE(PsiA(IWidth,IWidth), STAT = IErr)
-!!$        ALLOCATE(PsiB(IWidth,IWidth), STAT = IErr)
-!!$        
-!!$        ALLOCATE(nGamma(IWidth), STAT = IErr)
-!!$     
-!!$        ALLOCATE(gamma(IWidth), STAT = IErr)
-!!$        ALLOCATE(gamma2(IWidth), STAT = IErr)
-!!$        ALLOCATE(acc_variance(IWidth), STAT = IErr)
-!!$     END SELECT
-     
+             
      !PRINT*, "DBG: IErr=", IErr
      IF( IErr.NE.0 ) THEN
         PRINT*,"main: error in ALLOCATE()"
@@ -548,7 +524,6 @@ northo_loop: &
               CASE(31)
                  !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer,Energy,DiagDis,IWidth) 
-                        
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)
               CASE(32)
@@ -560,19 +535,10 @@ northo_loop: &
                  CALL TMMultLieb3DB6toA( PsiA, PsiB, Ilayer+2, &
                       Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidth)
-!!$                 CALL TMMultLieb3DAtoB1( PsiA, PsiB, Ilayer, &
-!!$                      Energy, DiagDis, IWidth)              
-!!$                 CALL TMMultLieb3DB1toB2( PsiB, PsiA, Ilayer+1, &
-!!$                      Energy, DiagDis, IWidth)
-!!$                 CALL TMMultLieb3DB2toA( PsiA, PsiB, Ilayer+2, &
-!!$                      Energy, DiagDis, IWidth)
-!!$                 CALL Swap( PsiA, PsiB, IWidth)
               CASE DEFAULT
                  PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
                  STOP
               END SELECT
-              
-              !CALL Swap( PsiA, PsiB, IWidth)
               
            ENDDO northo_loop
             
