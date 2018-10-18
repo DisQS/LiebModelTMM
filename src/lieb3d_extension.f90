@@ -26,7 +26,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER iSite,jSite,indexK,jstate, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
-  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown
+  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown, stub
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
      
@@ -79,10 +79,16 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                       /(OnsitePotVec(iSite,3*M-1)*OnsitePotVec(iSite,3*M)-1.0D0)    
               ENDIF
            ELSE
+              stub= (OnsitePotVec(iSite,jSite-1)*OnsitePotVec(iSite,jSite-2)-1.0D0)
+              IF( ABS(stub).LT.TINY) THEN
+                 PRINT*,"DBG: iSite, jSite, jState, stub(OL)", &
+                      iSite, jSite, JState, stub
+                 stub= SIGN(TINY,stub)
+              ENDIF
               OnsiteLeft=OnsitePotVec(iSite,jSite-2) &
-                   /(OnsitePotVec(iSite,jSite-1)*OnsitePotVec(iSite,jSite-2)-1.0D0)
+                   /stub !(OnsitePotVec(iSite,jSite-1)*OnsitePotVec(iSite,jSite-2)-1.0D0)
               PsiLeft=Psi_A(jstate,indexK-M) &
-                   /(OnsitePotVec(iSite,jSite-1)*OnsitePotVec(iSite,jSite-2)-1.0D0)
+                   /stub !(OnsitePotVec(iSite,jSite-1)*OnsitePotVec(iSite,jSite-2)-1.0D0)
            END IF
            
            !PsiRight
