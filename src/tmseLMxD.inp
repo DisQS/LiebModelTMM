@@ -1,7 +1,7 @@
-ISeed         = 1277
-NOfIter       = 100000000.
+ISeed         = 71277
+NOfIter       = 5000.
 NOfOrtho      = 10     
-NOfPrint      = 100000
+NOfPrint      = 1
 NOfGamma      = 1
 IDimenFlag    = 32
 IBCFlag       = 0    
