@@ -56,7 +56,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
         indexK=(iSite/3+1)+(jSite/3)*M
         OnsitePot=OnsitePotVec(iSite,jSite)
-        ! PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
+        PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
 
         DO jstate=1,M*M
 
