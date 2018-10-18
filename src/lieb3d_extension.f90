@@ -26,7 +26,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   INTEGER iSite,jSite,indexK,jstate, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
-  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown, stub
+  REAL(KIND=RKIND) NEW, PsiLeft, PsiRight, PsiUp, PsiDown, stub
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
 
@@ -76,7 +76,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteLeft=OnsitePotVec(iSite,3*M-1) &
                       /stub !(OnsitePotVec(iSite,3*M-1)*OnsitePotVec(iSite,3*M)-1.0D0)  
-                 PsiLeft=Psi_A(jstate,M*M-mod(indexK,M)) &
+                 PsiLeft=Psi_A(jstate,M*M-MOD(indexK,M)) &
                       /stub !(OnsitePotVec(iSite,3*M-1)*OnsitePotVec(iSite,3*M)-1.0D0)
               ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
                  stub= (OnsitePotVec(iSite,3*M-1)*OnsitePotVec(iSite,3*M)-1.0D0)
@@ -87,7 +87,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteLeft=OnsitePotVec(iSite,3*M-1) &
                       /stub !(OnsitePotVec(iSite,3*M-1)*OnsitePotVec(iSite,3*M)-1.0D0)   
-                 PsiLeft=-Psi_A(jstate,M*M-mod(indexK,M)) &
+                 PsiLeft=-Psi_A(jstate,M*M-MOD(indexK,M)) &
                       /stub !(OnsitePotVec(iSite,3*M-1)*OnsitePotVec(iSite,3*M)-1.0D0)    
               ENDIF
            ELSE
@@ -125,7 +125,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteRight=OnsitePotVec(iSite,jSite+2) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)  
-                 PsiRight=Psi_A(jstate,mod(indexK,M)) &
+                 PsiRight=Psi_A(jstate,MOD(indexK,M)) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)
               ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
                  stub= (OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)
@@ -136,7 +136,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteRight=OnsitePotVec(iSite,jSite+2) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)   
-                 PsiRight=-Psi_A(jstate,mod(indexK,M)) &
+                 PsiRight=-Psi_A(jstate,MOD(indexK,M)) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)
               ENDIF
            ELSE
@@ -153,7 +153,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
 
            !PsiUp
-           IF (mod(indexK,M).EQ.1) THEN
+           IF (MOD(indexK,M).EQ.1) THEN
 
               IF (IBCFlag.EQ.0) THEN ! hard wall BC
                  OnsiteUp=ZERO      
@@ -196,7 +196,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
 
            !PsiDown
-           IF (mod(indexK,M).EQ.0) THEN
+           IF (MOD(indexK,M).EQ.0) THEN
 
               IF (IBCFlag.EQ.0) THEN ! hard wall BC
                  stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
@@ -245,7 +245,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
 
            !PRINT*,"DBG2: jState,iSite, jSite, indexK", jState, iSite, jSite, indexK
-           new= ( OnsitePot + OnsiteLeft + OnsiteRight + OnsiteUp +  OnsiteDown ) * Psi_A(jstate,indexK)&
+           NEW= ( OnsitePot + OnsiteLeft + OnsiteRight + OnsiteUp +  OnsiteDown ) * Psi_A(jstate,indexK)&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
                 - PSI_B(jstate,indexK) 
 
@@ -254,7 +254,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            !        PSI_A(iSite,jState), PSI_B(iSite,jState),
            !        new
 
-           PSI_B(jstate,indexK)= new
+           PSI_B(jstate,indexK)= NEW
 
         ENDDO !jState
 
@@ -297,7 +297,7 @@ SUBROUTINE TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER iSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new
+  REAL(KIND=CKIND) NEW
   
   !PRINT*,"DBG: TMMultLieb3DBtoA()"
   
@@ -319,7 +319,7 @@ SUBROUTINE TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         !PRINT*,"jState, iSite", jState, iSite,
         
-        new= ( OnsitePot * PSI_A(jState,iSite) &
+        NEW= ( OnsitePot * PSI_A(jState,iSite) &
              - PSI_B(jState,iSite) )
         
         !PRINT*,"i,jSite,En, OP, PL, PR, PA,PB, PN"
@@ -327,7 +327,7 @@ SUBROUTINE TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= new
+        PSI_B(jState,iSite)= NEW
         
      ENDDO ! jState
   ENDDO ! iSite
@@ -364,7 +364,7 @@ SUBROUTINE TMMultLieb3DB6toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER iSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new
+  REAL(KIND=CKIND) NEW
 
   CALL TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
