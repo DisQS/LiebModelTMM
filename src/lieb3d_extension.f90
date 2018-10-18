@@ -56,13 +56,16 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
         indexK=(iSite/3+1)+(jSite/3)*M
         OnsitePot=OnsitePotVec(iSite,jSite)
-        PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
-
+        PRINT*,"DBG: iSite, jSite, indexK", iSite, jSite, indexK
+        PRINT*,"DBG: OL, M, indexK, indexK-M", M, indexK, indexK-M, indexK<=M
+        PRINT*,"DBG: OR, M, indexK, indexK+M", M, indexK, indexK+M, indexK>M*(M-1)
+        PRINT*,"DBG: OU, M, indexK, indexK-1", M, indexK, indexK-1, MOD(indexK,M).EQ.1
+        PRINT*,"DBG: OD, M, indexK, indexK+1", M, indexK, indexK+1, MOD(indexK,M).EQ.0
+        
         DO jState=1,M*M
 
            !PsiLeft
            IF (indexK<=M) THEN
-
               IF (IBCFlag.EQ.0) THEN ! hard wall BC
                  PsiLeft= ZERO            
                  OnsiteLeft= ZERO
