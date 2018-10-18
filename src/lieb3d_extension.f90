@@ -42,9 +42,9 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            OnsitePotVec(iSite,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         END SELECT
 
-        IF( ABS(OnsitePotVec(iSite,jSite)).LT.TINY) THEN
-           OnsitePotVec(iSite,jSite)= SIGN(TINY,OnsitePotVec(iSite,jSite))
-        END IF
+!!$        IF( ABS(OnsitePotVec(iSite,jSite)).LT.TINY) THEN
+!!$           OnsitePotVec(iSite,jSite)= SIGN(TINY,OnsitePotVec(iSite,jSite))
+!!$        END IF
      END DO
   END DO
 
