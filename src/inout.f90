@@ -830,8 +830,8 @@ SUBROUTINE OpenOutputGamma( IWidth, 				  &
 
   INTEGER ICh
 
-  CHARACTER*24 CNameP
-  CHARACTER*25 CNameM
+  CHARACTER*28 CNameP
+  CHARACTER*29 CNameM
 
   ! PRINT*,"DBG: OpenOutputGamma()"
 
@@ -842,21 +842,23 @@ SUBROUTINE OpenOutputGamma( IWidth, 				  &
 
   IF( Energy.GE.-1.0D-10 ) THEN
 
-     WRITE(CNameP, 100)                        &
-          IWidth,".",									&
-          NINT(100.0D0*ABS(DiagDis)),".",		&
+     WRITE(CNameP, 100) &
+          "L",IDimenFlag,"_", &
+          IWidth,".", &
+          NINT(100.0D0*ABS(DiagDis)),".", &
           NINT(100.0D0*ABS(Energy))
-100  FORMAT(I4.4,A1,I4.4,A1,I4.4)
+100  FORMAT(A1,I2.2,A1,I4.4,A1,I4.4,A1,I4.4)
 
      OPEN(UNIT= ICh, ERR= 10, STATUS= 'UNKNOWN', &
           FILE=CNameP)
   ELSE
 
-     WRITE(CNameM, 200)                         &
-          IWidth,".",			 &
-          NINT(100.0D0*ABS(DiagDis)),".-",		 &
+     WRITE(CNameM, 200) &
+          "L",IDimenFlag,"_", &
+          IWidth,".", &
+          NINT(100.0D0*ABS(DiagDis)),".-", &
           NINT(100.0D0*ABS(Energy))
-200  FORMAT(I4.4,A1,I4.4,A2,I4.4) 
+200  FORMAT(A1,I2.2,A1,I4.4,A1,I4.4,A2,I4.4) 
 
      OPEN(UNIT= ICh, ERR= 10, STATUS= 'UNKNOWN', &
           FILE=CNameM)
