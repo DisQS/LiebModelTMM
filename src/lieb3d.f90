@@ -134,7 +134,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
 
            !PRINT*,"DBG2: jState,iSite, jSite, indexK", jState, iSite, jSite, indexK
-           new= ( OnsitePot + OnsiteLeft + OnsiteRight + OnsiteUp +  OnsiteDown ) * Psi_A(jstate,indexK)&
+           new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * Psi_A(jstate,indexK)&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
                 - PSI_B(jstate,indexK) 
            
