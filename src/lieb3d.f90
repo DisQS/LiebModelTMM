@@ -56,7 +56,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         indexK=(jSite/2)*M+(iSite+1)/2
         OnsitePot=OnsitePotVec(iSite,jSite)
-        !PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
+        PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
         
         DO jstate=1,M*M
            
@@ -134,7 +134,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
 
            !PRINT*,"DBG2: jState,iSite, jSite, indexK", jState, iSite, jSite, indexK
-           new= ( OnsitePot + OnsiteLeft + OnsiteRight + OnsiteUp +  OnsiteDown ) * Psi_A(jstate,indexK)&
+           new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * Psi_A(jstate,indexK)&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
                 - PSI_B(jstate,indexK) 
            

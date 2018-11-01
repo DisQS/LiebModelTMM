@@ -97,7 +97,7 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
         END IF
         
-        new =(( OnsitePot+OnsiteLeft+OnsiteRight ) * PSI_A(jState,iSiteL) &
+        new =(( OnsitePot-OnsiteLeft-OnsiteRight ) * PSI_A(jState,iSiteL) &
              - Kappa * ( PsiLeft + PsiRight ) &
              - PSI_B(jState,iSiteL) )
         
