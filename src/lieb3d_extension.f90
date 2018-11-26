@@ -22,17 +22,17 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
        En                    ! energy
 
-  REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(3*M,3*M)
+  REAL(KIND=CKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M)
 
   INTEGER iSite,jSite,indexK,jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
+  REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown,OnsitePotVec(3*M,3*M)
   REAL(KIND=RKIND) NEW, PsiLeft, PsiRight, PsiUp, PsiDown, stub
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
 
   ! create the new onsite potential
-  DO iSite=1,3*M
-     DO jSite=1,3*M
+  DO jSite=1,3*M
+     DO iSite=1,3*M
         SELECT CASE(IRNGFlag)
         CASE(0)
            OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
@@ -56,11 +56,11 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
         indexK=(iSite/3+1)+(jSite/3)*M
         OnsitePot=OnsitePotVec(iSite,jSite)
-        PRINT*,"DBG: iSite, jSite, indexK", iSite, jSite, indexK
-        PRINT*,"DBG: OL, M, indexK, indexK-M", M, indexK, indexK-M, indexK<=M
-        PRINT*,"DBG: OR, M, indexK, indexK+M", M, indexK, indexK+M, indexK>M*(M-1)
-        PRINT*,"DBG: OU, M, indexK, indexK-1", M, indexK, indexK-1, MOD(indexK,M).EQ.1
-        PRINT*,"DBG: OD, M, indexK, indexK+1", M, indexK, indexK+1, MOD(indexK,M).EQ.0
+!!$        PRINT*,"DBG: iSite, jSite, indexK", iSite, jSite, indexK
+!!$        PRINT*,"DBG: OL, M, indexK, indexK-M", M, indexK, indexK-M, indexK<=M
+!!$        PRINT*,"DBG: OR, M, indexK, indexK+M", M, indexK, indexK+M, indexK>M*(M-1)
+!!$        PRINT*,"DBG: OU, M, indexK, indexK-1", M, indexK, indexK-1, MOD(indexK,M).EQ.1
+!!$        PRINT*,"DBG: OD, M, indexK, indexK+1", M, indexK, indexK+1, MOD(indexK,M).EQ.0
         
         DO jState=1,M*M
 
@@ -122,7 +122,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteRight=OnsitePotVec(iSite,jSite+2) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)  
-                 PsiRight=Psi_A(jState,MOD(indexK,M)) &
+                 PsiRight=Psi_A(jState,indexK-M*(M-1)) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)
               ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
                  stub= (OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)
@@ -132,7 +132,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteRight=OnsitePotVec(iSite,jSite+2) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)   
-                 PsiRight=-Psi_A(jState,MOD(indexK,M)) &
+                 PsiRight=-Psi_A(jState,indexK-M*(M-1)) &
                       /stub !(OnsitePotVec(iSite,jSite+1)*OnsitePotVec(iSite,jSite+2)-1.0D0)
               ENDIF
            ELSE
