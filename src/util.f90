@@ -377,7 +377,7 @@ SUBROUTINE ReNorm(PSI_A,PSI_B,GAMMA,GAMMA2,M)
      ! ----------------------------------------------------------------
      ! check orthogonality if desired
 
-     IF(IWriteFlag.GE.3) THEN
+     IF(IWriteFlag.GE.MAXWriteFlag) THEN
 
         DO JVec=1,IVec-1
            sum= REAL(0.D0,RKIND)

@@ -145,7 +145,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PsiDown=  Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL-1))/stub
            END IF
 
-           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL))&
+           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
+                Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL))&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
                 - PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))
            
