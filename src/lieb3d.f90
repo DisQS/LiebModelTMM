@@ -56,7 +56,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         indexK=(jSite/2)*M+(iSite+1)/2
         OnsitePot=OnsitePotVec(iSite,jSite)
-        PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
+       ! PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
         
         DO jstate=1,M*M
            
@@ -86,7 +86,8 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiRight= ZERO        
               ELSE IF (IBCFlag.EQ.1) THEN
                  OnsiteRight= 1.0D0/OnsitePotVec(iSite,jSite+1)    ! periodic BC
-                 PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,mod(indexK,M))
+                 !   PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,mod(indexK,M))
+                 PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,indexK-M*(M-1))
               ELSE IF (IBCFlag.EQ.2) THEN
                  OnsiteRight= 1.0D0/OnsitePotVec(iSite,jSite+1)    ! antiperiodic BC
                  PsiRight= -1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,mod(indexK,M))  
