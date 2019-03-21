@@ -328,20 +328,26 @@ SUBROUTINE ReNorm(PSI_A,PSI_B,GAMMA,GAMMA2,M)
      
      DO 200 JVec=1,IVec-1
         
-        sum= CZERO
+        sum= ZERO
         
         DO 300 KIndex=1,M
            
-           sum= sum + (PSI_A(JVec,KIndex))*PSI_A(IVec,KIndex) &
-                + (PSI_B(JVec,KIndex))*PSI_B(IVec,KIndex)
+!!$           sum= sum + (PSI_A(JVec,KIndex))*PSI_A(IVec,KIndex) &
+!!$                + (PSI_B(JVec,KIndex))*PSI_B(IVec,KIndex)
+           sum= sum + (PSI_A(KIndex,JVec))*PSI_A(KIndex,IVec) &
+                + (PSI_B(KIndex,JVec))*PSI_B(KIndex,IVec)
 300     ENDDO
         
         DO 400 KIndex=1,M
            
-           PSI_A(IVec,KIndex)= PSI_A(IVec,KIndex) - &
-                sum * PSI_A(JVec,KIndex)
-           PSI_B(IVec,KIndex)= PSI_B(IVec,KIndex) - &
-                sum * PSI_B(JVec,KIndex)
+!!$           PSI_A(IVec,KIndex)= PSI_A(IVec,KIndex) - &
+!!$                sum * PSI_A(JVec,KIndex)
+!!$           PSI_B(IVec,KIndex)= PSI_B(IVec,KIndex) - &
+!!$                sum * PSI_B(JVec,KIndex)
+           PSI_A(KIndex,IVec)= PSI_A(KIndex,IVec) - &
+                sum * PSI_A(KIndex,JVec)
+           PSI_B(KIndex,IVec)= PSI_B(KIndex,IVec) - &
+                sum * PSI_B(KIndex,JVec)
            
 400     ENDDO
         
@@ -351,13 +357,15 @@ SUBROUTINE ReNorm(PSI_A,PSI_B,GAMMA,GAMMA2,M)
      
      norm= REAL(0.D0,RKIND)
      DO 500 KIndex=1,M                      
-        norm= norm + (PSI_A(IVec,KIndex)) * PSI_A(IVec,KIndex) &
-             + (PSI_B(IVec,KIndex)) * PSI_B(IVec,KIndex)
+!!$        norm= norm + (PSI_A(IVec,KIndex)) * PSI_A(IVec,KIndex) &
+!!$             + (PSI_B(IVec,KIndex)) * PSI_B(IVec,KIndex)
+        norm= norm + (PSI_A(KIndex,IVec)) * PSI_A(KIndex,IVec) &
+             + (PSI_B(KIndex,IVec)) * PSI_B(KIndex,IVec)
 500  ENDDO
      dummy= 1.D0/SQRT(norm)
      DO 600 KIndex=1,M
-        PSI_A(IVec,KIndex)= dummy * PSI_A(IVec,KIndex)
-        PSI_B(IVec,KIndex)= dummy * PSI_B(IVec,KIndex)
+        PSI_A(KIndex,IVec)= dummy * PSI_A(KIndex,IVec)
+        PSI_B(KIndex,IVec)= dummy * PSI_B(KIndex,IVec)
 600  ENDDO
 
   !Print*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
