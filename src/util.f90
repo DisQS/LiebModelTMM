@@ -364,6 +364,8 @@ SUBROUTINE ReNorm(PSI_A,PSI_B,GAMMA,GAMMA2,M)
 500  ENDDO
      dummy= 1.D0/SQRT(norm)
      DO 600 KIndex=1,M
+!!$        PSI_A(IVec,KIndex)= dummy * PSI_A(IVec,KIndex)
+!!$        PSI_B(IVec,KIndex)= dummy * PSI_B(IVec,KIndex)
         PSI_A(KIndex,IVec)= dummy * PSI_A(KIndex,IVec)
         PSI_B(KIndex,IVec)= dummy * PSI_B(KIndex,IVec)
 600  ENDDO

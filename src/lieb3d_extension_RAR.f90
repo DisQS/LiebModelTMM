@@ -85,7 +85,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= SIGN(TINY,stub)
               ENDIF
               OnsiteLeft= OnsitePotVec(iSiteS-2,jSiteS)/stub
-              PsiLeft= Psi_A(jState,Coord2IndexL(M,iSiteL-1,jSiteL))/stub
+!!$              PsiLeft= Psi_A(jState,Coord2IndexL(M,iSiteL-1,jSiteL))/stub
+              PsiLeft= Psi_A(Coord2IndexL(M,iSiteL-1,jSiteL),jState)/stub
            END IF
 
            !PsiRight
@@ -104,7 +105,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= SIGN(TINY,stub)
               ENDIF
               OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
-              PsiRight= Psi_A(jState,Coord2IndexL(M,iSiteL+1,jSiteL))/stub
+!!$              PsiRight= Psi_A(jState,Coord2IndexL(M,iSiteL+1,jSiteL))/stub
+              PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState)/stub
            END IF
 
            !PsiUp
@@ -123,7 +125,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= SIGN(TINY,stub)
               ENDIF
               OnsiteUp= OnsitePotVec(iSiteS,jSiteS+2)/stub
-              PsiUp= Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL+1))/stub
+!!$              PsiUp= Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL+1))/stub
+              PsiUp= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState)/stub
            END IF
 
            !PsiDown
@@ -142,15 +145,21 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= SIGN(TINY,stub)
               ENDIF
               OnsiteDown= OnsitePotVec(iSiteS,jSiteS-2)/stub
-              PsiDown=  Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL-1))/stub
+!!$              PsiDown=  Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL-1))/stub
+              PsiDown=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState)/stub
            END IF
-
+!!$
+!!$           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
+!!$                Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL))&
+!!$                - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
+!!$                - PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))
            NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
-                Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL))&
+                Psi_A(Coord2IndexL(M,iSiteL,jSiteL),jState)&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
-                - PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))
+                - PSI_B(Coord2IndexL(M,iSiteL,jSiteL),jState)
            
-           PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))= NEW
+!!$           PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))= NEW
+           PSI_B(Coord2IndexL(M,iSiteL,jSiteL),jState)= NEW
         END DO !jState
         
      END DO !iSiteL
@@ -218,16 +227,19 @@ SUBROUTINE TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      DO jState=1,M*M
         
         !PRINT*,"jState, iSite", jState, iSite,
-        
-        NEW= ( OnsitePot * PSI_A(jState,iSite) &
-             - PSI_B(jState,iSite) )
+!!$        
+!!$        NEW= ( OnsitePot * PSI_A(jState,iSite) &
+!!$             - PSI_B(jState,iSite) )
+        NEW= ( OnsitePot * PSI_A(iSite,jState) &
+             - PSI_B(iSite,jState) )
         
         !PRINT*,"i,jSite,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= NEW
+!!$        PSI_B(jState,iSite)= NEW
+        PSI_B(iSite,jState)= NEW
         
      ENDDO ! jState
   ENDDO ! iSite
