@@ -22,7 +22,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
        En                    ! energy
 
-  REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(3*M,3*M)
+  REAL(KIND=CKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M)
 
   INTEGER jState, ISeedDummy,iSiteS,jSiteS, iSiteL,jSiteL, indexS,indexL
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
@@ -34,6 +34,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
 
   ! create the new onsite potential
+
   DO iSiteS=1,3*M
      DO jSiteS=1,3*M
 

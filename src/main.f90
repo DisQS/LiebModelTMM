@@ -513,6 +513,7 @@ northo_loop: &
                       Energy, DiagDis, IWidth)              
                  CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)
+                
               CASE (22)
                  CALL TMMultLieb2DAtoB1( PsiA, PsiB, Ilayer, &
                       Energy, DiagDis, IWidth)              
@@ -523,9 +524,11 @@ northo_loop: &
                  CALL Swap( PsiA, PsiB, IWidth)
               CASE(31)
                  !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
-                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer,Energy,DiagDis,IWidth) 
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
+                      Energy,DiagDis,IWidth) 
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
                       Energy, DiagDis, IWidth)
+                
               CASE(32)
                  !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
                  CALL TMMultLieb3DAtoB5( PsiA, PsiB, Ilayer, &

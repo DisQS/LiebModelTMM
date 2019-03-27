@@ -481,7 +481,7 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
      WRITE(IChList(ICh),140,ERR=20) NOfOrtho
 140  FORMAT("NOfOrtho     = ", I15.1, ";")
      
-     WRITE(IChList(ICh),140,ERR=20) NOfPrint
+     WRITE(IChList(ICh),145,ERR=20) NOfPrint
 145  FORMAT("NOfPrint     = ", I15.1, ";")
      
      WRITE(IChList(ICh),150,ERR=20) NOfGamma
