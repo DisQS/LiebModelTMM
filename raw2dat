@@ -1,0 +1,11 @@
+# convert .raw files with exponent E into .dat files with exponent *10^
+
+for n in *.raw
+do
+  echo $n "->" `basename $n .raw`.dat
+  sed "s/nan/1E+99/g" $n >raw2dat.tmp
+  sed "s/inf/1E+99/g" raw2dat.tmp > raw2dat.tmp2
+  sed "s/En/en/g" raw2dat.tmp2 > raw2dat.tmp
+  sed "s/E/*10^/g" raw2dat.tmp >`basename $n .raw`.dat
+  rm -f raw2dat.tmp?
+done
