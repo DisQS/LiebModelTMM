@@ -132,7 +132,7 @@ PROGRAM TMSELMxD
   
   IMPLICIT NONE
   
-  INTEGER IWidth, IWidthSquared, IWidthRL, Width0_X, &
+  INTEGER IWidth, IWidthEffective, IWidthRL, Width0_X, &
        IChannelMax, index,jndex,kndex,lndex, jjndex,kkndex, andex,bndex, &
        Iter1,Iter2, iStep, NOfG,iG, Ilayer, TMM_CONVERGED
   
@@ -292,14 +292,14 @@ PROGRAM TMSELMxD
      NOfG= MIN( NOfGamma, IWidth )
      
      !--------------------------------------------------------------
-     ! Calculate IWidthSquared if doing 3D TMM
+     ! Calculate IWidthEffective if doing 3D TMM
      !--------------------------------------------------------------
 
      SELECT CASE(IDimenFlag)
      CASE(21,22)
-        CONTINUE
+        IWidthEffective = IWidth
      CASE(31,32)
-        IWidthSquared = IWidth*IWidth
+        IWidthEffective = IWidth*IWidth
      CASE DEFAULT
         PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
         STOP
@@ -355,30 +355,15 @@ PROGRAM TMSELMxD
      ! allocate the memory for the TMM, gamma and RND vectors
      !--------------------------------------------------------------
 
-     SELECT CASE(IDimenFlag)
-     CASE(21,22)
-        ALLOCATE(PsiA(IWidth,IWidth), STAT = IErr)
-        ALLOCATE(PsiB(IWidth,IWidth), STAT = IErr)
-        
-        ALLOCATE(nGamma(IWidth), STAT = IErr)
+     ALLOCATE(PsiA(IWidthEffective,IWidthEffective), STAT = IErr)
+     ALLOCATE(PsiB(IWidthEffective,IWidthEffective), STAT = IErr)
      
-        ALLOCATE(gamma(IWidth), STAT = IErr)
-        ALLOCATE(gamma2(IWidth), STAT = IErr)
-        ALLOCATE(acc_variance(IWidth), STAT = IErr)
-     CASE(31,32)
-        ALLOCATE(PsiA(IWidthSquared,IWidthSquared), STAT = IErr)
-        ALLOCATE(PsiB(IWidthSquared,IWidthSquared), STAT = IErr)
-        
-        ALLOCATE(nGamma(IWidthSquared), STAT = IErr)
+     ALLOCATE(nGamma(IWidthEffective), STAT = IErr)
      
-        ALLOCATE(gamma(IWidthSquared), STAT = IErr)
-        ALLOCATE(gamma2(IWidthSquared), STAT = IErr)
-        ALLOCATE(acc_variance(IWidthSquared), STAT = IErr)
-     CASE DEFAULT
-        PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
-        STOP
-     END SELECT
-             
+     ALLOCATE(gamma(IWidthEffective), STAT = IErr)
+     ALLOCATE(gamma2(IWidthEffective), STAT = IErr)
+     ALLOCATE(acc_variance(IWidthEffective), STAT = IErr)
+     
      !PRINT*, "DBG: IErr=", IErr
      IF( IErr.NE.0 ) THEN
         PRINT*,"main: error in ALLOCATE()"
@@ -447,20 +432,10 @@ flux_loop: &
         gamma       = ZERO
         gamma2      = ZERO
         acc_variance= ZERO
-        
-        SELECT CASE(IDimenFlag)
-        CASE(21,22)
-           DO index=1,IWidth
-              PsiA(index,index)= ONE
-           ENDDO
-        CASE(31,32)
-           DO index=1,IWidthSquared
-              PsiA(index,index)= ONE
-           ENDDO        
-        CASE DEFAULT
-           PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
-           STOP           
-        END SELECT
+                   
+        DO index=1,IWidthEffective
+           PsiA(index,index)= ONE
+        ENDDO   
         
         !PRINT *, 'DBG: PsiA=', PsiA
         !PRINT *, 'DBG: PsiB=', PsiB
@@ -548,16 +523,8 @@ northo_loop: &
            !-------------------------------------------------------
            ! renormalize via Gram-Schmidt
            !-------------------------------------------------------
-           SELECT CASE(IDimenFlag)
-           CASE(21,22)
-              CALL ReNorm(PsiA,PsiB,gamma,gamma2,IWidth)
-           CASE(31,32)
-              CALL ReNorm(PsiA,PsiB,gamma,gamma2,IWidthSquared)
-           CASE DEFAULT
-              PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
-              STOP
-           END SELECT
-           
+           CALL ReNorm(PsiA,PsiB,gamma,gamma2,IWidthEffective)
+              
 !!$              CALL WriteOutputPsi( Iter1, IWidth, &
 !!$                    PsiA, IErr)
 !!$                 !PRINT*, "DBG: IErr=", IErr
@@ -581,7 +548,7 @@ northo_loop: &
 !!$              SELECT CASE(IDimenFlag)  
 !!$              !3D case
 !!$              CASE(3)
-!!$                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidthSquared)
+!!$                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidthEffective)
 !!$              !2D/1D case
 !!$              CASE DEFAULT
 !!$                 CALL ReSort(PsiA,PsiB,gamma,gamma2,IWidth)
@@ -598,35 +565,17 @@ northo_loop: &
            ! do the gamma computations
            !-----------------------------------------------------------
            
-           SELECT CASE(IDimenFlag)
-           CASE(21,22)
-              DO iG=1, IWidth
+           DO iG=1, IWidthEffective
                 
-                 nGamma(IWidth+1-iG)= gamma(iG)/REAL(NOfOrtho*Iter1)
+              nGamma(IWidthEffective+1-iG)= gamma(iG)/REAL(NOfOrtho*Iter1)
                 
-                 acc_variance(IWidth+1-iG)=             &
-                      SQRT( ABS(                        &
-                      (gamma2(iG)/REAL(Iter1) -         &
-                      (gamma(iG)/REAL(Iter1))**2 )      &
-                      / REAL( MAX(Iter1-1,1) )          &
-                      )) / ABS( gamma(iG)/REAL(Iter1) )
-              ENDDO           
-           CASE(31,32)              
-              DO iG=1, IWidthSquared
-                
-                 nGamma(IWidthSquared+1-iG)= gamma(iG)/REAL(NOfOrtho*Iter1)
-                
-                 acc_variance(IWidthSquared+1-iG)=             &
-                      SQRT( ABS(                        &
-                      (gamma2(iG)/REAL(Iter1) -         &
-                      (gamma(iG)/REAL(Iter1))**2 )      &
-                      / REAL( MAX(Iter1-1,1) )          &
-                      )) / ABS( gamma(iG)/REAL(Iter1) )
-              ENDDO           
-           CASE DEFAULT
-              PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
-              STOP
-           END SELECT
+              acc_variance(IWidthEffective+1-iG)=             &
+                   SQRT( ABS(                        &
+                   (gamma2(iG)/REAL(Iter1) -         &
+                   (gamma(iG)/REAL(Iter1))**2 )      &
+                   / REAL( MAX(Iter1-1,1) )          &
+                   )) / ABS( gamma(iG)/REAL(Iter1) )
+           ENDDO
            
            !-----------------------------------------------------------
            ! write the nGamma data to file
