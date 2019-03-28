@@ -32,22 +32,23 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   ! create the new onsite potential
    
- ! DO jSite=1  !label different column
-   jSite=1
-     DO iSite=1,3*M   !label different row
-        SELECT CASE(IRNGFlag)
-        CASE(0)
-           OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-        CASE(1)
-           OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-        CASE(2)
-           OnsitePotVec(iSite,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
-        END SELECT
+  ! DO jSite=1  !label different column
+  jSite=1
 
+  DO iSite=1,3*M   !label different row
+     SELECT CASE(IRNGFlag)
+     CASE(0)
+        OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+     CASE(1)
+        OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+     CASE(2)
+        OnsitePotVec(iSite,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     END SELECT
+     
 !!$        IF( ABS(OnsitePotVec(iSite,jSite)).LT.TINY) THEN
 !!$           OnsitePotVec(iSite,jSite)= SIGN(TINY,OnsitePotVec(iSite,jSite))
 !!$        END IF
-     END DO
+  END DO
 !  END DO
 
   
@@ -70,124 +71,118 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   ! to the TMM
 
 
-     ! DO jSite=1   !label the first colum
-   !  jSite=1
-     DO iSite=1,3*M,3  ! lable the the row of A atom.
-
-        indexK=(iSite/3+1)      !label the A atom
-        OnsitePot=OnsitePotVec(iSite,jSite)
-
-        DO jState=1,M
-          ! PSI UP
-           IF (indexK==1) THEN
-
-              IF (IBCFlag.EQ.0) THEN ! hard wall BC
-                 OnsiteUp=ZERO      
-                 PsiUp=ZERO
-                 
-              ELSE IF (IBCFlag.EQ.1) THEN ! periodic BC
-                 stub= (OnsitePotVec(3*M,jSite)*OnsitePotVec(3*M-1,jSite)-1.0D0)
-                 IF( ABS(stub).LT.TINY) THEN
-                    PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
-                    stub= SIGN(TINY,stub)
-                 ENDIF
-                 OnsiteUp=OnsitePotVec(3*M-1,jSite) &
-                      /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-                 PsiUp=Psi_A(jState,M) &
-                      /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-
-              ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
-                 stub= (OnsitePotVec(3*M,jSite)*OnsitePotVec(3*M-1,jSite)-1.0D0)
-                 IF( ABS(stub).LT.TINY) THEN
-                    PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
-                    stub= SIGN(TINY,stub)
-                 ENDIF
-                 OnsiteUp=OnsitePotVec(3*M-1,jSite) &
-                      /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-                 PsiUp=-Psi_A(jState,M) &
-                      /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)                       
-              ENDIF
-           ELSE
-              stub= (OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+  ! DO jSite=1   !label the first colum
+  !  jSite=1
+  DO iSite=1,3*M,3  ! lable the the row of A atom.
+     
+     indexK=(iSite/3+1)      !label the A atom
+     OnsitePot=OnsitePotVec(iSite,jSite)
+     
+     DO jState=1,M
+        ! PSI UP
+        IF (indexK==1) THEN
+           
+           IF (IBCFlag.EQ.0) THEN ! hard wall BC
+              OnsiteUp=ZERO      
+              PsiUp=ZERO
+              
+           ELSE IF (IBCFlag.EQ.1) THEN ! periodic BC
+              stub= (OnsitePotVec(3*M,jSite)*OnsitePotVec(3*M-1,jSite)-1.0D0)
               IF( ABS(stub).LT.TINY) THEN
                  PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp=OnsitePotVec(iSite-2,jSite) &
+              OnsiteUp=OnsitePotVec(3*M-1,jSite) &
                    /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-              PsiUp=Psi_A(jState,indexK-1) &
+              PsiUp=PSI_A(M,jState) &
                    /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-           END IF
-
-           !PSI DOWN
-             IF (indexK==M) THEN
-
-                IF (IBCFlag.EQ.0) THEN ! hard wall BC
-                   stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
-                   IF( ABS(stub).LT.TINY) THEN
-                      PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
-                      stub= SIGN(TINY,stub)
-                   ENDIF
-                   OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                        /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-                   PsiDown=ZERO        
-                 
-                ELSE IF (IBCFlag.EQ.1) THEN ! periodic BC
-                   stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
-                   IF( ABS(stub).LT.TINY) THEN
-                      PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
-                      stub= SIGN(TINY,stub)
-                   ENDIF
-                   OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                        /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-                   PsiDown=Psi_A(jState,1) &
-                        /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-                ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
-                   stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
-                   IF( ABS(stub).LT.TINY) THEN
-                      PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
-                      stub= SIGN(TINY,stub)
-                   ENDIF
-                   OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                        /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-                   PsiDown=-Psi_A(jState,1) &
-                        /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)                  
-                ENDIF
-             ELSE
-                stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
-                IF( ABS(stub).LT.TINY) THEN
-                   PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+              
+           ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
+              stub= (OnsitePotVec(3*M,jSite)*OnsitePotVec(3*M-1,jSite)-1.0D0)
+              IF( ABS(stub).LT.TINY) THEN
+                 PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+                 stub= SIGN(TINY,stub)
+              ENDIF
+              OnsiteUp=OnsitePotVec(3*M-1,jSite) &
+                   /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+              PsiUp=-PSI_A(M,jState) &
+                   /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)                       
+           ENDIF
+        ELSE
+           stub= (OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+           IF( ABS(stub).LT.TINY) THEN
+              PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+              stub= SIGN(TINY,stub)
+           ENDIF
+           OnsiteUp=OnsitePotVec(iSite-2,jSite) &
+                /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+           PsiUp=PSI_A(indexK-1,jState) &
+                /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+        END IF
+        
+        !PSI DOWN
+        IF (indexK==M) THEN
+           
+           IF (IBCFlag.EQ.0) THEN ! hard wall BC
+              stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
+              IF( ABS(stub).LT.TINY) THEN
+                 PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
               OnsiteDown=OnsitePotVec(iSite+2,jSite) &
                    /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-              PsiDown=Psi_A(jState,indexK+1) &
+              PsiDown=ZERO        
+              
+           ELSE IF (IBCFlag.EQ.1) THEN ! periodic BC
+              stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
+              IF( ABS(stub).LT.TINY) THEN
+                 PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+                 stub= SIGN(TINY,stub)
+              ENDIF
+              OnsiteDown=OnsitePotVec(iSite+2,jSite) &
                    /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
-           END IF
-           
-           new =(( OnsitePot-OnsiteUp-OnsiteDown )*PSI_A(jState,indexK) &
+              PsiDown=PSI_A(1,jState) &
+                   /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+           ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
+              stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
+              IF( ABS(stub).LT.TINY) THEN
+                 PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+                 stub= SIGN(TINY,stub)
+              ENDIF
+              OnsiteDown=OnsitePotVec(iSite+2,jSite) &
+                   /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+              PsiDown=-PSI_A(1,jState) &
+                   /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)                  
+           ENDIF
+        ELSE
+           stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
+           IF( ABS(stub).LT.TINY) THEN
+              PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+              stub= SIGN(TINY,stub)
+           ENDIF
+           OnsiteDown=OnsitePotVec(iSite+2,jSite) &
+                /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+           PsiDown=PSI_A(indexK+1,jState) &
+                /stub !(OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)-1.0D0)
+        END IF
+        
+        new =(( OnsitePot-OnsiteUp-OnsiteDown )*PSI_A(indexK,jState) &
              - Kappa * ( PsiUp + PsiDown ) &
-             - PSI_B(jState,indexK) )
+             - PSI_B(indexK,jState) )
         
 !!$        PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
 !!$        PRINT*, iSiteL, jState, En, OnsitePot, PsiLeft, PsiRight, &
 !!$                PSI_A(iSiteL,jState), PSI_B(iSiteL,jState), &
 !!$                new
         
-        PSI_B(jState,indexK)= new
+        PSI_B(indexK,jState)= new
         
      ENDDO ! jState
   ENDDO ! iSite
   
-  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
-
-  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
-  
-     RETURN
+  RETURN
     
-   END SUBROUTINE TMMultLieb2DAtoB1
+END SUBROUTINE TMMultLieb2DAtoB1
 
 ! --------------------------------------------------------------------
 ! TMMultLieb2DBtoA:
@@ -241,24 +236,18 @@ SUBROUTINE TMMultLieb2DB2toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         !PRINT*,"jState, iSite", jState, iSite,
         
-        new= ( OnsitePot * PSI_A(jState,iSite) &
-             - PSI_B(jState,iSite) )
+        new= ( OnsitePot * PSI_A(iSite,jState) &
+             - PSI_B(iSite,jState) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= new
+        PSI_B(iSite,jState)= new
         
      ENDDO ! jState
   ENDDO ! iSite
-  
-  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
-
-  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
   
   RETURN
 END SUBROUTINE TMMultLieb2DB2toA

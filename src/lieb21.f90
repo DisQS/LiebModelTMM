@@ -72,11 +72,11 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PsiLeft= PSI_A(jState,M)  ! periodic BC
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(jState,M) ! antiperiodic BC
+              PsiLeft= -PSI_A(M,jState) ! antiperiodic BC
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ENDIF
         ELSE
-           PsiLeft= PSI_A(jState,iSiteL-1)/OnsitePotVec(iSiteS -1)
+           PsiLeft= PSI_A(iSiteL-1,jState)/OnsitePotVec(iSiteS -1)
            OnsiteLeft= 1.D0/OnsitePotVec(iSiteS -1)
         END IF
 
@@ -86,27 +86,27 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PsiRight= ZERO            ! hard wall BC
               OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
            ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(jState,1)  ! periodic BC
+              PsiRight= PSI_A(1,jState)  ! periodic BC
               OnsiteRight= 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(jState,1) ! antiperiodic BC
+              PsiRight= -PSI_A(1,jState) ! antiperiodic BC
               OnsiteRight= 1.D0/OnsitePotVec(2*M)
            ENDIF
         ELSE
-           PsiRight= PSI_A(jState,iSiteL+1)/OnsitePotVec(iSiteS +1)
+           PsiRight= PSI_A(iSiteL+1,jState)/OnsitePotVec(iSiteS +1)
            OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
         END IF
         
-        new =(( OnsitePot-OnsiteLeft-OnsiteRight ) * PSI_A(jState,iSiteL) &
+        new =(( OnsitePot-OnsiteLeft-OnsiteRight ) * PSI_A(iSiteL,jState) &
              - Kappa * ( PsiLeft + PsiRight ) &
-             - PSI_B(jState,iSiteL) )
+             - PSI_B(iSiteL,jState) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSiteL)= new
+        PSI_B(iSiteL,jState)= new
         
      ENDDO ! jState
   ENDDO ! iSite
@@ -172,15 +172,15 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         !PRINT*,"jState, iSite", jState, iSite,
         
-        new= ( OnsitePot * PSI_A(jState,iSite) &
-             - PSI_B(jState,iSite) )
+        new= ( OnsitePot * PSI_A(iSite,jState) &
+             - PSI_B(iSite,jState) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= new
+        PSI_B(iSite,jState)= new
         
      ENDDO ! jState
   ENDDO ! iSite

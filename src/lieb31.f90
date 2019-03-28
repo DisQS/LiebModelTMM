@@ -24,7 +24,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(2*M,2*M)
   
-  INTEGER iSite,jSite,indexK,jstate, ISeedDummy
+  INTEGER iSite,jSite,indexK,jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
   REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown
 
@@ -58,7 +58,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         OnsitePot=OnsitePotVec(iSite,jSite)
        ! PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
         
-        DO jstate=1,M*M
+        DO jState=1,M*M
            
            !PsiLeft
            IF (indexK<=M) THEN
@@ -68,14 +68,14 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteLeft= ZERO
               ELSE IF (IBCFlag.EQ.1) THEN
                  OnsiteLeft=1.0D0/OnsitePotVec(iSite,2*M)    ! periodic BC
-                 PsiLeft=1.0D0/OnsitePotVec(iSite,2*M)*Psi_A(jstate,indexK+M**2-M) 
+                 PsiLeft=1.0D0/OnsitePotVec(iSite,2*M)*PSI_A(indexK+M**2-M,jState) 
               ELSE IF (IBCFlag.EQ.2) THEN
                  OnsiteLeft=1.0D0/OnsitePotVec(iSite,2*M)   ! antiperiodic BC
-                 PsiLeft=-1.0D0/OnsitePotVec(iSite,2*M)*Psi_A(jstate,indexK+M**2-M)    
+                 PsiLeft=-1.0D0/OnsitePotVec(iSite,2*M)*PSI_A(indexK+M**2-M,jState)    
               ENDIF
            ELSE
               OnsiteLeft=1.0D0/OnsitePotVec(iSite,jSite-1)
-              PsiLeft=1.0D0/OnsitePotVec(iSite,jSite-1)*Psi_A(jstate,indexK-M)
+              PsiLeft=1.0D0/OnsitePotVec(iSite,jSite-1)*PSI_A(indexK-M,jState)
            END IF
            
            !PsiRight
@@ -86,15 +86,15 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiRight= ZERO        
               ELSE IF (IBCFlag.EQ.1) THEN
                  OnsiteRight= 1.0D0/OnsitePotVec(iSite,jSite+1)    ! periodic BC
-                 !   PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,mod(indexK,M))
-                 PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,indexK-M*(M-1))
+                 !   PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(jState,mod(indexK,M))
+                 PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(indexK-M*(M-1),jState)
               ELSE IF (IBCFlag.EQ.2) THEN
                  OnsiteRight= 1.0D0/OnsitePotVec(iSite,jSite+1)    ! antiperiodic BC
-                 PsiRight= -1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,mod(indexK,M))  
+                 PsiRight= -1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(mod(indexK,M),jState)  
               ENDIF
            ELSE
               OnsiteRight=1.0D0/OnsitePotVec(iSite,jSite+1)
-              PsiRight=1.0D0/OnsitePotVec(iSite,jSite+1)*Psi_A(jstate,indexK+M)
+              PsiRight=1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(indexK+M,jState)
            END IF
            
            !PsiUp
@@ -105,15 +105,15 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiUp=ZERO
               ELSE IF (IBCFlag.EQ.1) THEN
                  OnsiteUp=1.0D0/OnsitePotVec(2*M,jSite)     ! periodic BC
-                 PsiUp=1.0D0/OnsitePotVec(2*M,jSite)*Psi_A(jstate,indexK+M-1)
+                 PsiUp=1.0D0/OnsitePotVec(2*M,jSite)*PSI_A(indexK+M-1,jState)
               ELSE IF (IBCFlag.EQ.2) THEN
                  OnsiteUp=1.0D0/OnsitePotVec(2*M,jSite)     ! antiperiodic BC
-                 PsiUp=-1.0D0/OnsitePotVec(2*M,jSite)*Psi_A(jstate,indexK+M-1)
+                 PsiUp=-1.0D0/OnsitePotVec(2*M,jSite)*PSI_A(indexK+M-1,jState)
                  
               ENDIF
            ELSE
               OnsiteUp=1.0D0/OnsitePotVec(iSite-1,jSite)
-              PsiUp=1.0D0/OnsitePotVec(iSite-1,jSite)*Psi_A(jstate,indexK-1)
+              PsiUp=1.0D0/OnsitePotVec(iSite-1,jSite)*PSI_A(indexK-1,jState)
            END IF
            
            !PsiDown
@@ -124,36 +124,33 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiDown=ZERO                 
               ELSE IF (IBCFlag.EQ.1) THEN
                  OnsiteDown=1.0D0/OnsitePotVec(iSite+1,jSite)   ! periodic BC
-                 PsiDown=1.0D0/OnsitePotVec(iSite+1,jSite)*Psi_A(jstate,indexK-M+1)
+                 PsiDown=1.0D0/OnsitePotVec(iSite+1,jSite)*PSI_A(indexK-M+1,jState)
               ELSE IF (IBCFlag.EQ.2) THEN
                  OnsiteDown=1.0D0/OnsitePotVec(iSite+1,jSite)   ! antiperiodic BC
-                 PsiDown=-1.0D0/OnsitePotVec(iSite+1,jSite)*Psi_A(jstate,indexK-M+1)                 
+                 PsiDown=-1.0D0/OnsitePotVec(iSite+1,jSite)*PSI_A(indexK-M+1,jState)                 
               ENDIF
            ELSE
               OnsiteDown=1.0D0/OnsitePotVec(iSite+1,jSite)
-              PsiDown=1.0D0/OnsitePotVec(iSite+1,jSite)*Psi_A(jstate,indexK+1)
+              PsiDown=1.0D0/OnsitePotVec(iSite+1,jSite)*PSI_A(indexK+1,jState)
            END IF
 
            !PRINT*,"DBG2: jState,iSite, jSite, indexK", jState, iSite, jSite, indexK
-           new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * Psi_A(jstate,indexK)&
+           new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * PSI_A(indexK,jState)&
                 - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
-                - PSI_B(jstate,indexK) 
+                - PSI_B(indexK,jState) 
            
            !PRINT*,"iSite,jSite,En, OP, PL, PR, PA,PB, PN"
            !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
            !        PSI_A(iSite,jState), PSI_B(iSite,jState),
            !        new
            
-           PSI_B(jstate,indexK)= new
+           PSI_B(indexK,jState)= new
            
         ENDDO !jState
         
      ENDDO ! iSite
   ENDDO!jSite
   
-  !PRINT*,"PSIA(1,1),(2,1),(1,2),(2,2)",&
-  !      PSI_A(1,1),PSI_A(2,1),PSI_A(1,2),PSI_A(2,2)
-
   RETURN
 
 END SUBROUTINE TMMultLieb3DAtoB
@@ -209,24 +206,18 @@ SUBROUTINE TMMultLieb3DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         !PRINT*,"jState, iSite", jState, iSite,
         
-        new= ( OnsitePot * PSI_A(jState,iSite) &
-             - PSI_B(jState,iSite) )
+        new= ( OnsitePot * PSI_A(iSite,jState) &
+             - PSI_B(iSite,jState) )
         
         !PRINT*,"i,jSite,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
         !        PSI_A(iSite,jState), PSI_B(iSite,jState),
         !        new
         
-        PSI_B(jState,iSite)= new
+        PSI_B(iSite,jState)= new
         
      ENDDO ! jState
   ENDDO ! iSite
-  
-  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
-
-  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
   
   RETURN
 END SUBROUTINE TMMultLieb3DBtoA

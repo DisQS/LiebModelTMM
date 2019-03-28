@@ -47,241 +47,241 @@
 !
 ! ********************************************************************
 
-! --------------------------------------------------------------------
-! TMMult2D:
-!
-! Multiplication of the transfer matrix onto the vector (PSI_A,PSI_B), 
-! giving (PSI_B,PSI_A) so that the structure of the transfer matrix 
-! can be exploited
-
-SUBROUTINE TMMult2D(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
-
-  USE MyNumbers
-  USE IPara
-  USE RNG
-  USE DPara
-  
-  ! wave functions:
-  !       
-  ! (PSI_A, PSI_B) on input, (PSI_B,PSI_A) on output
-  
-  IMPLICIT NONE
-  
-  INTEGER Ilayer,           &! current # TM multiplications
-       M                     ! strip width
-  
-  REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       En                    ! energy
-  
-  REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
-  
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new, PsiLeft, PsiRight
-  
-  !PRINT*,"DBG: TMMult2D()"
-  
-  DO iSite=1,M
-     
-     ! create the new onsite potential
-     SELECT CASE(IRNGFlag)
-     CASE(0)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
-        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
-     END SELECT
-     
-     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
-     
-     DO jState=1,M
-        
-        !PRINT*,"jState, iSite", jState, iSite,
-        
-        IF (iSite.EQ.1) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiLeft= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiLeft= PSI_A(jState,M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(jState,M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiLeft= PSI_A(jState,iSite-1)
-        ENDIF
-        
-        IF (iSite.EQ.M) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiRight= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(jState,1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(jState,1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiRight= PSI_A(jState,iSite+1)
-        ENDIF
-        
-        new= ( OnsitePot * PSI_A(jState,iSite) &
-             - Kappa * ( PsiLeft + PsiRight ) &
-             - PSI_B(jState,iSite) )
-        
-        !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
-        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
-        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
-        !        new
-        
-        PSI_B(jState,iSite)= new
-        
-     ENDDO ! jState
-  ENDDO ! iSite
-  
-  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
-
-  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
-  
-  RETURN
-END SUBROUTINE TMMult2D
-
-! --------------------------------------------------------------------
-! TMMult3D:
-!
-! 3D version of TMMult2D. Extra boundary conditions
-
-SUBROUTINE TMMult3D(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
-
-  USE MyNumbers
-  USE IPara
-  USE RNG
-  USE DPara
-  
-  ! wave functions:
-  !       
-  ! (PSI_A, PSI_B) on input, (PSI_B,PSI_A) on output
-  
-  IMPLICIT NONE
-  
-  INTEGER Ilayer,           &! current # TM multiplications
-       M                     ! strip width
-  
-  REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       En                    ! energy
-  
-  REAL(KIND=RKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
-  
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown
-  
-  !PRINT*,"DBG: TMMult3D()"
-  
-  DO iSite=1,M*M
-     
-     ! create the new onsite potential
-     SELECT CASE(IRNGFlag)
-     CASE(0)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
-        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
-        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
-     END SELECT
-     
-     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
-     
-     DO jState=1,M*M
-        
-        !PRINT*,"jState, iSite", jState, iSite,
-         
-        ! PsiLeft
-        !IF (iSite.EQ.1) THEN
-        IF (MOD(iSite,M).EQ.1) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiLeft= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiLeft= PSI_A(jState,iSite+M-1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(jState,iSite+M-1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           !PRINT*,"DBG: iSite=",iSite
-           PsiLeft= PSI_A(jState,iSite-1)
-        ENDIF
-
-        ! PsiRight        
-        !IF (iSite.EQ.M) THEN
-        IF (MOD(iSite,M).EQ.0) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiRight= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(jState,iSite-M+1)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(jState,iSite-M+1) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiRight= PSI_A(jState,iSite+1)
-        ENDIF
-
-        ! PsiUp
-        IF (iSite.GT.(M-1)*M) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiUp= CZERO                ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiUp= PSI_A(jState,iSite-(M-1)*M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiUp= -PSI_A(jState,iSite-(M-1)*M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiUp= PSI_A(jState,iSite+M)
-        ENDIF
-
-        ! PsiDown        
-        IF (iSite.LT.(M+1)) THEN
-           
-           IF (IBCFlag.EQ.0) THEN
-              PsiDown= CZERO            ! hard wall BC
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiDown= PSI_A(jState,iSite+(M-1)*M)  ! periodic BC
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiDown= -PSI_A(jState,iSite+(M-1)*M) ! antiperiodic BC
-           ENDIF
-           
-        ELSE
-           PsiDown= PSI_A(jState,iSite-M)
-        ENDIF        
-        
-        new= ( OnsitePot * PSI_A(jState,iSite) &
-             - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
-             - PSI_B(jState,iSite) )
-        
-        !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
-        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
-        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
-        !        new
-        
-        PSI_B(jState,iSite)= new
-        
-     ENDDO ! jState
-  ENDDO ! iSite
-  
-  !PRINT*,"PSIA(1,1),(2,1),(1,2),(2,2)",&
-  !      PSI_A(1,1),PSI_A(2,1),PSI_A(1,2),PSI_A(2,2)
-  
-  RETURN
-END SUBROUTINE TMMult3D
+!!$! --------------------------------------------------------------------
+!!$! TMMult2D:
+!!$!
+!!$! Multiplication of the transfer matrix onto the vector (PSI_A,PSI_B), 
+!!$! giving (PSI_B,PSI_A) so that the structure of the transfer matrix 
+!!$! can be exploited
+!!$
+!!$SUBROUTINE TMMult2D(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+!!$
+!!$  USE MyNumbers
+!!$  USE IPara
+!!$  USE RNG
+!!$  USE DPara
+!!$  
+!!$  ! wave functions:
+!!$  !       
+!!$  ! (PSI_A, PSI_B) on input, (PSI_B,PSI_A) on output
+!!$  
+!!$  IMPLICIT NONE
+!!$  
+!!$  INTEGER Ilayer,           &! current # TM multiplications
+!!$       M                     ! strip width
+!!$  
+!!$  REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+!!$       En                    ! energy
+!!$  
+!!$  REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
+!!$  
+!!$  INTEGER iSite, jState, ISeedDummy
+!!$  REAL(KIND=RKIND) OnsitePot
+!!$  REAL(KIND=CKIND) new, PsiLeft, PsiRight
+!!$  
+!!$  !PRINT*,"DBG: TMMult2D()"
+!!$  
+!!$  DO iSite=1,M
+!!$     
+!!$     ! create the new onsite potential
+!!$     SELECT CASE(IRNGFlag)
+!!$     CASE(0)
+!!$        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+!!$     CASE(1)
+!!$        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+!!$     CASE(2)
+!!$        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
+!!$     END SELECT
+!!$     
+!!$     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
+!!$     
+!!$     DO jState=1,M
+!!$        
+!!$        !PRINT*,"jState, iSite", jState, iSite,
+!!$        
+!!$        IF (iSite.EQ.1) THEN
+!!$           
+!!$           IF (IBCFlag.EQ.0) THEN
+!!$              PsiLeft= CZERO            ! hard wall BC
+!!$           ELSE IF (IBCFlag.EQ.1) THEN
+!!$              PsiLeft= PSI_A(jState,M)  ! periodic BC
+!!$           ELSE IF (IBCFlag.EQ.2) THEN
+!!$              PsiLeft= -PSI_A(jState,M) ! antiperiodic BC
+!!$           ENDIF
+!!$           
+!!$        ELSE
+!!$           PsiLeft= PSI_A(jState,iSite-1)
+!!$        ENDIF
+!!$        
+!!$        IF (iSite.EQ.M) THEN
+!!$           
+!!$           IF (IBCFlag.EQ.0) THEN
+!!$              PsiRight= CZERO            ! hard wall BC
+!!$           ELSE IF (IBCFlag.EQ.1) THEN
+!!$              PsiRight= PSI_A(jState,1)  ! periodic BC
+!!$           ELSE IF (IBCFlag.EQ.2) THEN
+!!$              PsiRight= -PSI_A(jState,1) ! antiperiodic BC
+!!$           ENDIF
+!!$           
+!!$        ELSE
+!!$           PsiRight= PSI_A(jState,iSite+1)
+!!$        ENDIF
+!!$        
+!!$        new= ( OnsitePot * PSI_A(jState,iSite) &
+!!$             - Kappa * ( PsiLeft + PsiRight ) &
+!!$             - PSI_B(jState,iSite) )
+!!$        
+!!$        !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
+!!$        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
+!!$        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
+!!$        !        new
+!!$        
+!!$        PSI_B(jState,iSite)= new
+!!$        
+!!$     ENDDO ! jState
+!!$  ENDDO ! iSite
+!!$  
+!!$  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
+!!$        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
+!!$
+!!$  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
+!!$        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
+!!$  
+!!$  RETURN
+!!$END SUBROUTINE TMMult2D
+!!$
+!!$! --------------------------------------------------------------------
+!!$! TMMult3D:
+!!$!
+!!$! 3D version of TMMult2D. Extra boundary conditions
+!!$
+!!$SUBROUTINE TMMult3D(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+!!$
+!!$  USE MyNumbers
+!!$  USE IPara
+!!$  USE RNG
+!!$  USE DPara
+!!$  
+!!$  ! wave functions:
+!!$  !       
+!!$  ! (PSI_A, PSI_B) on input, (PSI_B,PSI_A) on output
+!!$  
+!!$  IMPLICIT NONE
+!!$  
+!!$  INTEGER Ilayer,           &! current # TM multiplications
+!!$       M                     ! strip width
+!!$  
+!!$  REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+!!$       En                    ! energy
+!!$  
+!!$  REAL(KIND=RKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
+!!$  
+!!$  INTEGER iSite, jState, ISeedDummy
+!!$  REAL(KIND=RKIND) OnsitePot
+!!$  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown
+!!$  
+!!$  !PRINT*,"DBG: TMMult3D()"
+!!$  
+!!$  DO iSite=1,M*M
+!!$     
+!!$     ! create the new onsite potential
+!!$     SELECT CASE(IRNGFlag)
+!!$     CASE(0)
+!!$        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+!!$     CASE(1)
+!!$        OnsitePot= En - DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+!!$     CASE(2)
+!!$        OnsitePot= En - GRANDOM(ISeedDummy,0.0D0,DiagDis)
+!!$     END SELECT
+!!$     
+!!$     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
+!!$     
+!!$     DO jState=1,M*M
+!!$        
+!!$        !PRINT*,"jState, iSite", jState, iSite,
+!!$         
+!!$        ! PsiLeft
+!!$        !IF (iSite.EQ.1) THEN
+!!$        IF (MOD(iSite,M).EQ.1) THEN
+!!$           
+!!$           IF (IBCFlag.EQ.0) THEN
+!!$              PsiLeft= CZERO            ! hard wall BC
+!!$           ELSE IF (IBCFlag.EQ.1) THEN
+!!$              PsiLeft= PSI_A(jState,iSite+M-1)  ! periodic BC
+!!$           ELSE IF (IBCFlag.EQ.2) THEN
+!!$              PsiLeft= -PSI_A(jState,iSite+M-1) ! antiperiodic BC
+!!$           ENDIF
+!!$           
+!!$        ELSE
+!!$           !PRINT*,"DBG: iSite=",iSite
+!!$           PsiLeft= PSI_A(jState,iSite-1)
+!!$        ENDIF
+!!$
+!!$        ! PsiRight        
+!!$        !IF (iSite.EQ.M) THEN
+!!$        IF (MOD(iSite,M).EQ.0) THEN
+!!$           
+!!$           IF (IBCFlag.EQ.0) THEN
+!!$              PsiRight= CZERO            ! hard wall BC
+!!$           ELSE IF (IBCFlag.EQ.1) THEN
+!!$              PsiRight= PSI_A(jState,iSite-M+1)  ! periodic BC
+!!$           ELSE IF (IBCFlag.EQ.2) THEN
+!!$              PsiRight= -PSI_A(jState,iSite-M+1) ! antiperiodic BC
+!!$           ENDIF
+!!$           
+!!$        ELSE
+!!$           PsiRight= PSI_A(jState,iSite+1)
+!!$        ENDIF
+!!$
+!!$        ! PsiUp
+!!$        IF (iSite.GT.(M-1)*M) THEN
+!!$           
+!!$           IF (IBCFlag.EQ.0) THEN
+!!$              PsiUp= CZERO                ! hard wall BC
+!!$           ELSE IF (IBCFlag.EQ.1) THEN
+!!$              PsiUp= PSI_A(jState,iSite-(M-1)*M)  ! periodic BC
+!!$           ELSE IF (IBCFlag.EQ.2) THEN
+!!$              PsiUp= -PSI_A(jState,iSite-(M-1)*M) ! antiperiodic BC
+!!$           ENDIF
+!!$           
+!!$        ELSE
+!!$           PsiUp= PSI_A(jState,iSite+M)
+!!$        ENDIF
+!!$
+!!$        ! PsiDown        
+!!$        IF (iSite.LT.(M+1)) THEN
+!!$           
+!!$           IF (IBCFlag.EQ.0) THEN
+!!$              PsiDown= CZERO            ! hard wall BC
+!!$           ELSE IF (IBCFlag.EQ.1) THEN
+!!$              PsiDown= PSI_A(jState,iSite+(M-1)*M)  ! periodic BC
+!!$           ELSE IF (IBCFlag.EQ.2) THEN
+!!$              PsiDown= -PSI_A(jState,iSite+(M-1)*M) ! antiperiodic BC
+!!$           ENDIF
+!!$           
+!!$        ELSE
+!!$           PsiDown= PSI_A(jState,iSite-M)
+!!$        ENDIF        
+!!$        
+!!$        new= ( OnsitePot * PSI_A(jState,iSite) &
+!!$             - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
+!!$             - PSI_B(jState,iSite) )
+!!$        
+!!$        !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
+!!$        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
+!!$        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
+!!$        !        new
+!!$        
+!!$        PSI_B(jState,iSite)= new
+!!$        
+!!$     ENDDO ! jState
+!!$  ENDDO ! iSite
+!!$  
+!!$  !PRINT*,"PSIA(1,1),(2,1),(1,2),(2,2)",&
+!!$  !      PSI_A(1,1),PSI_A(2,1),PSI_A(1,2),PSI_A(2,2)
+!!$  
+!!$  RETURN
+!!$END SUBROUTINE TMMult3D
 
 
 !	--------------------------------------------------------------------
@@ -392,8 +392,8 @@ SUBROUTINE ReNorm(PSI_A,PSI_B,GAMMA,GAMMA2,M)
         DO JVec=1,IVec-1
            sum= REAL(0.D0,RKIND)
            DO KIndex=1,M
-              sum= sum + (PSI_A(JVec,KIndex))*PSI_A(IVec,KIndex) &
-                   + (PSI_B(JVec,KIndex))*PSI_B(IVec,KIndex)
+              sum= sum + (PSI_A(KIndex,JVec))*PSI_A(KIndex,IVec) &
+                   + (PSI_B(KIndex,JVec))*PSI_B(KIndex,IVec)
            ENDDO
            PRINT*,"Renorm: <",JVec,"|",IVec,">=",sum
         ENDDO

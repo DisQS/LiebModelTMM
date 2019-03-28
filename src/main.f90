@@ -653,8 +653,8 @@ northo_loop: &
            ENDIF
            !PAUSE
            
-           ! HP F77 compiler
-           !CALL fortranfflush()
+           ! flush all buffers
+           IF(IWriteFlag.GE.1) CALL flush()
            
            !-----------------------------------------------------------
            ! check accuracy and dump the result

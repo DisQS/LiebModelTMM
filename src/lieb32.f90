@@ -244,12 +244,6 @@ SUBROUTINE TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      ENDDO ! jState
   ENDDO ! iSite
   
-  !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
-
-  !PRINT*,"PSIB(1,1),(1,2),(1,3),(1,4)",&
-        !PSI_B(1,1),PSI_B(1,2),PSI_B(1,3),PSI_B(1,4)
-  
   RETURN
 END SUBROUTINE TMMultLieb3DB5toB6
 
