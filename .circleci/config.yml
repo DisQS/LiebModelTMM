@@ -86,7 +86,7 @@ jobs:
     - run: cd tests/lieb22/; diff -W132 -s L22_0004_D0050.raw ./target/L22_0004_D0050.raw || true
     # Test Lieb31
     - run: cd tests/lieb31/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
-    - run: cd tests/lieb31/; diff -W132 -s L31_0004_D0150.raw ./target/L31_0004_D0150.raw || true
+    - run: cd tests/lieb31/; diff -W132 -s L31_0004_D0850.raw ./target/L31_0004_D0850.raw || true
     # Test Lieb32
     - run: cd tests/lieb32/; ../../src/tmseLMxD.GF | tee terminal_log.txt; cat terminal_log.txt
     - run: cd tests/lieb32/; diff -W132 -s L32_0004_D0150.raw ./target/L32_0004_D0150.raw || true
