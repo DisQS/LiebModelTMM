@@ -18,6 +18,6 @@ DiagDis1      = 0.1
 dDiagDis      = -0.1
 Energy0       = -1.0
 Energy1       = 1.0
-dEnergy       = 0.1
+dEnergy       = 0.25
 Kappa         = 1.0
 Epsilon       = 1.0E-2
