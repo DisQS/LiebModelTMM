@@ -90,7 +90,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiRight= 1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(indexK-M*(M-1),jState)
               ELSE IF (IBCFlag.EQ.2) THEN
                  OnsiteRight= 1.0D0/OnsitePotVec(iSite,jSite+1)    ! antiperiodic BC
-                 PsiRight= -1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(mod(indexK,M),jState)  
+                 PsiRight= -1.0D0/OnsitePotVec(iSite,jSite+1)*PSI_A(indexK-M*(M-1),jState)  
               ENDIF
            ELSE
               OnsiteRight=1.0D0/OnsitePotVec(iSite,jSite+1)
