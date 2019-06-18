@@ -524,7 +524,7 @@ northo_loop: &
                       Energy, DiagDis, IWidth)
                  CALL TMMultLieb3D_D2toD3( PsiA, PsiB, Ilayer+2, &
                       Energy, DiagDis, IWidth)
-                 CALL TMMultLieb3D_D3toA( PsiA, PsiB, Ilayer+3, &
+                 CALL TMMultLieb3D_D3toA( PsiB, PsiA, Ilayer+3, &
                       Energy, DiagDis, IWidth)
               CASE DEFAULT
                  PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
