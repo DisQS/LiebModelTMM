@@ -91,8 +91,14 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
            !PsiRight
            IF (iSiteL.GE.M) THEN
+              
               IF (IBCFlag.EQ.0) THEN        ! hard wall BC
-                 OnsiteRight= ZERO
+                 stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
+                 IF( ABS(stub).LT.TINY) THEN             
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+!!$                 OnsiteRight= ZERO
+                 OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
                  PsiRight= ZERO        
               ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
                  CONTINUE
@@ -100,7 +106,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  CONTINUE
               ENDIF
            ELSE
-              stub= (OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0)
+              stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
               IF( ABS(stub).LT.TINY) THEN             
                  stub= SIGN(TINY,stub)
               ENDIF
@@ -109,31 +115,36 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState)/stub
            END IF
 
-           !PsiUp
+           !PsiDown
            IF (jSiteL.GE.M) THEN
               IF (IBCFlag.EQ.0) THEN        ! hard wall BC
-                 OnsiteUp=ZERO      
-                 PsiUp=ZERO
+                 stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
+                 IF( ABS(stub).LT.TINY) THEN
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+!!$                 OnsiteUp=ZERO
+                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
+                 PsiDown= ZERO
               ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
                  CONTINUE
               ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
                  CONTINUE
               ENDIF
            ELSE
-              stub= (OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0)
+              stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp= OnsitePotVec(iSiteS,jSiteS+2)/stub
+              OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
 !!$              PsiUp= Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL+1))/stub
-              PsiUp= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState)/stub
+              PsiDown= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState)/stub
            END IF
 
-           !PsiDown
+           !PsiUp
            IF (jSiteL.LE.1) THEN
               IF (IBCFlag.EQ.0) THEN       ! hard wall BC
-                 OnsiteDown= ZERO
-                 PsiDown= ZERO                 
+                 OnsiteUp= ZERO
+                 PsiUp= ZERO                 
               ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
                  CONTINUE
               ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
@@ -144,9 +155,9 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown= OnsitePotVec(iSiteS,jSiteS-2)/stub
+              OnsiteUp= OnsitePotVec(iSiteS,jSiteS-2)/stub
 !!$              PsiDown=  Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL-1))/stub
-              PsiDown=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState)/stub
+              PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState)/stub
            END IF
 !!$
 !!$           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
@@ -230,8 +241,8 @@ SUBROUTINE TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 !!$        
 !!$        NEW= ( OnsitePot * PSI_A(jState,iSite) &
 !!$             - PSI_B(jState,iSite) )
-        NEW= ( OnsitePot * PSI_A(iSite,jState) &
-             - PSI_B(iSite,jState) )
+        NEW=  OnsitePot * PSI_A(iSite,jState) &
+             - PSI_B(iSite,jState) 
         
         !PRINT*,"i,jSite,En, OP, PL, PR, PA,PB, PN"
         !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
