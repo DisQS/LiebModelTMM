@@ -296,7 +296,7 @@ PROGRAM TMSELMxD
      !--------------------------------------------------------------
 
      SELECT CASE(IDimenFlag)
-     CASE(21,22)
+     CASE(21,22,23)
         IWidthEffective = IWidth
      CASE(31,32,33)
         IWidthEffective = IWidth*IWidth
@@ -457,7 +457,7 @@ flux_loop: &
            iStep=2
         CASE(22,32)
            iStep=3
-        CASE(33)
+        CASE(23,33)
            iStep=4
         CASE DEFAULT
            PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
@@ -499,6 +499,17 @@ northo_loop: &
                  CALL TMMultLieb2DB2toA( PsiA, PsiB, Ilayer+2, &
                       Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidth)
+                 
+              CASE(23)
+                 CALL TMMultLieb2D_AtoB1( PsiA, PsiB, Ilayer, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2D_B1toB2( PsiB, PsiA, Ilayer+1, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2D_B2toB3( PsiA, PsiB, Ilayer+2, &
+                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2D_B3toA( PsiB, PsiA, Ilayer+3, &
+                      Energy, DiagDis, IWidth)
+                 
               CASE(31)
                  !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
