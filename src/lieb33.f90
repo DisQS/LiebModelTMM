@@ -71,8 +71,17 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF (IBCFlag.EQ.0) THEN
                  PsiLeft= ZERO            ! hard wall BC
                  OnsiteLeft= ZERO
+                 
               ELSE IF (IBCFlag.EQ.1) THEN
-                 CONTINUE                 ! periodic BC                
+!!$                 CONTINUE                 ! periodic BC
+                 stub= ( OnsitePotVec(4*M-1,jSiteS)*OnsitePotVec(4*M-2,jSiteS)*OnsitePotVec(4*M,jSiteS) &
+                      - OnsitePotVec(4*M,jSiteS)-OnsitePotVec(4*M-2,jSiteS) )
+                 IF( ABS(stub).LT.TINY) THEN           
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteLeft=( OnsitePotVec(4*M-1,jSiteS)*OnsitePotVec(4*M-2,jSiteS)-1.0D0)/stub                  
+                 PsiLeft=PSI_A(Coord2IndexL(M,M,jSiteL),jState)/stub
+                 
               ELSE IF (IBCFlag.EQ.2) THEN
                  CONTINUE                 ! antiperiodic BC    
               ENDIF
@@ -96,9 +105,18 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                     stub= SIGN(TINY,stub)
                  ENDIF
                  OnsiteRight=( OnsitePotVec(iSiteS+2,jSiteS)*OnsitePotVec(iSiteS+3,jSiteS)-1.0D0)/stub  ! hard wall BC                     
-                 PsiRight= ZERO        
+                 PsiRight= ZERO
+                 
               ELSE IF (IBCFlag.EQ.1) THEN
-                 CONTINUE                                          ! periodic BC 
+!!$                 CONTINUE                                          ! periodic BC
+                 stub=( OnsitePotVec(iSiteS+2,jSiteS)*OnsitePotVec(iSiteS+3,jSiteS)*OnsitePotVec(iSiteS+1,jSiteS) &
+                      - OnsitePotVec(iSiteS+1,jSiteS)-OnsitePotVec(iSiteS+3,jSiteS) )
+                 IF( ABS(stub).LT.TINY) THEN           
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteRight=( OnsitePotVec(iSiteS+2,jSiteS)*OnsitePotVec(iSiteS+3,jSiteS)-1.0D0)/ stub
+                 PsiRight=PSI_A(Coord2IndexL(M,1,jSiteL),jState)/ stub
+                 
               ELSE IF (IBCFlag.EQ.2) THEN
                  CONTINUE                                          ! antiperiodic BC 
               ENDIF
@@ -110,7 +128,6 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               ENDIF
               OnsiteRight=( OnsitePotVec(iSiteS+2,jSiteS)*OnsitePotVec(iSiteS+3,jSiteS)-1.0D0)/ stub
               PsiRight=PSI_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState)/ stub
-!!$              PsiRight=PSI_A(indexK+M,jState)/ stub
            END IF
            
            !PsiUp
@@ -119,8 +136,17 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF (IBCFlag.EQ.0) THEN
                  OnsiteUp=ZERO      ! hard wall BC
                  PsiUp=ZERO
+                 
               ELSE IF (IBCFlag.EQ.1) THEN
-                 CONTINUE           ! periodic BC 
+!!$                 CONTINUE           ! periodic BC
+                 stub=( OnsitePotVec(iSiteS,4*M-1)*OnsitePotVec(iSiteS,4*M-2)*OnsitePotVec(iSiteS,4*M) &
+                      -OnsitePotVec(iSiteS,4*M)-OnsitePotVec(iSiteS,4*M-2))
+                 IF( ABS(stub).LT.TINY) THEN           
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteUp=(OnsitePotVec(iSiteS,4*M-1)*OnsitePotVec(iSiteS,4*M-2)-1.0D0)/stub
+                 PsiUp=PSI_A(Coord2IndexL(M,iSiteL,M),jState) /stub      
+                 
               ELSE IF (IBCFlag.EQ.2) THEN
                  CONTINUE           ! antiperiodic BC
               ENDIF
@@ -132,7 +158,6 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               ENDIF
               OnsiteUp=(OnsitePotVec(iSiteS,jSiteS-2)*OnsitePotVec(iSiteS,jSiteS-3)-1.0D0)/stub
               PsiUp=PSI_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState) /stub                   
-!!$              PsiUp=PSI_A(indexK-1,jState) /stub
            END IF
            
            !PsiDown
@@ -146,9 +171,18 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  ENDIF
                  OnsiteDown=(OnsitePotVec(iSiteS,jSiteS+2)*OnsitePotVec(iSiteS,jSiteS+3)-1.0D0) /stub    ! hard wall BC
                      
-                 PsiDown=ZERO                 
+                 PsiDown=ZERO
+                 
               ELSE IF (IBCFlag.EQ.1) THEN
-                 CONTINUE                                         ! periodic BC 
+!!$                 CONTINUE                                         ! periodic BC
+                 stub= ( OnsitePotVec(iSiteS,jSiteS+2)*OnsitePotVec(iSiteS,jSiteS+3)*OnsitePotVec(iSiteS,jSiteS+1) &
+                      -OnsitePotVec(iSiteS,jSiteS+1)-OnsitePotVec(iSiteS,jSiteS+3))
+                 IF( ABS(stub).LT.TINY) THEN           
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteDown=(OnsitePotVec(iSiteS,jSiteS+2)*OnsitePotVec(iSiteS,jSiteS+3)-1.0D0 )/stub
+                 PsiDown=PSI_A(Coord2IndexL(M,iSiteL,1),jState)/stub
+                 
               ELSE IF (IBCFlag.EQ.2) THEN
                  CONTINUE                                         ! antiperiodic BC               
               ENDIF
@@ -160,7 +194,6 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               ENDIF
               OnsiteDown=(OnsitePotVec(iSiteS,jSiteS+2)*OnsitePotVec(iSiteS,jSiteS+3)-1.0D0 )/stub
               PsiDown=PSI_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState)/stub
-!!$              PsiDown=PSI_A(indexK+1,jState)/stub
            END IF
 
            new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * PSI_A(Coord2IndexL(M,iSiteL,jSiteL),jState)&
