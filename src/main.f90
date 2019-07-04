@@ -622,7 +622,7 @@ northo_loop: &
            
            IF(IWriteFlag.GE.1 .AND. MOD(Iter1,NOfPrint).EQ.0 ) THEN
               WRITE(*,4210) Iter1, nGamma(1), acc_variance(1)
-4210          FORMAT(I7.1, G15.7, G15.7)
+4210          FORMAT(I8.1, G15.7, G15.7)
            ENDIF
            !PAUSE
            
