@@ -685,7 +685,7 @@ northo_loop: &
              DiagDis,Energy, Kappa
         WRITE(*,5012) nGamma(1), acc_variance(1)
 
-5010    FORMAT("END @ ", I7.1, &
+5010    FORMAT("END @ ", I8.1, &
              ",", G15.7, ",", G15.7,",", G15.7)
 5012    FORMAT("     ", &
              G15.7, ",", G15.7)
