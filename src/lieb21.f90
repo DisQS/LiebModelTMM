@@ -62,14 +62,15 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      DO jState=1,M
         
         !PRINT*,"jState, iSite", jState, iSite,
-
+        !Up
         IF (iSiteL.EQ.1) THEN
 
            IF (IBCFlag.EQ.0) THEN
               PsiLeft= ZERO            ! hard wall BC
               OnsiteLeft= ZERO
            ELSE IF (IBCFlag.EQ.1) THEN
-              PsiLeft= PSI_A(jState,M)  ! periodic BC
+!!$              PsiLeft= PSI_A(jState,M)  ! periodic BC
+              PsiLeft= PSI_A(M,jState)
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
               PsiLeft= -PSI_A(M,jState) ! antiperiodic BC
@@ -80,6 +81,7 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            OnsiteLeft= 1.D0/OnsitePotVec(iSiteS -1)
         END IF
 
+        !Down
         IF (iSiteL.EQ.M) THEN
 
            IF (IBCFlag.EQ.0) THEN

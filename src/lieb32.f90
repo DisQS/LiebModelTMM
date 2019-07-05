@@ -75,7 +75,13 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteLeft= ZERO
                  PsiLeft= ZERO               
               ELSE IF (IBCFlag.EQ.1) THEN  ! periodic BC
-                 CONTINUE
+!!$                 CONTINUE
+                 stub= OnsitePotVec(3*M,jSiteS)*OnSitePotVec(3*M-1,jSiteS)-1.0D0
+                 IF( ABS(stub).LT.TINY) THEN           
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteLeft= OnsitePotVec(3*M-1,jSiteS)/stub
+                 PsiLeft= Psi_A(Coord2IndexL(M,M,jSiteL),jState)/stub
               ELSE IF (IBCFlag.EQ.2) THEN  ! antiperiodic BC
                  CONTINUE
               ENDIF
@@ -101,7 +107,13 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
                  PsiRight= ZERO        
               ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
-                 CONTINUE
+!!$                 CONTINUE
+                 stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
+                 IF( ABS(stub).LT.TINY) THEN             
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
+                 PsiRight= Psi_A(Coord2IndexL(M,1,jSiteL),jState)/stub
               ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
                  CONTINUE
               ENDIF
@@ -126,7 +138,14 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
                  PsiDown= ZERO
               ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
-                 CONTINUE
+!!$                 CONTINUE
+                 stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
+                 IF( ABS(stub).LT.TINY) THEN
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
+                 PsiDown= Psi_A(Coord2IndexL(M,iSiteL,1),jState)/stub
+                 
               ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
                  CONTINUE
               ENDIF
@@ -146,7 +165,14 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteUp= ZERO
                  PsiUp= ZERO                 
               ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
-                 CONTINUE
+!!$                 CONTINUE
+                 stub= (OnsitePotVec(iSiteS,3*M)*OnSitePotVec(iSiteS,3*M-1)-1.0D0)
+                 IF( ABS(stub).LT.TINY) THEN
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteUp= OnsitePotVec(iSiteS,3*M-1)/stub
+                 PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,M),jState)/stub
+                 
               ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
                  CONTINUE
               ENDIF
