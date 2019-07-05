@@ -71,119 +71,120 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            
            !PsiLeft
            IF (iSiteL.LE.1) THEN
-              IF (IBCFlag.EQ.0) THEN       ! hard wall BC
+              SELECT CASE(IBCFLag)
+              CASE(-1,0) ! hard wall BC
                  OnsiteLeft= ZERO
-                 PsiLeft= ZERO               
-              ELSE IF (IBCFlag.EQ.1) THEN  ! periodic BC
-!!$                 CONTINUE
+                 PsiLeft= ZERO
+              CASE(1) ! periodic BC
                  stub= OnsitePotVec(3*M,jSiteS)*OnSitePotVec(3*M-1,jSiteS)-1.0D0
                  IF( ABS(stub).LT.TINY) THEN           
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteLeft= OnsitePotVec(3*M-1,jSiteS)/stub
-                 PsiLeft= Psi_A(Coord2IndexL(M,M,jSiteL),jState)/stub
-              ELSE IF (IBCFlag.EQ.2) THEN  ! antiperiodic BC
-                 CONTINUE
-              ENDIF
+                 OnsiteLeft= OnsitePotVec(3*M-1,jSiteS) /stub
+                 PsiLeft= Psi_A(Coord2IndexL(M,M,jSiteL),jState) /stub
+!              CASE(2) ! antiperiodic BC
+              CASE DEFAULT
+                 PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+              END SELECT
            ELSE
               stub= OnsitePotVec(iSiteS-1,jSiteS)*OnSitePotVec(iSiteS-2,jSiteS)-1.0D0
               IF( ABS(stub).LT.TINY) THEN           
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteLeft= OnsitePotVec(iSiteS-2,jSiteS)/stub
-!!$              PsiLeft= Psi_A(jState,Coord2IndexL(M,iSiteL-1,jSiteL))/stub
-              PsiLeft= Psi_A(Coord2IndexL(M,iSiteL-1,jSiteL),jState)/stub
+              OnsiteLeft= OnsitePotVec(iSiteS-2,jSiteS) /stub
+              PsiLeft= Psi_A(Coord2IndexL(M,iSiteL-1,jSiteL),jState) /stub
            END IF
 
            !PsiRight
            IF (iSiteL.GE.M) THEN
-              
-              IF (IBCFlag.EQ.0) THEN        ! hard wall BC
-                 stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
-                 IF( ABS(stub).LT.TINY) THEN             
-                    stub= SIGN(TINY,stub)
-                 ENDIF
-!!$                 OnsiteRight= ZERO
-                 OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
-                 PsiRight= ZERO        
-              ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
-!!$                 CONTINUE
+              SELECT CASE(IBCFLag)
+              CASE(-1) ! hard wall BC + stubs
                  stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
                  IF( ABS(stub).LT.TINY) THEN             
                     stub= SIGN(TINY,stub)
                  ENDIF
                  OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
-                 PsiRight= Psi_A(Coord2IndexL(M,1,jSiteL),jState)/stub
-              ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
-                 CONTINUE
-              ENDIF
+                 PsiRight= ZERO
+              CASE(0) ! hard wall
+                 OnsiteRight= ZERO
+                 PsiRight= ZERO
+              CASE(1) ! periodic BC
+                 stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
+                 IF( ABS(stub).LT.TINY) THEN             
+                    stub= SIGN(TINY,stub)
+                 ENDIF
+                 OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS) /stub
+                 PsiRight= Psi_A(Coord2IndexL(M,1,jSiteL),jState) /stub
+!              CASE(2) ! antiperiodic BC
+              CASE DEFAULT
+                 PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+              END SELECT
            ELSE
               stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
               IF( ABS(stub).LT.TINY) THEN             
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
-!!$              PsiRight= Psi_A(jState,Coord2IndexL(M,iSiteL+1,jSiteL))/stub
-              PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState)/stub
+              OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS) /stub
+              PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState) /stub
            END IF
 
            !PsiDown
            IF (jSiteL.GE.M) THEN
-              IF (IBCFlag.EQ.0) THEN        ! hard wall BC
+              SELECT CASE(IBCFlag)
+              CASE(-1) ! hard wall BC + stubs
                  stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
                  ENDIF
-!!$                 OnsiteUp=ZERO
-                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
+                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
                  PsiDown= ZERO
-              ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
-!!$                 CONTINUE
+              CASE(0) ! hard wall
+                 OnsiteUp=ZERO
+                 PsiDown= ZERO
+              CASE(1) ! periodic BC
                  stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
-                 PsiDown= Psi_A(Coord2IndexL(M,iSiteL,1),jState)/stub
-                 
-              ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
-                 CONTINUE
-              ENDIF
+                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
+                 PsiDown= Psi_A(Coord2IndexL(M,iSiteL,1),jState) /stub
+!              CASE(2) ! antiperiodic BC
+              CASE DEFAULT
+                 PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+              END SELECT
            ELSE
               stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
-!!$              PsiUp= Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL+1))/stub
-              PsiDown= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState)/stub
+              OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
+              PsiDown= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState) /stub
            END IF
 
            !PsiUp
            IF (jSiteL.LE.1) THEN
-              IF (IBCFlag.EQ.0) THEN       ! hard wall BC
+              SELECT CASE(IBCFlag)
+              CASE(-1,0) ! hard wall BC
                  OnsiteUp= ZERO
-                 PsiUp= ZERO                 
-              ELSE IF (IBCFlag.EQ.1) THEN   ! periodic BC
-!!$                 CONTINUE
+                 PsiUp= ZERO
+              CASE(1) ! periodic BC
                  stub= (OnsitePotVec(iSiteS,3*M)*OnSitePotVec(iSiteS,3*M-1)-1.0D0)
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteUp= OnsitePotVec(iSiteS,3*M-1)/stub
-                 PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,M),jState)/stub
-                 
-              ELSE IF (IBCFlag.EQ.2) THEN   ! antiperiodic BC
-                 CONTINUE
-              ENDIF
+                 OnsiteUp= OnsitePotVec(iSiteS,3*M-1) /stub
+                 PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,M),jState) /stub
+              CASE(2) ! antiperiodic BC
+              CASE DEFAULT
+                 PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+              END SELECT
            ELSE
               stub= (OnsitePotVec(iSiteS,jSiteS-1)*OnSitePotVec(iSiteS,jSiteS-2)-1.0D0)
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp= OnsitePotVec(iSiteS,jSiteS-2)/stub
-!!$              PsiDown=  Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL-1))/stub
-              PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState)/stub
+              OnsiteUp= OnsitePotVec(iSiteS,jSiteS-2) /stub
+              PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState) /stub
            END IF
 !!$
 !!$           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &

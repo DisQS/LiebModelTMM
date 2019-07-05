@@ -57,25 +57,24 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      OnsitePot= &
           OnsitePotVec(iSiteS) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
      
-    
-     
      DO jState=1,M
         
         !PRINT*,"jState, iSite", jState, iSite,
         !Up
         IF (iSiteL.EQ.1) THEN
-
-           IF (IBCFlag.EQ.0) THEN
-              PsiLeft= ZERO            ! hard wall BC
+           SELECT CASE(IBCFlag)
+           CASE(-1,0) ! hard wall BC
+              PsiLeft= ZERO            
               OnsiteLeft= ZERO
-           ELSE IF (IBCFlag.EQ.1) THEN
-!!$              PsiLeft= PSI_A(jState,M)  ! periodic BC
+           CASE(1) ! periodic BC
               PsiLeft= PSI_A(M,jState)/OnsitePotVec(2*M)
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(M,jState)/OnsitePotVec(2*M) ! antiperiodic BC
+           CASE(2) ! antiperiodic BC
+              PsiLeft= -PSI_A(M,jState)/OnsitePotVec(2*M) 
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
-           ENDIF
+           CASE DEFAULT
+              PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+           END SELECT
         ELSE
            PsiLeft= PSI_A(iSiteL-1,jState)/OnsitePotVec(iSiteS -1)
            OnsiteLeft= 1.D0/OnsitePotVec(iSiteS -1)
@@ -83,17 +82,22 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
         !Down
         IF (iSiteL.EQ.M) THEN
-
-           IF (IBCFlag.EQ.0) THEN
-              PsiRight= ZERO            ! hard wall BC
+           SELECT CASE(IBCFlag)
+           CASE(-1) ! hard wall BC + STUBS
+              PsiRight= ZERO            
               OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
-           ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(1,jState)/OnsitePotVec(iSiteS +1)  ! periodic BC
+           CASE(0) ! hard wall BC
+              PsiRight= ZERO            
+              OnsiteRight= ZERO
+           CASE(1) ! periodic BC
+              PsiRight= PSI_A(1,jState)/OnsitePotVec(iSiteS +1) 
               OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
-           ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(1,jState)/OnsitePotVec(iSiteS +1) ! antiperiodic BC
+           CASE(2) ! antiperiodic BC
+              PsiRight= -PSI_A(1,jState)/OnsitePotVec(iSiteS +1)
               OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
-           ENDIF
+           CASE DEFAULT
+              PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+           END SELECT
         ELSE
            PsiRight= PSI_A(iSiteL+1,jState)/OnsitePotVec(iSiteS +1)
            OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
