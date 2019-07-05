@@ -51,12 +51,11 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      DO jState=1,M
         ! PSI UP
         IF (indexK==1) THEN
-           
-           IF (IBCFlag.EQ.0) THEN ! hard wall BC
+           SELECT CASE(IBCFlag)
+           CASE(-1,0) ! hard wall BC
               OnsiteUp=ZERO      
-              PsiUp=ZERO              
-           ELSE IF (IBCFlag.EQ.1) THEN ! periodic BC
-!!$              CONTINUE
+              PsiUp=ZERO
+           CASE(1) ! periodic BC
               stub= (OnsitePotVec(4*M,jSite)*OnsitePotVec(4*M-1,jSite)*OnsitePotVec(4*M-2,jSite) &
                    -OnsitePotVec(4*M,jSite)-OnsitePotVec(4*M-2,jSite))
               IF( ABS(stub).LT.TINY) THEN
@@ -64,10 +63,10 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               ENDIF
               OnsiteUp=(OnsitePotVec(4*M-1,jSite)*OnsitePotVec(4*M-2,jSite)-1.0D0)/stub
               PsiUp=PSI_A(M,jState)/stub
-              
-           ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
-              CONTINUE                      
-           ENDIF
+           !CASE(2)
+           CASE DEFAULT
+              PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+           END SELECT
         ELSE
            stub= (OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)*OnsitePotVec(iSite-3,jSite) &
                 -OnsitePotVec(iSite-1,jSite)-OnsitePotVec(iSite-3,jSite))
@@ -80,8 +79,8 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         !PSI DOWN
         IF (indexK==M) THEN
-           
-           IF (IBCFlag.EQ.0) THEN ! hard wall BC
+           SELECT CASE(IBCFlag)
+           CASE(-1) ! hard wall BC + stubs
               stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite) &
                    -OnsitePotVec(iSite+1,jSite)-OnsitePotVec(iSite+3,jSite))
               IF( ABS(stub).LT.TINY) THEN
@@ -89,9 +88,10 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               ENDIF
               OnsiteDown=(OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite)-1.0D0)/stub 
               PsiDown=ZERO
-              
-           ELSE IF (IBCFlag.EQ.1) THEN ! periodic BC
-!!$              CONTINUE
+           CASE(0) ! hard wall BC 
+              OnsiteDown=ZERO
+              PsiDown=ZERO
+           CASE(1) ! periodic BC
               stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite) &
                    -OnsitePotVec(iSite+1,jSite)-OnsitePotVec(iSite+3,jSite))
               IF( ABS(stub).LT.TINY) THEN
@@ -99,10 +99,10 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               ENDIF
               OnsiteDown=(OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite)-1.0D0)/stub  
               PsiDown=PSI_A(1,jState) /stub 
-              
-           ELSE IF (IBCFlag.EQ.2) THEN ! antiperiodic BC
-              CONTINUE          
-           ENDIF
+           !CASE(2) ! antiperiodic BC
+           CASE DEFAULT
+              PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+           END SELECT
         ELSE
            stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite) &
                 -OnsitePotVec(iSite+1,jSite)-OnsitePotVec(iSite+3,jSite))
@@ -116,16 +116,16 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         new =(( OnsitePot-OnsiteUp-OnsiteDown )*PSI_A(indexK,jState) &
              - Kappa * ( PsiUp + PsiDown ) &
              - PSI_B(indexK,jState) )
-         PSI_B(indexK,jState)= new
+        PSI_B(indexK,jState)= new
         
-      ENDDO ! jState
-   ENDDO ! iSite
+     ENDDO ! jState
+  ENDDO ! iSite
   
-   RETURN
-    
- END SUBROUTINE TMMultLieb2D_AtoB1
+  RETURN
+  
+END SUBROUTINE TMMultLieb2D_AtoB1
 
- SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   USE MyNumbers
   USE IPara
