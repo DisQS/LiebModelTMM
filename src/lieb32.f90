@@ -131,7 +131,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            !PsiDown
            IF (jSiteL.GE.M) THEN
               SELECT CASE(IBCFlag)
-              CASE(-1,0) ! hard wall BC + stubs
+              CASE(-1) ! hard wall BC + stubs
                  stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
