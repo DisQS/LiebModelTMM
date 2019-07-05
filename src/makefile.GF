@@ -84,7 +84,7 @@ tmseLMxD.GF: $(OBJ)
 	$(F90) $(F90FLAGS) -o $@ $(OBJ) $(LIBFLAGS)
 
 print:
-	PRINT1 $(F90)
+	$(PRINT1) *.f90
 
 clean:
 	rm -f core *.mod *.o
