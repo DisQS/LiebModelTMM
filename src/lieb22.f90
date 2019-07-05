@@ -111,7 +111,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            CASE(2) ! antiperiodic BC
               stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
               IF( ABS(stub).LT.TINY) THEN
-                 PRINT*,"DBG: iSite, jSite, jState, stub(U)", iSite, jSite, jState, stub
+                 PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
               OnsiteDown=OnsitePotVec(iSite+2,jSite) /stub 
