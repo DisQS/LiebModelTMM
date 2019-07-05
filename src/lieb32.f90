@@ -24,7 +24,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(3*M,3*M)
 
-  INTEGER jState, ISeedDummy,iSiteS,jSiteS, iSiteL,jSiteL, indexS,indexL
+  INTEGER jState, ISeedDummy,iSiteS,jSiteS, iSiteL,jSiteL
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
   REAL(KIND=RKIND) NEW, PsiLeft, PsiRight, PsiUp, PsiDown, stub
 
@@ -281,10 +281,6 @@ SUBROUTINE TMMultLieb3DB6toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) NEW
-
   CALL TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   RETURN

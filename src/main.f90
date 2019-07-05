@@ -133,12 +133,12 @@ PROGRAM TMSELMxD
   IMPLICIT NONE
   
   INTEGER IWidth, IWidthEffective, IWidthRL, Width0_X, &
-       IChannelMax, index,jndex,kndex,lndex, jjndex,kkndex, andex,bndex, &
+       index, &
        Iter1,Iter2, iStep, NOfG,iG, Ilayer, TMM_CONVERGED
   
   REAL(KIND=RKIND) flux, flux0,flux1,dflux, &
        fluxRL,flux0_X, fluxVal
-  REAL(KIND=RKIND) DiagDis, Energy, sum
+  REAL(KIND=RKIND) DiagDis, Energy
   
   REAL(KIND=RKIND), DIMENSION(:), ALLOCATABLE ::             &
        nGamma, gamma, gamma2, acc_variance
@@ -147,17 +147,15 @@ PROGRAM TMSELMxD
 
   CHARACTER*1 fluxStr
   CHARACTER*50 filenameAVG, filename
-  CHARACTER*3 EnStr
   EXTERNAL FileNameAvg
   
   ! timing variables
-  REAL(4), DIMENSION(1:3,1:1) :: TIME, TIMESUM
+  REAL(4), DIMENSION(1:3,1:1) :: TIME
   REAL(4) STARTTIME(2), ENDTIME(2) 
   REAL(4) T, T2, ETIME
   
   EXTERNAL ETIME
   
-  REAL(KIND=RKIND) dummy, dummyB
   INTEGER :: IErr = 0
   
   !-------------------------------------------------------------------
