@@ -70,10 +70,10 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               OnsiteLeft= ZERO
            ELSE IF (IBCFlag.EQ.1) THEN
 !!$              PsiLeft= PSI_A(jState,M)  ! periodic BC
-              PsiLeft= PSI_A(M,jState)
+              PsiLeft= PSI_A(M,jState)/OnsitePotVec(2*M)
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ELSE IF (IBCFlag.EQ.2) THEN
-              PsiLeft= -PSI_A(M,jState) ! antiperiodic BC
+              PsiLeft= -PSI_A(M,jState)/OnsitePotVec(2*M) ! antiperiodic BC
               OnsiteLeft= 1.D0/OnsitePotVec(2*M)
            ENDIF
         ELSE
@@ -88,11 +88,11 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PsiRight= ZERO            ! hard wall BC
               OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
            ELSE IF (IBCFlag.EQ.1) THEN
-              PsiRight= PSI_A(1,jState)  ! periodic BC
-              OnsiteRight= 1.D0/OnsitePotVec(2*M)
+              PsiRight= PSI_A(1,jState)/OnsitePotVec(iSiteS +1)  ! periodic BC
+              OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
            ELSE IF (IBCFlag.EQ.2) THEN
-              PsiRight= -PSI_A(1,jState) ! antiperiodic BC
-              OnsiteRight= 1.D0/OnsitePotVec(2*M)
+              PsiRight= -PSI_A(1,jState)/OnsitePotVec(iSiteS +1) ! antiperiodic BC
+              OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
            ENDIF
         ELSE
            PsiRight= PSI_A(iSiteL+1,jState)/OnsitePotVec(iSiteS +1)
