@@ -206,15 +206,15 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
 END SUBROUTINE TMMultLieb3DAtoB5
 
-! --------------------------------------------------------------------
-! convert i,j coordinates to an index
-FUNCTION Coord2IndexL(isize, iSite, jSite)
-  INTEGER Coord2IndexL, isize, iSite, jSite
-  
-  Coord2IndexL= (jSite-1)*isize + iSite
-  
-  RETURN
-END FUNCTION Coord2IndexL
+!!$! --------------------------------------------------------------------
+!!$! convert i,j coordinates to an index
+!!$FUNCTION Coord2IndexL(isize, iSite, jSite)
+!!$  INTEGER Coord2IndexL, isize, iSite, jSite
+!!$  
+!!$  Coord2IndexL= (jSite-1)*isize + iSite
+!!$  
+!!$  RETURN
+!!$END FUNCTION Coord2IndexL
 
 ! --------------------------------------------------------------------
 ! TMMultLieb3DBtoA:
