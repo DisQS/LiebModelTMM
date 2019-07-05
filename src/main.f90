@@ -486,57 +486,31 @@ northo_loop: &
               ! do the TM multiplication
               SELECT CASE(IDimenFlag)
               CASE(21)
-                 CALL TMMultLieb2DAtoB( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)              
-                 CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)
-                
+                 CALL TMMultLieb2DAtoB( PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)              
+                 CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
               CASE (22)
-                 CALL TMMultLieb2DAtoB1( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)              
-                 CALL TMMultLieb2DB1toB2( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb2DB2toA( PsiA, PsiB, Ilayer+2, &
-                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2DAtoB1(  PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)              
+                 CALL TMMultLieb2DB1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2DB2toA(  PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidth)
-                 
               CASE(23)
-                 CALL TMMultLieb2D_AtoB1( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb2D_B1toB2( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb2D_B2toB3( PsiA, PsiB, Ilayer+2, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb2D_B3toA( PsiB, PsiA, Ilayer+3, &
-                      Energy, DiagDis, IWidth)
-                 
+                 CALL TMMultLieb2D_AtoB1(  PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2D_B1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2D_B2toB3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb2D_B3toA(  PsiB, PsiA, Ilayer+3, Energy, DiagDis, IWidth)
               CASE(31)
-                 !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
-                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, &
-                      Energy,DiagDis,IWidth) 
-                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)
-                
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, Energy,DiagDis, IWidth) 
+                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
               CASE(32)
-                 !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
-                 CALL TMMultLieb3DAtoB5( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)              
-                 CALL TMMultLieb3DB5toB6( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb3DB6toA( PsiA, PsiB, Ilayer+2, &
-                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3DAtoB5(  PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)              
+                 CALL TMMultLieb3DB5toB6( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3DB6toA(  PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidth)
-
               CASE(33)
-                 !PRINT*,"DBG: WRNG! --- TMMultLieb3DAtoB/BtoA() not yet implemented, using old TMMult3D()"
-                 CALL TMMultLieb3D_AtoD1( PsiA, PsiB, Ilayer, &
-                      Energy, DiagDis, IWidth)              
-                 CALL TMMultLieb3D_D1toD2( PsiB, PsiA, Ilayer+1, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb3D_D2toD3( PsiA, PsiB, Ilayer+2, &
-                      Energy, DiagDis, IWidth)
-                 CALL TMMultLieb3D_D3toA( PsiB, PsiA, Ilayer+3, &
-                      Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3D_AtoD1(  PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)              
+                 CALL TMMultLieb3D_D1toD2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3D_D2toD3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3D_D3toA(  PsiB, PsiA, Ilayer+3, Energy, DiagDis, IWidth)
               CASE DEFAULT
                  PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
                  STOP
