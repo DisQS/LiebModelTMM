@@ -64,20 +64,16 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp=OnsitePotVec(3*M-1,jSite) &
-                   /stub 
-              PsiUp=PSI_A(M,jState) &
-                   /stub 
+              OnsiteUp=OnsitePotVec(3*M-1,jSite) /stub 
+              PsiUp=PSI_A(M,jState) /stub 
            CASE(2) ! antiperiodic BC
               stub= (OnsitePotVec(3*M,jSite)*OnsitePotVec(3*M-1,jSite)-1.0D0)
               IF( ABS(stub).LT.TINY) THEN
                  PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp=OnsitePotVec(3*M-1,jSite) &
-                   /stub 
-              PsiUp=-PSI_A(M,jState) &
-                   /stub 
+              OnsiteUp=OnsitePotVec(3*M-1,jSite) /stub 
+              PsiUp=-PSI_A(M,jState) /stub 
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
@@ -87,10 +83,8 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
               stub= SIGN(TINY,stub)
            ENDIF
-           OnsiteUp=OnsitePotVec(iSite-2,jSite) &
-                /stub 
-           PsiUp=PSI_A(indexK-1,jState) &
-                /stub 
+           OnsiteUp=OnsitePotVec(iSite-2,jSite) /stub 
+           PsiUp=PSI_A(indexK-1,jState) /stub 
         END IF
         
         !PSI DOWN
@@ -102,8 +96,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                   /stub 
+              OnsiteDown=OnsitePotVec(iSite+2,jSite) /stub 
            CASE(0) ! hard wall BC 
               OnSiteDown=ZERO
               PsiDown=ZERO
@@ -113,20 +106,16 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                   /stub 
-              PsiDown=PSI_A(1,jState) &
-                   /stub 
+              OnsiteDown=OnsitePotVec(iSite+2,jSite) /stub 
+              PsiDown=PSI_A(1,jState) /stub 
            CASE(2) ! antiperiodic BC
               stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)-1.0D0)
               IF( ABS(stub).LT.TINY) THEN
-                 PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
+                 PRINT*,"DBG: iSite, jSite, jState, stub(U)", iSite, jSite, jState, stub
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                   /stub 
-              PsiDown=-PSI_A(1,jState) &
-                   /stub 
+              OnsiteDown=OnsitePotVec(iSite+2,jSite) /stub 
+              PsiDown=-PSI_A(1,jState) /stub 
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
@@ -136,10 +125,8 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PRINT*,"DBG: iSite, jSite, jState, stub(OU)", iSite, jSite, jState, stub
               stub= SIGN(TINY,stub)
            ENDIF
-           OnsiteDown=OnsitePotVec(iSite+2,jSite) &
-                /stub 
-           PsiDown=PSI_A(indexK+1,jState) &
-                /stub 
+           OnsiteDown=OnsitePotVec(iSite+2,jSite) /stub 
+           PsiDown=PSI_A(indexK+1,jState) /stub 
         END IF
         
         new =(( OnsitePot-OnsiteUp-OnsiteDown )*PSI_A(indexK,jState) &
