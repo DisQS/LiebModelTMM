@@ -80,8 +80,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  IF( ABS(stub).LT.TINY) THEN           
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteLeft= OnsitePotVec(3*M-1,jSiteS)/stub
-                 PsiLeft= Psi_A(Coord2IndexL(M,M,jSiteL),jState)/stub
+                 OnsiteLeft= OnsitePotVec(3*M-1,jSiteS) /stub
+                 PsiLeft= Psi_A(Coord2IndexL(M,M,jSiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -91,8 +91,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF( ABS(stub).LT.TINY) THEN           
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteLeft= OnsitePotVec(iSiteS-2,jSiteS)/stub
-              PsiLeft= Psi_A(Coord2IndexL(M,iSiteL-1,jSiteL),jState)/stub
+              OnsiteLeft= OnsitePotVec(iSiteS-2,jSiteS) /stub
+              PsiLeft= Psi_A(Coord2IndexL(M,iSiteL-1,jSiteL),jState) /stub
            END IF
 
            !PsiRight
@@ -113,8 +113,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  IF( ABS(stub).LT.TINY) THEN             
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
-                 PsiRight= Psi_A(Coord2IndexL(M,1,jSiteL),jState)/stub
+                 OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS) /stub
+                 PsiRight= Psi_A(Coord2IndexL(M,1,jSiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -124,8 +124,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF( ABS(stub).LT.TINY) THEN             
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
-              PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState)/stub
+              OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS) /stub
+              PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState) /stub
            END IF
 
            !PsiDown
@@ -136,7 +136,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
+                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
                  PsiDown= ZERO
               CASE(0) ! hard wall
                  OnsiteUp=ZERO
@@ -146,8 +146,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
-                 PsiDown= Psi_A(Coord2IndexL(M,iSiteL,1),jState)/stub
+                 OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
+                 PsiDown= Psi_A(Coord2IndexL(M,iSiteL,1),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -157,9 +157,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2)/stub
-!!$              PsiUp= Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL+1))/stub
-              PsiDown= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState)/stub
+              OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
+              PsiDown= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState) /stub
            END IF
 
            !PsiUp
@@ -173,8 +172,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  IF( ABS(stub).LT.TINY) THEN
                     stub= SIGN(TINY,stub)
                  ENDIF
-                 OnsiteUp= OnsitePotVec(iSiteS,3*M-1)/stub
-                 PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,M),jState)/stub
+                 OnsiteUp= OnsitePotVec(iSiteS,3*M-1) /stub
+                 PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,M),jState) /stub
               CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -184,9 +183,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp= OnsitePotVec(iSiteS,jSiteS-2)/stub
-!!$              PsiDown=  Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL-1))/stub
-              PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState)/stub
+              OnsiteUp= OnsitePotVec(iSiteS,jSiteS-2) /stub
+              PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState) /stub
            END IF
 !!$
 !!$           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
