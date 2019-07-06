@@ -283,6 +283,16 @@
 !!$  RETURN
 !!$END SUBROUTINE TMMult3D
 
+! --------------------------------------------------------------------
+! convert i,j coordinates to an index
+! used in lieb32/33
+FUNCTION Coord2IndexL(isize, iSite, jSite)
+  INTEGER Coord2IndexL, isize, iSite, jSite
+  
+  Coord2IndexL= (jSite-1)*isize + iSite
+  
+  RETURN
+END FUNCTION Coord2IndexL
 
 !	--------------------------------------------------------------------
 !	ReNorm:

@@ -156,7 +156,7 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER iSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new, PsiLeft, PsiRight
+  REAL(KIND=CKIND) new
   
   !PRINT*,"DBG: TMMultLieb2DBtoA()"
   

@@ -148,7 +148,7 @@ SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER iSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new, PsiLeft, PsiRight
+  REAL(KIND=CKIND) new
   
   DO iSite=1,M
      
@@ -201,10 +201,6 @@ SUBROUTINE TMMultLieb2D_B2toB3(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new, PsiLeft, PsiRight
-  
   !PRINT*,"DBG: TMMultLieb2DB1toB2()"
 
   CALL TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
@@ -232,10 +228,6 @@ SUBROUTINE TMMultLieb2D_B3toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
-  
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) new, PsiLeft, PsiRight
   
   !PRINT*,"DBG: TMMultLieb2DB1toB2()"
 

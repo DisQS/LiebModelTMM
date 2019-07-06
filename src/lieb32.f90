@@ -24,7 +24,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(3*M,3*M)
 
-  INTEGER jState, ISeedDummy,iSiteS,jSiteS, iSiteL,jSiteL, indexS,indexL
+  INTEGER jState, ISeedDummy,iSiteS,jSiteS, iSiteL,jSiteL
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
   REAL(KIND=RKIND) NEW, PsiLeft, PsiRight, PsiUp, PsiDown, stub
 
@@ -59,11 +59,11 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         iSiteS= (iSiteL-1)*3 + 1
         jSiteS= (jSiteL-1)*3 + 1
         
-        indexL= (jSiteL-1)*M + iSiteL
+        !indexL= (jSiteL-1)*M + iSiteL
         !indexS= (jSiteS-1)*M + iSiteS
         
-!!$        PRINT*,"iSL,jSL, iSS, jSS, iL, iLL", &
-!!$             iSiteL,jSiteL, iSiteS,jSiteS, indexL,Coord2IndexL(M,iSiteL,jSiteL)
+!!$        PRINT*,"iSL,jSL, iSS, jSS, C2I", &
+!!$             iSiteL,jSiteL, iSiteS,jSiteS, Coord2IndexL(M,iSiteL,jSiteL)
 
         OnsitePot=OnsitePotVec(iSiteS,jSiteS)
 
@@ -77,9 +77,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiLeft= ZERO
               CASE(1) ! periodic BC
                  stub= OnsitePotVec(3*M,jSiteS)*OnSitePotVec(3*M-1,jSiteS)-1.0D0
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteLeft= OnsitePotVec(3*M-1,jSiteS) /stub
                  PsiLeft= Psi_A(Coord2IndexL(M,M,jSiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
@@ -88,9 +86,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               END SELECT
            ELSE
               stub= OnsitePotVec(iSiteS-1,jSiteS)*OnSitePotVec(iSiteS-2,jSiteS)-1.0D0
-              IF( ABS(stub).LT.TINY) THEN           
-                 stub= SIGN(TINY,stub)
-              ENDIF
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteLeft= OnsitePotVec(iSiteS-2,jSiteS) /stub
               PsiLeft= Psi_A(Coord2IndexL(M,iSiteL-1,jSiteL),jState) /stub
            END IF
@@ -100,9 +96,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               SELECT CASE(IBCFLag)
               CASE(-1) ! hard wall BC + stubs
                  stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
-                 IF( ABS(stub).LT.TINY) THEN             
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS)/stub
                  PsiRight= ZERO
               CASE(0) ! hard wall
@@ -110,9 +104,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiRight= ZERO
               CASE(1) ! periodic BC
                  stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
-                 IF( ABS(stub).LT.TINY) THEN             
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS) /stub
                  PsiRight= Psi_A(Coord2IndexL(M,1,jSiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
@@ -121,9 +113,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               END SELECT
            ELSE
               stub= OnsitePotVec(iSiteS+1,jSiteS)*OnSitePotVec(iSiteS+2,jSiteS)-1.0D0
-              IF( ABS(stub).LT.TINY) THEN             
-                 stub= SIGN(TINY,stub)
-              ENDIF
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteRight= OnsitePotVec(iSiteS+2,jSiteS) /stub
               PsiRight= Psi_A(Coord2IndexL(M,iSiteL+1,jSiteL),jState) /stub
            END IF
@@ -133,9 +123,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               SELECT CASE(IBCFlag)
               CASE(-1) ! hard wall BC + stubs
                  stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
-                 IF( ABS(stub).LT.TINY) THEN
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
                  PsiDown= ZERO
               CASE(0) ! hard wall
@@ -143,9 +131,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiDown= ZERO
               CASE(1) ! periodic BC
                  stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
-                 IF( ABS(stub).LT.TINY) THEN
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
                  PsiDown= Psi_A(Coord2IndexL(M,iSiteL,1),jState) /stub
 !              CASE(2) ! antiperiodic BC
@@ -154,9 +140,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               END SELECT
            ELSE
               stub= OnsitePotVec(iSiteS,jSiteS+1)*OnSitePotVec(iSiteS,jSiteS+2)-1.0D0
-              IF( ABS(stub).LT.TINY) THEN
-                 stub= SIGN(TINY,stub)
-              ENDIF
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteDown= OnsitePotVec(iSiteS,jSiteS+2) /stub
               PsiDown= Psi_A(Coord2IndexL(M,iSiteL,jSiteL+1),jState) /stub
            END IF
@@ -169,9 +153,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiUp= ZERO
               CASE(1) ! periodic BC
                  stub= (OnsitePotVec(iSiteS,3*M)*OnSitePotVec(iSiteS,3*M-1)-1.0D0)
-                 IF( ABS(stub).LT.TINY) THEN
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteUp= OnsitePotVec(iSiteS,3*M-1) /stub
                  PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,M),jState) /stub
               CASE(2) ! antiperiodic BC
@@ -179,24 +161,17 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
               END SELECT
            ELSE
-              stub= (OnsitePotVec(iSiteS,jSiteS-1)*OnSitePotVec(iSiteS,jSiteS-2)-1.0D0)
-              IF( ABS(stub).LT.TINY) THEN
-                 stub= SIGN(TINY,stub)
-              ENDIF
+              stub= OnsitePotVec(iSiteS,jSiteS-1)*OnSitePotVec(iSiteS,jSiteS-2)-1.0D0
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteUp= OnsitePotVec(iSiteS,jSiteS-2) /stub
-              PsiUp=  Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState) /stub
+              PsiUp= Psi_A(Coord2IndexL(M,iSiteL,jSiteL-1),jState) /stub
            END IF
-!!$
-!!$           NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
-!!$                Psi_A(jState,Coord2IndexL(M,iSiteL,jSiteL))&
-!!$                - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
-!!$                - PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))
+
            NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * &
-                Psi_A(Coord2IndexL(M,iSiteL,jSiteL),jState)&
-                - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
+                Psi_A(Coord2IndexL(M,iSiteL,jSiteL),jState) &
+                - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown ) &
                 - PSI_B(Coord2IndexL(M,iSiteL,jSiteL),jState)
            
-!!$           PSI_B(jState,Coord2IndexL(M,iSiteL,jSiteL))= NEW
            PSI_B(Coord2IndexL(M,iSiteL,jSiteL),jState)= NEW
         END DO !jState
         
@@ -206,15 +181,15 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
 END SUBROUTINE TMMultLieb3DAtoB5
 
-! --------------------------------------------------------------------
-! convert i,j coordinates to an index
-FUNCTION Coord2IndexL(isize, iSite, jSite)
-  INTEGER Coord2IndexL, isize, iSite, jSite
-  
-  Coord2IndexL= (jSite-1)*isize + iSite
-  
-  RETURN
-END FUNCTION Coord2IndexL
+!!$! --------------------------------------------------------------------
+!!$! convert i,j coordinates to an index
+!!$FUNCTION Coord2IndexL(isize, iSite, jSite)
+!!$  INTEGER Coord2IndexL, isize, iSite, jSite
+!!$  
+!!$  Coord2IndexL= (jSite-1)*isize + iSite
+!!$  
+!!$  RETURN
+!!$END FUNCTION Coord2IndexL
 
 ! --------------------------------------------------------------------
 ! TMMultLieb3DBtoA:
@@ -306,10 +281,6 @@ SUBROUTINE TMMultLieb3DB6toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
-  INTEGER iSite, jState, ISeedDummy
-  REAL(KIND=RKIND) OnsitePot
-  REAL(KIND=CKIND) NEW
-
   CALL TMMultLieb3DB5toB6(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   RETURN
