@@ -186,10 +186,10 @@ END SUBROUTINE TMMultLieb3DAtoB5
 ! --------------------------------------------------------------------
 ! convert i,j coordinates to an index
 ! used in lieb32/33
-FUNCTION Co2InL32(M, xSiteS, ySiteS)
-  INTEGER Co2InL32, M, xSiteS, ySiteS
+FUNCTION Co2InL32(M, xSiteL, ySiteL)
+  INTEGER Co2InL32, M, xSiteL, ySiteL
   
-  Co2InL32= (ySiteS-1)*M + xSiteS
+  Co2InL32= (ySiteL-1)*M + xSiteL
   
   RETURN
 END FUNCTION Co2InL32

@@ -210,11 +210,11 @@ END SUBROUTINE TMMultLieb3DAtoB
 ! --------------------------------------------------------------------
 ! convert i,j coordinates to an index
 ! used in lieb31
-FUNCTION Co2InL31(M, xSiteS, ySiteS)
-  INTEGER Co2InL31, M, xSiteS, ySiteS
+FUNCTION Co2InL31(M, xSiteL, ySiteL)
+  INTEGER Co2InL31, M, xSiteL, ySiteL
 
   !old: indexK=(jSite/2)*M+(iSite+1)/2
-  Co2InL31= (ySiteS-1)*M + xSiteS
+  Co2InL31= (ySiteL-1)*M + xSiteL
 
   
   RETURN

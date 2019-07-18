@@ -203,13 +203,13 @@ END SUBROUTINE TMMultLieb3D_AtoD1
 ! --------------------------------------------------------------------
 ! convert i,j coordinates to an index
 ! used in lieb32/33
-FUNCTION Co2InL33(M, xSiteS, ySiteS)
-  INTEGER Co2InL33, M, xSiteS, ySiteS
+FUNCTION Co2InL33(M, xSiteL, ySiteL)
+  INTEGER Co2InL33, M, xSiteL, ySiteL
 
   INTEGER Co2InL32
   EXTERNAL Co2InL32
 
-  Co2InL33= Co2InL32(M,xSiteS,ySiteS)
+  Co2InL33= Co2InL32(M,xSiteL,ySiteL)
   
   RETURN
 END FUNCTION Co2InL33
