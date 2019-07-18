@@ -28,14 +28,16 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
   REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown,stub
 
+  INTEGER, PARAMETER :: LiebSpacer=4
+
   INTEGER Co2InL33
   EXTERNAL Co2InL33
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
      
   ! create the new onsite potential
-  DO xSiteS=1,4*M
-     DO ySiteS=1,4*M
+  DO xSiteS=1,LiebSpacer*M
+     DO ySiteS=1,LiebSpacer*M
         SELECT CASE(IRNGFlag)
         CASE(0)
            OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
@@ -56,8 +58,8 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO xSiteL=1,M
      DO ySiteL=1,M
 
-        xSiteS= (xSiteL-1)*4 + 1
-        ySiteS= (ySiteL-1)*4 + 1
+        xSiteS= (xSiteL-1)*LiebSpacer + 1
+        ySiteS= (ySiteL-1)*LiebSpacer + 1
 
         OnsitePot=OnsitePotVec(xSiteS,ySiteS)
 !        PRINT*,"DBG1: iSite, jSite, indexK", iSite, jSite, indexK
@@ -71,10 +73,11 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiLeft= ZERO           
                  OnsiteLeft= ZERO
               CASE(1) ! periodic BC
-                 stub= ( OnsitePotVec(4*M-1,ySiteS)*OnsitePotVec(4*M-2,ySiteS)*OnsitePotVec(4*M,ySiteS) &
-                      - OnsitePotVec(4*M,ySiteS)-OnsitePotVec(4*M-2,ySiteS) )
+                 stub= ( OnsitePotVec(LiebSpacer*M-1,ySiteS)*&
+                      OnsitePotVec(LiebSpacer*M-2,ySiteS)*OnsitePotVec(LiebSpacer*M,ySiteS) &
+                      - OnsitePotVec(LiebSpacer*M,ySiteS)-OnsitePotVec(LiebSpacer*M-2,ySiteS) )
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteLeft=( OnsitePotVec(4*M-1,ySiteS)*OnsitePotVec(4*M-2,ySiteS)-1.0D0) /stub
+                 OnsiteLeft=( OnsitePotVec(LiebSpacer*M-1,ySiteS)*OnsitePotVec(LiebSpacer*M-2,ySiteS)-1.0D0) /stub
                  PsiLeft=PSI_A(Co2InL33(M,M,ySiteL),jState) /stub
               !CASE(2) ! antiperiodic BC
               CASE DEFAULT
@@ -162,10 +165,11 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteUp=ZERO      
                  PsiUp=ZERO
               CASE(1) ! periodic BC
-                 stub=( OnsitePotVec(xSiteS,4*M-1)*OnsitePotVec(xSiteS,4*M-2)*OnsitePotVec(xSiteS,4*M) &
-                      -OnsitePotVec(xSiteS,4*M)-OnsitePotVec(xSiteS,4*M-2))
+                 stub=( OnsitePotVec(xSiteS,LiebSpacer*M-1)*&
+                      OnsitePotVec(xSiteS,LiebSpacer*M-2)*OnsitePotVec(xSiteS,LiebSpacer*M) &
+                      -OnsitePotVec(xSiteS,LiebSpacer*M)-OnsitePotVec(xSiteS,LiebSpacer*M-2))
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteUp=(OnsitePotVec(xSiteS,4*M-1)*OnsitePotVec(xSiteS,4*M-2)-1.0D0)/stub
+                 OnsiteUp=(OnsitePotVec(xSiteS,LiebSpacer*M-1)*OnsitePotVec(xSiteS,LiebSpacer*M-2)-1.0D0)/stub
                  PsiUp=PSI_A(Co2InL33(M,xSiteL,M),jState) /stub      
               !CASE(2) ! antiperiodic BC
               CASE DEFAULT
