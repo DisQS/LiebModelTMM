@@ -28,16 +28,18 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
   REAL(KIND=RKIND) NEW, PsiLeft, PsiRight, PsiUp, PsiDown, stub
 
+  INTEGER, PARAMETER :: LiebSpacer=3 
+
   INTEGER Co2InL32
   EXTERNAL Co2InL32
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
 
   ! create the new onsite potential
-  DO xSiteS=1,3*M
-     DO ySiteS=1,3*M
+  DO xSiteS=1,LiebSpacer*M
+     DO ySiteS=1,LiebSpacer*M
 
-        !indexS= (xSiteS-1)*3*M + ySiteS
+        !indexS= (xSiteS-1)*LiebSpacer*M + ySiteS
 
         SELECT CASE(IRNGFlag)
         CASE(0)
@@ -56,8 +58,8 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO xSiteL=1,M
      DO ySiteL=1,M
 
-        xSiteS= (xSiteL-1)*3 + 1
-        ySiteS= (ySiteL-1)*3 + 1
+        xSiteS= (xSiteL-1)*LiebSpacer + 1
+        ySiteS= (ySiteL-1)*LiebSpacer + 1
         
         !indexL= (ySiteL-1)*M + xSiteL
         !indexS= (ySiteS-1)*M + xSiteS
@@ -76,9 +78,9 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteLeft= ZERO
                  PsiLeft= ZERO
               CASE(1) ! periodic BC
-                 stub= OnsitePotVec(3*M,ySiteS)*OnSitePotVec(3*M-1,ySiteS)-1.0D0
+                 stub= OnsitePotVec(LiebSpacer*M,ySiteS)*OnSitePotVec(LiebSpacer*M-1,ySiteS)-1.0D0
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteLeft= OnsitePotVec(3*M-1,ySiteS) /stub
+                 OnsiteLeft= OnsitePotVec(LiebSpacer*M-1,ySiteS) /stub
                  PsiLeft= Psi_A(Co2InL32(M,M,ySiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
@@ -152,9 +154,9 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteUp= ZERO
                  PsiUp= ZERO
               CASE(1) ! periodic BC
-                 stub= (OnsitePotVec(xSiteS,3*M)*OnSitePotVec(xSiteS,3*M-1)-1.0D0)
+                 stub= (OnsitePotVec(xSiteS,LiebSpacer*M)*OnSitePotVec(xSiteS,LiebSpacer*M-1)-1.0D0)
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteUp= OnsitePotVec(xSiteS,3*M-1) /stub
+                 OnsiteUp= OnsitePotVec(xSiteS,LiebSpacer*M-1) /stub
                  PsiUp=  Psi_A(Co2InL32(M,xSiteL,M),jState) /stub
               CASE(2) ! antiperiodic BC
               CASE DEFAULT
