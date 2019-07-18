@@ -77,12 +77,12 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteLeft=ZERO      
                  PsiLeft=ZERO
               CASE(1) ! periodic BC
-                 stub= OnsitePotVec(2*M,ySiteS)    
+                 stub= OnsitePotVec(LiebSpacer*M,ySiteS)    
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteLeft=1.0D0 /stub
                  PsiLeft=PSI_A(Co2InL31(M,M,ySiteL),jState) /stub
               CASE(2) ! antiperiodic BC
-                 stub= OnsitePotVec(2*M,ySiteS)    
+                 stub= OnsitePotVec(LiebSpacer*M,ySiteS)    
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteLeft= 1.0D0 /stub
                  PsiLeft= -PSI_A(Co2InL31(M,M,ySiteL),jState) /stub
@@ -167,12 +167,12 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  PsiUp= ZERO            
                  OnsiteUp= ZERO
               CASE(1) ! periodic BC
-                 stub= OnsitePotVec(xSiteS,2*M)
+                 stub= OnsitePotVec(xSiteS,LiebSpacer*M)
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteUp= 1.0D0 /stub
                  PsiUp= PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
               CASE(2) ! antiperiodic BC
-                 stub= OnsitePotVec(xSiteS,2*M)
+                 stub= OnsitePotVec(xSiteS,LiebSpacer*M)
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteUp= 1.0D0 /stub
                  PsiUp= -PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
