@@ -87,7 +87,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteLeft= 1.0D0 /stub
                  PsiLeft= -PSI_A(Co2InL31(M,M,ySiteL),jState) /stub
               CASE DEFAULT
-                 PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+                 PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
               END SELECT
            ELSE
               stub= OnsitePotVec(xSiteS-1,ySiteS)
@@ -118,7 +118,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteRight= 1.0D0 /stub
                  PsiRight= -PSI_A(Co2InL31(M,1,ySiteL),jState) /stub
               CASE DEFAULT
-                 PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+                 PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
               END SELECT
            ELSE
               stub= OnsitePotVec(xSiteS+1,ySiteS)
@@ -151,7 +151,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  !   PsiDown= 1.0D0/OnsitePotVec(xSiteS,ySiteS+1)*PSI_A(jState,mod(indexK,M))
                  PsiDown=-PSI_A(Co2InL31(M,xSiteL,1),jState) /stub
               CASE DEFAULT
-                 PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+                 PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
               END SELECT
            ELSE
               stub= OnsitePotVec(xSiteS,ySiteS+1)
@@ -177,7 +177,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  OnsiteUp= 1.0D0 /stub
                  PsiUp= -PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
               CASE DEFAULT
-                 PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+                 PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
               END SELECT
            ELSE
               stub= OnsitePotVec(xSiteS,ySiteS-1)
