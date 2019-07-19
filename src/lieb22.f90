@@ -93,7 +93,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            PsiLeft=PSI_A(xSiteL-1,jState) /stub 
         END IF
         
-        !PSI DOWN
+        !PsiRight
         IF (xSiteL.GE.M) THEN
            SELECT CASE(IBCFlag)
            CASE(-1) ! hard wall BC + STUB
