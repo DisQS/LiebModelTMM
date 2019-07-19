@@ -26,96 +26,103 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
-  INTEGER iSiteL,iSiteS, jState, ISeedDummy
+  INTEGER xSiteL,xSiteS, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(2*M)
-  REAL(KIND=CKIND) new , PsiLeft, PsiRight
+  REAL(KIND=CKIND) new , PsiLeft, PsiRight, stub
   
+  INTEGER, PARAMETER :: LiebSpacer=2
+
   !PRINT*,"DBG: TMMultLieb2DAtoB()"
 
   ! create the new onsite potential
-  DO iSiteS=1,2*M   
+  DO xSiteS=1,LiebSpacer*M   
      SELECT CASE(IRNGFlag)
      CASE(0)
-        OnsitePotVec(iSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(1)
-        OnsitePotVec(iSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(2)
-        OnsitePotVec(iSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
-
-     IF( ABS(OnsitePotVec(iSiteS)).LT.TINY) THEN
-        OnsitePotVec(iSiteS)= SIGN(TINY,OnsitePotVec(iSiteS))
-     END IF
   END DO
      
   ! to the TMM
-  DO iSiteL=1,M
+  DO xSiteL=1,M
      
-     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
-     iSiteS= 2*iSiteL-1
+     xSiteS= (xSiteL-1)*LiebSpacer + 1
      
-     OnsitePot= &
-          OnsitePotVec(iSiteS) !+ 1.D0/(OnsitePotVec(iSite-1) + 1.D0/(OnsitePotVec(iSite+1)
+     OnsitePot= OnsitePotVec(xSiteS) 
      
      DO jState=1,M
         
-        !PRINT*,"jState, iSite", jState, iSite,
-        !Up
-        IF (iSiteL.EQ.1) THEN
+        !PsiLeft
+        IF (xSiteL.EQ.1) THEN
            SELECT CASE(IBCFlag)
            CASE(-1,0) ! hard wall BC
               PsiLeft= ZERO            
               OnsiteLeft= ZERO
            CASE(1) ! periodic BC
-              PsiLeft= PSI_A(M,jState)/OnsitePotVec(2*M)
-              OnsiteLeft= 1.D0/OnsitePotVec(2*M)
+              stub= OnsitePotVec(LiebSpacer*M)
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteLeft= 1.D0 /stub
+              PsiLeft= PSI_A(M,jState) /stub
            CASE(2) ! antiperiodic BC
-              PsiLeft= -PSI_A(M,jState)/OnsitePotVec(2*M) 
-              OnsiteLeft= 1.D0/OnsitePotVec(2*M)
+              stub= OnsitePotVec(LiebSpacer*M)
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteLeft= 1.D0 /stub
+              PsiLeft= -PSI_A(M,jState) /stub
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
         ELSE
-           PsiLeft= PSI_A(iSiteL-1,jState)/OnsitePotVec(iSiteS -1)
-           OnsiteLeft= 1.D0/OnsitePotVec(iSiteS -1)
+           stub= OnsitePotVec(xSiteS -1)
+           IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+           OnsiteLeft= 1.D0 /stub
+           PsiLeft= PSI_A(xSiteL-1,jState) /stub
         END IF
 
-        !Down
-        IF (iSiteL.EQ.M) THEN
+        !PsiRight
+        IF (xSiteL.EQ.M) THEN
            SELECT CASE(IBCFlag)
            CASE(-1) ! hard wall BC + STUBS
+              stub= OnsitePotVec(xSiteS +1)
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteRight= 1.D0 /stub
               PsiRight= ZERO            
-              OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
            CASE(0) ! hard wall BC
               PsiRight= ZERO            
               OnsiteRight= ZERO
            CASE(1) ! periodic BC
-              PsiRight= PSI_A(1,jState)/OnsitePotVec(iSiteS +1) 
-              OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
+              stub= OnsitePotVec(xSiteS +1)
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteRight= 1.D0 /stub
+              PsiRight= PSI_A(1,jState) /stub
            CASE(2) ! antiperiodic BC
-              PsiRight= -PSI_A(1,jState)/OnsitePotVec(iSiteS +1)
-              OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
+              stub= OnsitePotVec(xSiteS +1)
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteRight= 1.D0 /stub
+              PsiRight= -PSI_A(1,jState) /stub
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
         ELSE
-           PsiRight= PSI_A(iSiteL+1,jState)/OnsitePotVec(iSiteS +1)
-           OnsiteRight= 1.D0/OnsitePotVec(iSiteS +1)
+           PsiRight= PSI_A(xSiteL+1,jState)/OnsitePotVec(xSiteS +1)
+           OnsiteRight= 1.D0/OnsitePotVec(xSiteS +1)
         END IF
         
-        new =(( OnsitePot-OnsiteLeft-OnsiteRight ) * PSI_A(iSiteL,jState) &
+        new =(( OnsitePot - OnsiteLeft - OnsiteRight ) * PSI_A(xSiteL,jState) &
              - Kappa * ( PsiLeft + PsiRight ) &
-             - PSI_B(iSiteL,jState) )
+             - PSI_B(xSiteL,jState) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
-        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
-        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
+        !PRINT*, xSite, jState, En, OnsitePot, PsiLeft, PsiRight,
+        !        PSI_A(xSite,jState), PSI_B(xSite,jState),
         !        new
         
-        PSI_B(iSiteL,jState)= new
+        PSI_B(xSiteL,jState)= new
         
      ENDDO ! jState
-  ENDDO ! iSite
+  ENDDO ! xSite
   
   !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
         !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
@@ -154,13 +161,13 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
-  INTEGER iSite, jState, ISeedDummy
+  INTEGER xSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
   REAL(KIND=CKIND) new
   
   !PRINT*,"DBG: TMMultLieb2DBtoA()"
   
-  DO iSite=1,M
+  DO xSite=1,M
      
      ! create the new onsite potential
      SELECT CASE(IRNGFlag)
@@ -172,24 +179,24 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
      
-     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
+     !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
      
      DO jState=1,M
         
-        !PRINT*,"jState, iSite", jState, iSite,
+        !PRINT*,"jState, xSite", jState, xSite,
         
-        new= ( OnsitePot * PSI_A(iSite,jState) &
-             - PSI_B(iSite,jState) )
+        new= ( OnsitePot * PSI_A(xSite,jState) &
+             - PSI_B(xSite,jState) )
         
         !PRINT*,"i,j,En, OP, PL, PR, PA,PB, PN"
-        !PRINT*, iSite, jState, En, OnsitePot, PsiLeft, PsiRight,
-        !        PSI_A(iSite,jState), PSI_B(iSite,jState),
+        !PRINT*, xSite, jState, En, OnsitePot, PsiLeft, PsiRight,
+        !        PSI_A(xSite,jState), PSI_B(xSite,jState),
         !        new
         
-        PSI_B(iSite,jState)= new
+        PSI_B(xSite,jState)= new
         
      ENDDO ! jState
-  ENDDO ! iSite
+  ENDDO ! xSite
   
   !PRINT*,"PSIA(1,1),(1,2),(1,3),(1,4)",&
         !PSI_A(1,1),PSI_A(1,2),PSI_A(1,3),PSI_A(1,4)
