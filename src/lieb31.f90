@@ -215,7 +215,6 @@ FUNCTION Co2InL31(M, xSiteL, ySiteL)
 
   !old: indexK=(jSite/2)*M+(iSite+1)/2
   Co2InL31= (ySiteL-1)*M + xSiteL
-
   
   RETURN
 END FUNCTION Co2InL31
