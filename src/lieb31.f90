@@ -36,8 +36,8 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
      
   ! create the new onsite potential
-  DO xSiteS=1,2*M
-     DO ySiteS=1,2*M
+  DO xSiteS=1,LiebSpacer*M
+     DO ySiteS=1,LiebSpacer*M
         SELECT CASE(IRNGFlag)
         CASE(0)
            OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
@@ -61,8 +61,6 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         
         xSiteS= (xSiteL-1)*LiebSpacer + 1
         ySiteS= (ySiteL-1)*LiebSpacer + 1
-
-        indexK=(ySiteS/2)*M+(xSiteS+1)/2
 
         OnsitePot=OnsitePotVec(xSiteS,ySiteS)
 
