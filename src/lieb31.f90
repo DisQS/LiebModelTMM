@@ -47,8 +47,8 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         END SELECT
 
-        stub= OnsitePotVec(xSiteS,ySiteS)
-        IF( ABS(stub).LT.TINY) OnsitePotVec(xSiteS,ySiteS)= SIGN(TINY,stub)
+!!$        stub= OnsitePotVec(xSiteS,ySiteS)
+!!$        IF( ABS(stub).LT.TINY) OnsitePotVec(xSiteS,ySiteS)= SIGN(TINY,stub)
      END DO
   END DO
   
