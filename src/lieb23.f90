@@ -64,11 +64,9 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            CASE(1) ! periodic BC
               stub= (OnsitePotVec(LiebSpacer*M,jSite)*OnsitePotVec(LiebSpacer*M-1,jSite)*OnsitePotVec(LiebSpacer*M-2,jSite) &
                    -OnsitePotVec(LiebSpacer*M,jSite)-OnsitePotVec(LiebSpacer*M-2,jSite))
-              IF( ABS(stub).LT.TINY) THEN
-                 stub= SIGN(TINY,stub)
-              ENDIF
-              OnsiteLeft=(OnsitePotVec(LiebSpacer*M-1,jSite)*OnsitePotVec(LiebSpacer*M-2,jSite)-1.0D0)/stub
-              PsiLeft=PSI_A(M,jState)/stub
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteLeft= (OnsitePotVec(LiebSpacer*M-1,jSite)*OnsitePotVec(LiebSpacer*M-2,jSite)-1.0D0) /stub
+              PsiLeft= PSI_A(M,jState) /stub
            !CASE(2)
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -76,11 +74,9 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         ELSE
            stub= (OnsitePotVec(xSiteS-1,jSite)*OnsitePotVec(xSiteS-2,jSite)*OnsitePotVec(xSiteS-3,jSite) &
                 -OnsitePotVec(xSiteS-1,jSite)-OnsitePotVec(xSiteS-3,jSite))
-           IF( ABS(stub).LT.TINY) THEN
-              stub= SIGN(TINY,stub)
-           ENDIF
-           OnsiteLeft=(OnsitePotVec(xSiteS-2,jSite)*OnsitePotVec(xSiteS-3,jSite)-1.0D0)/stub
-           PsiLeft=PSI_A(xSiteL-1,jState)/stub 
+           IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+           OnsiteLeft= (OnsitePotVec(xSiteS-2,jSite)*OnsitePotVec(xSiteS-3,jSite)-1.0D0) /stub
+           PsiLeft= PSI_A(xSiteL-1,jState) /stub 
         END IF
         
         !PsiRight
@@ -89,21 +85,17 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            CASE(-1) ! hard wall BC + stubs
               stub= (OnsitePotVec(xSiteS+1,jSite)*OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite) &
                    -OnsitePotVec(xSiteS+1,jSite)-OnsitePotVec(xSiteS+3,jSite))
-              IF( ABS(stub).LT.TINY) THEN
-                 stub= SIGN(TINY,stub)
-              ENDIF
-              OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0)/stub 
-              PsiRight=ZERO
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteRight= (OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0) /stub 
+              PsiRight= ZERO
            CASE(0) ! hard wall BC 
               OnsiteRight=ZERO
               PsiRight=ZERO
            CASE(1) ! periodic BC
               stub= (OnsitePotVec(xSiteS+1,jSite)*OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite) &
                    -OnsitePotVec(xSiteS+1,jSite)-OnsitePotVec(xSiteS+3,jSite))
-              IF( ABS(stub).LT.TINY) THEN
-                 stub= SIGN(TINY,stub)
-              ENDIF
-              OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0)/stub  
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0) /stub  
               PsiRight=PSI_A(1,jState) /stub 
            !CASE(2) ! antiperiodic BC
            CASE DEFAULT
@@ -112,10 +104,8 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         ELSE
            stub= (OnsitePotVec(xSiteS+1,jSite)*OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite) &
                 -OnsitePotVec(xSiteS+1,jSite)-OnsitePotVec(xSiteS+3,jSite))
-           IF( ABS(stub).LT.TINY) THEN
-              stub= SIGN(TINY,stub)
-           ENDIF
-           OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0)/stub  
+           IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+           OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0) /stub  
            PsiRight=PSI_A(xSiteL+1,jState) /stub 
         END IF
         
