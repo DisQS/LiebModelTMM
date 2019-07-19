@@ -28,7 +28,7 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   INTEGER xSiteL,xSiteS, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsitePotVec(2*M)
-  REAL(KIND=CKIND) new , PsiLeft, PsiRight
+  REAL(KIND=CKIND) new , PsiLeft, PsiRight, stub
   
   INTEGER, PARAMETER :: LiebSpacer=2
 
@@ -47,7 +47,7 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
 !!$     IF( ABS(OnsitePotVec(xSiteS)).LT.TINY) THEN
 !!$        OnsitePotVec(xSiteS)= SIGN(TINY,OnsitePotVec(xSiteS))
-     END IF
+!!$     END IF
   END DO
      
   ! to the TMM
