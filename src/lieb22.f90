@@ -47,11 +47,8 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   END DO
   
   ! to the TMM
-
   DO xSiteL=1,M  ! lable the the row of A atom.
      
-     !indexK=(xSiteS/3+1)      !label the A atom
-
      xSiteS= (xSiteL-1)*LiebSpacer + 1
 
      OnsitePot=OnsitePotVec(xSiteS,jSite)

@@ -30,17 +30,14 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
   INTEGER, PARAMETER :: LiebSpacer=3 
 
-  INTEGER Co2InL32
-  EXTERNAL Co2InL32
+  INTEGER C2IL3
+  EXTERNAL C2IL3
 
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
 
   ! create the new onsite potential
   DO xSiteS=1,LiebSpacer*M
      DO ySiteS=1,LiebSpacer*M
-
-        !indexS= (xSiteS-1)*LiebSpacer*M + ySiteS
-
         SELECT CASE(IRNGFlag)
         CASE(0)
            OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
@@ -52,20 +49,15 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      END DO
   END DO
 
-  !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
-
-  !new TMM
+  !to the TMM
   DO xSiteL=1,M
      DO ySiteL=1,M
 
         xSiteS= (xSiteL-1)*LiebSpacer + 1
         ySiteS= (ySiteL-1)*LiebSpacer + 1
         
-        !indexL= (ySiteL-1)*M + xSiteL
-        !indexS= (ySiteS-1)*M + xSiteS
-        
 !!$        PRINT*,"xL,yL, xS, yS, C2I", &
-!!$             xSiteL,ySiteL, xSiteS,ySiteS, Co2InL32(M,xSiteL,ySiteL)
+!!$             xSiteL,ySiteL, xSiteS,ySiteS, C2IL3(M,xSiteL,ySiteL)
 
         OnsitePot=OnsitePotVec(xSiteS,ySiteS)
 
@@ -81,7 +73,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= OnsitePotVec(LiebSpacer*M,ySiteS)*OnSitePotVec(LiebSpacer*M-1,ySiteS)-1.0D0
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteLeft= OnsitePotVec(LiebSpacer*M-1,ySiteS) /stub
-                 PsiLeft= Psi_A(Co2InL32(M,M,ySiteL),jState) /stub
+                 PsiLeft= Psi_A(C2IL3(M,M,ySiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -90,7 +82,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub= OnsitePotVec(xSiteS-1,ySiteS)*OnSitePotVec(xSiteS-2,ySiteS)-1.0D0
               IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteLeft= OnsitePotVec(xSiteS-2,ySiteS) /stub
-              PsiLeft= Psi_A(Co2InL32(M,xSiteL-1,ySiteL),jState) /stub
+              PsiLeft= Psi_A(C2IL3(M,xSiteL-1,ySiteL),jState) /stub
            END IF
 
            !PsiRight
@@ -108,7 +100,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= OnsitePotVec(xSiteS+1,ySiteS)*OnSitePotVec(xSiteS+2,ySiteS)-1.0D0
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteRight= OnsitePotVec(xSiteS+2,ySiteS) /stub
-                 PsiRight= Psi_A(Co2InL32(M,1,ySiteL),jState) /stub
+                 PsiRight= Psi_A(C2IL3(M,1,ySiteL),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -117,7 +109,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub= OnsitePotVec(xSiteS+1,ySiteS)*OnSitePotVec(xSiteS+2,ySiteS)-1.0D0
               IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteRight= OnsitePotVec(xSiteS+2,ySiteS) /stub
-              PsiRight= Psi_A(Co2InL32(M,xSiteL+1,ySiteL),jState) /stub
+              PsiRight= Psi_A(C2IL3(M,xSiteL+1,ySiteL),jState) /stub
            END IF
 
            !PsiDown
@@ -130,7 +122,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= (OnsitePotVec(xSiteS,LiebSpacer*M)*OnSitePotVec(xSiteS,LiebSpacer*M-1)-1.0D0)
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteDown= OnsitePotVec(xSiteS,LiebSpacer*M-1) /stub
-                 PsiDown=  Psi_A(Co2InL32(M,xSiteL,M),jState) /stub
+                 PsiDown=  Psi_A(C2IL3(M,xSiteL,M),jState) /stub
               CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -139,7 +131,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub= OnsitePotVec(xSiteS,ySiteS-1)*OnSitePotVec(xSiteS,ySiteS-2)-1.0D0
               IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteDown= OnsitePotVec(xSiteS,ySiteS-2) /stub
-              PsiDown= Psi_A(Co2InL32(M,xSiteL,ySiteL-1),jState) /stub
+              PsiDown= Psi_A(C2IL3(M,xSiteL,ySiteL-1),jState) /stub
            END IF
 
            !PsiUp
@@ -157,7 +149,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub= OnsitePotVec(xSiteS,ySiteS+1)*OnSitePotVec(xSiteS,ySiteS+2)-1.0D0
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteUp= OnsitePotVec(xSiteS,ySiteS+2) /stub
-                 PsiUp= Psi_A(Co2InL32(M,xSiteL,1),jState) /stub
+                 PsiUp= Psi_A(C2IL3(M,xSiteL,1),jState) /stub
 !              CASE(2) ! antiperiodic BC
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB5(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
@@ -166,15 +158,15 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub= OnsitePotVec(xSiteS,ySiteS+1)*OnSitePotVec(xSiteS,ySiteS+2)-1.0D0
               IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteUp= OnsitePotVec(xSiteS,ySiteS+2) /stub
-              PsiUp= Psi_A(Co2InL32(M,xSiteL,ySiteL+1),jState) /stub
+              PsiUp= Psi_A(C2IL3(M,xSiteL,ySiteL+1),jState) /stub
            END IF
 
            NEW= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteDown - OnsiteUp ) * &
-                Psi_A(Co2InL32(M,xSiteL,ySiteL),jState) &
+                Psi_A(C2IL3(M,xSiteL,ySiteL),jState) &
                 - Kappa * ( PsiLeft + PsiRight + PsiDown + PsiUp ) &
-                - PSI_B(Co2InL32(M,xSiteL,ySiteL),jState)
+                - PSI_B(C2IL3(M,xSiteL,ySiteL),jState)
            
-           PSI_B(Co2InL32(M,xSiteL,ySiteL),jState)= NEW
+           PSI_B(C2IL3(M,xSiteL,ySiteL),jState)= NEW
         END DO !jState
         
      END DO !xSiteL
@@ -183,20 +175,20 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 
 END SUBROUTINE TMMultLieb3DAtoB5
 
-! --------------------------------------------------------------------
-! convert i,j coordinates to an index
-! used in lieb32/33
-FUNCTION Co2InL32(M, xSiteL, ySiteL)
-  INTEGER Co2InL32, M, xSiteL, ySiteL
-  
-  INTEGER Co2InL31
-  EXTERNAL Co2InL31
-
-  Co2InL32= Co2InL31(M,xSiteL,ySiteL)
-  
-  RETURN
-END FUNCTION Co2InL32
-
+!!$! --------------------------------------------------------------------
+!!$! convert i,j coordinates to an index
+!!$! used in lieb32/33
+!!$FUNCTION Co2InL32(M, xSiteL, ySiteL)
+!!$  INTEGER Co2InL32, M, xSiteL, ySiteL
+!!$  
+!!$  INTEGER Co2InL31
+!!$  EXTERNAL Co2InL31
+!!$
+!!$  Co2InL32= Co2InL31(M,xSiteL,ySiteL)
+!!$  
+!!$  RETURN
+!!$END FUNCTION Co2InL32
+!!$
 ! --------------------------------------------------------------------
 ! TMMultLieb3DBtoA:
 !

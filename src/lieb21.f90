@@ -44,16 +44,10 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      CASE(2)
         OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
-
-!!$     IF( ABS(OnsitePotVec(xSiteS)).LT.TINY) THEN
-!!$        OnsitePotVec(xSiteS)= SIGN(TINY,OnsitePotVec(xSiteS))
-!!$     END IF
   END DO
      
   ! to the TMM
   DO xSiteL=1,M
-     
-     !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
      
      xSiteS= (xSiteL-1)*LiebSpacer + 1
      
