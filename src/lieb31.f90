@@ -187,8 +187,8 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
            
            !PRINT*,"DBG2: jState,xSiteS, ySiteS, indexK", jState, xSiteS, ySiteS, indexK
-           new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteUp - OnsiteDown ) * PSI_A(Co2InL31(M,xSiteL,ySiteL),jState)&
-                - Kappa * ( PsiLeft + PsiRight + PsiUp + PsiDown  ) &
+           new= ( OnsitePot - OnsiteLeft - OnsiteRight - OnsiteDown - OnsiteUp ) * PSI_A(Co2InL31(M,xSiteL,ySiteL),jState)&
+                - Kappa * ( PsiLeft + PsiRight + PsiDown + PsiUp ) &
                 - PSI_B(Co2InL31(M,xSiteL,ySiteL),jState) 
            
            !PRINT*,"xSiteS,ySiteS,En, OP, PL, PR, PA,PB, PN"
