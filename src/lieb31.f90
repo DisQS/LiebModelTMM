@@ -128,62 +128,62 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
 
            !PsiDown
-           IF (ySiteS.GE.M) THEN !(indexK>M*(M-1))
-              SELECT CASE(IBCFlag)
-              CASE(-1) ! hard wall BC with stubs
-                 stub= OnsitePotVec(xSiteS,ySiteS+1)    
-                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteDown= 1.0D0 /stub
-                 PsiDown= ZERO
-              CASE(0) ! hard wall BC
-                 OnsiteDown= ZERO
-                 PsiDown= ZERO
-              CASE(1) ! periodic BC
-                 stub= OnsitePotVec(xSiteS,ySiteS+1)    
-                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteDown= 1.0D0 /stub
-                 !   PsiDown= 1.0D0/OnsitePotVec(xSiteS,ySiteS+1)*PSI_A(jState,mod(Co2InL31(M,xSiteL,ySiteL),M))
-                 PsiDown= PSI_A(Co2InL31(M,xSiteL,1),jState) /stub
-              CASE(2) ! antiperiodic BC
-                 stub= OnsitePotVec(xSiteS,ySiteS+1)    
-                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteDown= 1.0D0 /stub
-                 !   PsiDown= 1.0D0/OnsitePotVec(xSiteS,ySiteS+1)*PSI_A(jState,mod(indexK,M))
-                 PsiDown=-PSI_A(Co2InL31(M,xSiteL,1),jState) /stub
-              CASE DEFAULT
-                 PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
-              END SELECT
-           ELSE
-              stub= OnsitePotVec(xSiteS,ySiteS+1)
-              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-              OnsiteDown= 1.0D0 /stub
-              PsiDown= PSI_A(Co2InL31(M,xSiteL,ySiteL+1),jState) /stub
-           END IF
-           
-           !PsiUp
            IF (ySiteL.LE.1) THEN !(indexK<=M)
               SELECT CASE(IBCFlag)
               CASE(-1,0) ! hard wall BC
-                 PsiUp= ZERO            
-                 OnsiteUp= ZERO
+                 PsiDown= ZERO            
+                 OnsiteDown= ZERO
               CASE(1) ! periodic BC
                  stub= OnsitePotVec(xSiteS,LiebSpacer*M)
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteUp= 1.0D0 /stub
-                 PsiUp= PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
+                 OnsiteDown= 1.0D0 /stub
+                 PsiDown= PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
               CASE(2) ! antiperiodic BC
                  stub= OnsitePotVec(xSiteS,LiebSpacer*M)
                  IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
-                 OnsiteUp= 1.0D0 /stub
-                 PsiUp= -PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
+                 OnsiteDown= 1.0D0 /stub
+                 PsiDown= -PSI_A(Co2InL31(M,xSiteL,M),jState) /stub
               CASE DEFAULT
                  PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
               END SELECT
            ELSE
               stub= OnsitePotVec(xSiteS,ySiteS-1)
               IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+              OnsiteDown= 1.0D0 /stub
+              PsiDown= PSI_A(Co2InL31(M,xSiteL,ySiteL-1),jState) /stub
+           END IF
+           
+           !PsiUp
+           IF (ySiteS.GE.M) THEN !(indexK>M*(M-1))
+              SELECT CASE(IBCFlag)
+              CASE(-1) ! hard wall BC with stubs
+                 stub= OnsitePotVec(xSiteS,ySiteS+1)    
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+                 OnsiteUp= 1.0D0 /stub
+                 PsiUp= ZERO
+              CASE(0) ! hard wall BC
+                 OnsiteUp= ZERO
+                 PsiUp= ZERO
+              CASE(1) ! periodic BC
+                 stub= OnsitePotVec(xSiteS,ySiteS+1)    
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+                 OnsiteUp= 1.0D0 /stub
+                 !   PsiUp= 1.0D0/OnsitePotVec(xSiteS,ySiteS+1)*PSI_A(jState,mod(Co2InL31(M,xSiteL,ySiteL),M))
+                 PsiUp= PSI_A(Co2InL31(M,xSiteL,1),jState) /stub
+              CASE(2) ! antiperiodic BC
+                 stub= OnsitePotVec(xSiteS,ySiteS+1)    
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+                 OnsiteUp= 1.0D0 /stub
+                 !   PsiUp= 1.0D0/OnsitePotVec(xSiteS,ySiteS+1)*PSI_A(jState,mod(indexK,M))
+                 PsiUp=-PSI_A(Co2InL31(M,xSiteL,1),jState) /stub
+              CASE DEFAULT
+                 PRINT*,"TMMultLieb3DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
+              END SELECT
+           ELSE
+              stub= OnsitePotVec(xSiteS,ySiteS+1)
+              IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
               OnsiteUp= 1.0D0 /stub
-              PsiUp= PSI_A(Co2InL31(M,xSiteL,ySiteL-1),jState) /stub
+              PsiUp= PSI_A(Co2InL31(M,xSiteL,ySiteL+1),jState) /stub
            END IF
            
            !PRINT*,"DBG2: jState,xSiteS, ySiteS, indexK", jState, xSiteS, ySiteS, indexK
