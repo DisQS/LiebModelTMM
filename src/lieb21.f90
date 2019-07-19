@@ -54,7 +54,8 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO xSiteL=1,M
      
      !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
-     xSiteS= LiebSpacer*xSiteL-1
+     
+     xSiteS= (xSiteL-1)*LiebSpacer + 1
      
      OnsitePot= OnsitePotVec(xSiteS) 
      

@@ -52,7 +52,7 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      
      !indexK=(xSiteS/3+1)      !label the A atom
 
-     xSiteS= LiebSpacer*xSiteL-1
+     xSiteS= (xSiteL-1)*LiebSpacer + 1
 
      OnsitePot=OnsitePotVec(xSiteS,jSite)
      

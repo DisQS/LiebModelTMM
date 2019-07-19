@@ -64,7 +64,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         !indexL= (ySiteL-1)*M + xSiteL
         !indexS= (ySiteS-1)*M + xSiteS
         
-!!$        PRINT*,"iSL,jSL, iSS, jSS, C2I", &
+!!$        PRINT*,"xL,yL, xS, yS, C2I", &
 !!$             xSiteL,ySiteL, xSiteS,ySiteS, Co2InL32(M,xSiteL,ySiteL)
 
         OnsitePot=OnsitePotVec(xSiteS,ySiteS)
