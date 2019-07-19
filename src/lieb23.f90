@@ -24,102 +24,109 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
-  INTEGER iSite, jSite,jState, indexK,ISeedDummy
-  REAL(KIND=RKIND) OnsitePot, OnsiteDown, OnsiteUp, OnsitePotVec(4*M,1)
-  REAL(KIND=CKIND) new , PsiUp, PsiDown,stub
+  INTEGER xSiteS,xSiteL, jSite,jState, indexK,ISeedDummy
+  REAL(KIND=RKIND) OnsitePot, OnsiteLeft, OnsiteRight, OnsitePotVec(4*M,1)
+  REAL(KIND=CKIND) new , PsiLeft, PsiRight,stub
+
+  INTEGER, PARAMETER :: LiebSpacer=4
 
   ! create the new onsite potential
    jSite=1
 
-  DO iSite=1,4*M   !label different row
+  DO xSiteS=1,LiebSpacer*M   !label different row
      SELECT CASE(IRNGFlag)
      CASE(0)
-        OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(1)
-        OnsitePotVec(iSite,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(2)
-        OnsitePotVec(iSite,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        OnsitePotVec(xSiteS,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
   END DO
 
   ! to the TMM
-  DO iSite=1,4*M,4  ! lable the the row of A atom.
+  DO xSiteL=1,M  ! lable the the row of A atom.
      
-     indexK=(iSite/4+1)      !label the A atom
-     OnsitePot=OnsitePotVec(iSite,jSite)
+     !indexK=(xSiteS/4+1)      !label the A atom
+
+     xSiteS= LiebSpacer*xSiteL-1
+
+     OnsitePot=OnsitePotVec(xSiteS,jSite)
      
      DO jState=1,M
-        ! PSI UP
-        IF (indexK==1) THEN
+
+        !PsiLeft
+        IF (xSiteL.LE.1) THEN
            SELECT CASE(IBCFlag)
            CASE(-1,0) ! hard wall BC
-              OnsiteUp=ZERO      
-              PsiUp=ZERO
+              OnsiteLeft=ZERO      
+              PsiLeft=ZERO
            CASE(1) ! periodic BC
-              stub= (OnsitePotVec(4*M,jSite)*OnsitePotVec(4*M-1,jSite)*OnsitePotVec(4*M-2,jSite) &
-                   -OnsitePotVec(4*M,jSite)-OnsitePotVec(4*M-2,jSite))
+              stub= (OnsitePotVec(LiebSpacer*M,jSite)*OnsitePotVec(LiebSpacer*M-1,jSite)*OnsitePotVec(LiebSpacer*M-2,jSite) &
+                   -OnsitePotVec(LiebSpacer*M,jSite)-OnsitePotVec(LiebSpacer*M-2,jSite))
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteUp=(OnsitePotVec(4*M-1,jSite)*OnsitePotVec(4*M-2,jSite)-1.0D0)/stub
-              PsiUp=PSI_A(M,jState)/stub
+              OnsiteLeft=(OnsitePotVec(LiebSpacer*M-1,jSite)*OnsitePotVec(LiebSpacer*M-2,jSite)-1.0D0)/stub
+              PsiLeft=PSI_A(M,jState)/stub
            !CASE(2)
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
         ELSE
-           stub= (OnsitePotVec(iSite-1,jSite)*OnsitePotVec(iSite-2,jSite)*OnsitePotVec(iSite-3,jSite) &
-                -OnsitePotVec(iSite-1,jSite)-OnsitePotVec(iSite-3,jSite))
+           stub= (OnsitePotVec(xSiteS-1,jSite)*OnsitePotVec(xSiteS-2,jSite)*OnsitePotVec(xSiteS-3,jSite) &
+                -OnsitePotVec(xSiteS-1,jSite)-OnsitePotVec(xSiteS-3,jSite))
            IF( ABS(stub).LT.TINY) THEN
               stub= SIGN(TINY,stub)
            ENDIF
-           OnsiteUp=(OnsitePotVec(iSite-2,jSite)*OnsitePotVec(iSite-3,jSite)-1.0D0)/stub
-           PsiUp=PSI_A(indexK-1,jState)/stub 
+           OnsiteLeft=(OnsitePotVec(xSiteS-2,jSite)*OnsitePotVec(xSiteS-3,jSite)-1.0D0)/stub
+           PsiLeft=PSI_A(xSiteL-1,jState)/stub 
         END IF
         
-        !PSI DOWN
-        IF (indexK==M) THEN
+        !PsiRight
+        IF (xSiteL.GE.M) THEN
            SELECT CASE(IBCFlag)
            CASE(-1) ! hard wall BC + stubs
-              stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite) &
-                   -OnsitePotVec(iSite+1,jSite)-OnsitePotVec(iSite+3,jSite))
+              stub= (OnsitePotVec(xSiteS+1,jSite)*OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite) &
+                   -OnsitePotVec(xSiteS+1,jSite)-OnsitePotVec(xSiteS+3,jSite))
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown=(OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite)-1.0D0)/stub 
-              PsiDown=ZERO
+              OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0)/stub 
+              PsiRight=ZERO
            CASE(0) ! hard wall BC 
-              OnsiteDown=ZERO
-              PsiDown=ZERO
+              OnsiteRight=ZERO
+              PsiRight=ZERO
            CASE(1) ! periodic BC
-              stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite) &
-                   -OnsitePotVec(iSite+1,jSite)-OnsitePotVec(iSite+3,jSite))
+              stub= (OnsitePotVec(xSiteS+1,jSite)*OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite) &
+                   -OnsitePotVec(xSiteS+1,jSite)-OnsitePotVec(xSiteS+3,jSite))
               IF( ABS(stub).LT.TINY) THEN
                  stub= SIGN(TINY,stub)
               ENDIF
-              OnsiteDown=(OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite)-1.0D0)/stub  
-              PsiDown=PSI_A(1,jState) /stub 
+              OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0)/stub  
+              PsiRight=PSI_A(1,jState) /stub 
            !CASE(2) ! antiperiodic BC
            CASE DEFAULT
               PRINT*,"TMMultLieb2DAtoB1(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
         ELSE
-           stub= (OnsitePotVec(iSite+1,jSite)*OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite) &
-                -OnsitePotVec(iSite+1,jSite)-OnsitePotVec(iSite+3,jSite))
+           stub= (OnsitePotVec(xSiteS+1,jSite)*OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite) &
+                -OnsitePotVec(xSiteS+1,jSite)-OnsitePotVec(xSiteS+3,jSite))
            IF( ABS(stub).LT.TINY) THEN
               stub= SIGN(TINY,stub)
            ENDIF
-           OnsiteDown=(OnsitePotVec(iSite+2,jSite)*OnsitePotVec(iSite+3,jSite)-1.0D0)/stub  
-           PsiDown=PSI_A(indexK+1,jState) /stub 
+           OnsiteRight=(OnsitePotVec(xSiteS+2,jSite)*OnsitePotVec(xSiteS+3,jSite)-1.0D0)/stub  
+           PsiRight=PSI_A(xSiteL+1,jState) /stub 
         END IF
         
-        new =(( OnsitePot-OnsiteUp-OnsiteDown )*PSI_A(indexK,jState) &
-             - Kappa * ( PsiUp + PsiDown ) &
-             - PSI_B(indexK,jState) )
-        PSI_B(indexK,jState)= new
+        new =(( OnsitePot - OnsiteLeft - OnsiteRight )*PSI_A(xSiteL,jState) &
+             - Kappa * ( PsiLeft + PsiRight ) &
+             - PSI_B(xSiteL,jState) )
+
+        PSI_B(xSiteL,jState)= new
         
      ENDDO ! jState
-  ENDDO ! iSite
+  ENDDO ! xSiteS
   
   RETURN
   
@@ -146,11 +153,11 @@ SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
-  INTEGER iSite, jState, ISeedDummy
+  INTEGER xSite, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot
   REAL(KIND=CKIND) new
   
-  DO iSite=1,M
+  DO xSite=1,M
      
      ! create the new onsite potential
      SELECT CASE(IRNGFlag)
@@ -162,19 +169,19 @@ SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      END SELECT
      
-     !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
+     !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
      
      DO jState=1,M
         
-        !PRINT*,"jState, iSite", jState, iSite,
+        !PRINT*,"jState, xSite", jState, xSite,
         
-        new= ( OnsitePot * PSI_A(iSite,jState) &
-             - PSI_B(iSite,jState) )
+        new= ( OnsitePot * PSI_A(xSite,jState) &
+             - PSI_B(xSite,jState) )
         
-        PSI_B(iSite,jState)= new
+        PSI_B(xSite,jState)= new
         
      ENDDO ! jState
-  ENDDO ! iSite
+  ENDDO ! xSite
   
   RETURN
 END SUBROUTINE TMMultLieb2D_B1toB2
