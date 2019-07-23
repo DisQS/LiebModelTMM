@@ -294,9 +294,9 @@ PROGRAM TMSELMxD
      !--------------------------------------------------------------
 
      SELECT CASE(IDimenFlag)
-     CASE(21,22,23)
+     CASE(21,22,23,24)
         IWidthEffective = IWidth
-     CASE(31,32,33)
+     CASE(31,32,33,34)
         IWidthEffective = IWidth*IWidth
      CASE DEFAULT
         PRINT*,"tmseLMxD: IDimenFlag=", IDimenFlag, " not yet implemented --- aborting!"
@@ -457,6 +457,8 @@ flux_loop: &
            iStep=3
         CASE(23,33)
            iStep=4
+        CASE(24,34)
+           iStep=5
         CASE DEFAULT
            PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
            STOP
@@ -496,6 +498,13 @@ northo_loop: &
                  CALL TMMultLieb2D_B1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
                  CALL TMMultLieb2D_B2toB3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
                  CALL TMMultLieb2D_B3toA(  PsiB, PsiA, Ilayer+3, Energy, DiagDis, IWidth)
+              CASE(24)
+                 CALL TMMultLieb24_AtoB1( PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)    
+                 CALL TMMultLieb24_B1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb24_B2toB3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb24_B3toB4( PsiB, PsiA, Ilayer+3, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb24_B4toA( PsiA, PsiB, Ilayer+4, Energy, DiagDis, IWidth)
+                 CALL Swap( PsiA, PsiB, IWidth)
               CASE(31)
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, Energy,DiagDis, IWidth) 
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
@@ -509,6 +518,13 @@ northo_loop: &
                  CALL TMMultLieb3D_D1toD2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
                  CALL TMMultLieb3D_D2toD3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, IWidth)
                  CALL TMMultLieb3D_D3toA(  PsiB, PsiA, Ilayer+3, Energy, DiagDis, IWidth)
+              CASE(34)
+                 CALL TMMultLieb34_AtoD1( PsiA, PsiB, Ilayer,Energy, DiagDis, IWidth)              
+                 CALL TMMultLieb34_D1toD2( PsiB, PsiA, Ilayer+1,Energy, DiagDis, IWidth)
+                 CALL TMMultLieb34_D2toD3( PsiA, PsiB, Ilayer+2,Energy, DiagDis, IWidth)
+                 CALL TMMultLieb34_D3toD4( PsiB, PsiA, Ilayer+3,Energy, DiagDis, IWidth)
+                 CALL TMMultLieb34_D4toA( PsiA, PsiB, Ilayer+4,Energy, DiagDis, IWidth)
+                 CALL Swap( PsiA, PsiB, IWidth)
               CASE DEFAULT
                  PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
                  STOP
