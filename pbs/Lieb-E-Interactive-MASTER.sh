@@ -55,7 +55,7 @@ jobdir=${submitdir}
 #do
 echo "LM: loop-width=" $width
 
-for flux in 5.0 2.0 1.0
+for flux in -2.0 -1.0 0.0 1.0 2.0
 do
 echo "LM: loop-flux=" $flux
 
@@ -63,7 +63,7 @@ for liebdef in 21 22 23 24 31 32 33 34
 do
 echo "LM: loop-lieb=" $liebdef
 
-jobname="L$liebdef-M$width-B$boundary-D$flux"
+jobname="L$liebdef-M$width-B$boundary-E$flux"
 echo $jobname
 
 jobfile=`printf "$jobname.sh"`
@@ -128,15 +128,15 @@ echo "IRNGFlag      = 0"      >> $inpfile
 echo "IKeepFlag     = 0">> $inpfile
 echo "IWriteFlag    = 2">> $inpfile
 echo "ISortFlag     = 0      ">> $inpfile
-echo "IFluxFlag     = 1">> $inpfile
+echo "IFluxFlag     = 0">> $inpfile
 echo "Width0        = $width">> $inpfile
 echo "Width1        = $width">> $inpfile
 echo "dWidth        = 2      ">> $inpfile
-echo "DiagDis0      = $flux  ">> $inpfile
-echo "DiagDis1      = $flux ">> $inpfile
-echo "dDiagDis      = 0.1">> $inpfile
-echo "Energy0       = -10.0">> $inpfile
-echo "Energy1       = 10.0">> $inpfile
+echo "DiagDis0      = 10.0  ">> $inpfile
+echo "DiagDis1      = 0.10 ">> $inpfile
+echo "dDiagDis      = -0.1">> $inpfile
+echo "Energy0       = $flux">> $inpfile
+echo "Energy1       = $flux">> $inpfile
 echo "dEnergy       = 0.02">> $inpfile
 echo "Kappa         = 1.0">> $inpfile
 echo "Epsilon       = 1.0E-2">> $inpfile
