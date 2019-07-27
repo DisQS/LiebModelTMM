@@ -144,7 +144,7 @@ SUBROUTINE TMMultLieb3DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            END IF
            
            !PsiUp
-           IF (ySiteS.GE.M) THEN !(indexK>M*(M-1))
+           IF (ySiteL.GE.M) THEN !(indexK>M*(M-1))
               SELECT CASE(IBCFlag)
               CASE(-1) ! hard wall BC with stubs
                  stub= OnsitePotVec(xSiteS,ySiteS+1)    
