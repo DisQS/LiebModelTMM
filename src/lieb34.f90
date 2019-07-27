@@ -70,9 +70,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub = (OnsitePotVec(LiebSpacer*M-1,ySiteS)*OnsitePotVec(LiebSpacer*M,ySiteS)-1.0D0) &
                       *(OnsitePotVec(LiebSpacer*M-2,ySiteS)*OnsitePotVec(LiebSpacer*M-3,ySiteS)-1.0D0) &
                       -OnsitePotVec(LiebSpacer*M-3,ySiteS)*OnsitePotVec(LiebSpacer*M,ySiteS)
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub = SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
                  OnsiteLeft = ( OnsitePotVec(LiebSpacer*M-1,ySiteS)*OnsitePotVec(LiebSpacer*M-2,ySiteS) &
                       *OnsitePotVec(LiebSpacer*M-3,ySiteS)-OnsitePotVec(LiebSpacer*M-1,ySiteS) &
                       -OnsitePotVec(LiebSpacer*M-3,ySiteS))/stub              
@@ -85,9 +83,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub = (OnsitePotVec(xSiteS-2,ySiteS)*OnsitePotVec(xSiteS-1,ySiteS)-1.0D0) &
                    *(OnsitePotVec(xSiteS-3,ySiteS)*OnsitePotVec(xSiteS-4,ySiteS)-1.0D0) &
                    -OnsitePotVec(xSiteS-4,ySiteS)*OnsitePotVec(xSiteS-1,ySiteS)
-              IF( ABS(stub).LT.TINY) THEN           
-                 stub = SIGN(TINY,stub)
-              ENDIF
+              IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
               OnsiteLeft = ( OnsitePotVec(xSiteS-2,ySiteS)*OnsitePotVec(xSiteS-3,ySiteS) &
                    *OnsitePotVec(xSiteS-4,ySiteS)-OnsitePotVec(xSiteS-2,ySiteS) &
                    -OnsitePotVec(xSiteS-4,ySiteS))/stub              
@@ -101,9 +97,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub = (OnsitePotVec(xSiteS+2,ySiteS)*OnsitePotVec(xSiteS+1,ySiteS)-1.0D0) &
                       *(OnsitePotVec(xSiteS+3,ySiteS)*OnsitePotVec(xSiteS+4,ySiteS)-1.0D0) &
                       -OnsitePotVec(xSiteS+4,ySiteS)*OnsitePotVec(xSiteS+1,ySiteS)
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub = SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
                  OnsiteRight = ( OnsitePotVec(xSiteS+2,ySiteS)*OnsitePotVec(xSiteS+3,ySiteS) &
                       *OnsitePotVec(xSiteS+4,ySiteS)-OnsitePotVec(xSiteS+2,ySiteS) &
                       -OnsitePotVec(xSiteS+4,ySiteS))/stub                    
@@ -115,9 +109,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub = (OnsitePotVec(xSiteS+2,ySiteS)*OnsitePotVec(xSiteS+1,ySiteS)-1.0D0) &
                       *(OnsitePotVec(xSiteS+3,ySiteS)*OnsitePotVec(xSiteS+4,ySiteS)-1.0D0) &
                       -OnsitePotVec(xSiteS+4,ySiteS)*OnsitePotVec(xSiteS+1,ySiteS)
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub = SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
                  OnsiteRight = ( OnsitePotVec(xSiteS+2,ySiteS)*OnsitePotVec(xSiteS+3,ySiteS) &
                       *OnsitePotVec(xSiteS+4,ySiteS)-OnsitePotVec(xSiteS+2,ySiteS) &
                       -OnsitePotVec(xSiteS+4,ySiteS))/stub
@@ -130,9 +122,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub = (OnsitePotVec(xSiteS+2,ySiteS)*OnsitePotVec(xSiteS+1,ySiteS)-1.0D0) &
                    *(OnsitePotVec(xSiteS+3,ySiteS)*OnsitePotVec(xSiteS+4,ySiteS)-1.0D0) &
                    -OnsitePotVec(xSiteS+4,ySiteS)*OnsitePotVec(xSiteS+1,ySiteS)
-              IF( ABS(stub).LT.TINY) THEN           
-                 stub = SIGN(TINY,stub)
-              ENDIF
+              IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
               OnsiteRight = ( OnsitePotVec(xSiteS+2,ySiteS)*OnsitePotVec(xSiteS+3,ySiteS) &
                    *OnsitePotVec(xSiteS+4,ySiteS)-OnsitePotVec(xSiteS+2,ySiteS) &
                    -OnsitePotVec(xSiteS+4,ySiteS))/stub
@@ -149,9 +139,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub = (OnsitePotVec(xSiteS,LiebSpacer*M-1)*OnsitePotVec(xSiteS,LiebSpacer*M)-1.0D0) &
                       *(OnsitePotVec(xSiteS,LiebSpacer*M-2)*OnsitePotVec(xSiteS,LiebSpacer*M-3)-1.0D0) &
                       -OnsitePotVec(xSiteS,LiebSpacer*M-3)*OnsitePotVec(xSiteS,LiebSpacer*M)
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub = SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
                  OnsiteDown = ( OnsitePotVec(xSiteS,LiebSpacer*M-1)*OnsitePotVec(xSiteS,LiebSpacer*M-2) &
                       *OnsitePotVec(xSiteS,LiebSpacer*M-3)-OnsitePotVec(xSiteS,LiebSpacer*M-1) &
                       -OnsitePotVec(xSiteS,LiebSpacer*M-3))/stub
@@ -164,9 +152,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub = (OnsitePotVec(xSiteS,ySiteS-2)*OnsitePotVec(xSiteS,ySiteS-1)-1.0D0) &
                    *(OnsitePotVec(xSiteS,ySiteS-3)*OnsitePotVec(xSiteS,ySiteS-4)-1.0D0) &
                    -OnsitePotVec(xSiteS,ySiteS-4)*OnsitePotVec(xSiteS,ySiteS-1)
-              IF( ABS(stub).LT.TINY) THEN           
-                 stub = SIGN(TINY,stub)
-              ENDIF              
+              IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
               OnsiteDown = ( OnsitePotVec(xSiteS,ySiteS-2)*OnsitePotVec(xSiteS,ySiteS-3) &
                    *OnsitePotVec(xSiteS,ySiteS-4)-OnsitePotVec(xSiteS,ySiteS-2) &
                    -OnsitePotVec(xSiteS,ySiteS-4))/stub
@@ -180,9 +166,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub = (OnsitePotVec(xSiteS,ySiteS+2)*OnsitePotVec(xSiteS,ySiteS+1)-1.0D0) &
                       *(OnsitePotVec(xSiteS,ySiteS+3)*OnsitePotVec(xSiteS,ySiteS+4)-1.0D0) &
                       -OnsitePotVec(xSiteS,ySiteS+4)*OnsitePotVec(xSiteS,ySiteS+1)
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub= SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
                  OnsiteUp = ( OnsitePotVec(xSiteS,ySiteS+2)*OnsitePotVec(xSiteS,ySiteS+3) &
                       *OnsitePotVec(xSiteS,ySiteS+4)-OnsitePotVec(xSiteS,ySiteS+2) &
                       -OnsitePotVec(xSiteS,ySiteS+4))/stub                     
@@ -194,9 +178,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
                  stub = (OnsitePotVec(xSiteS,ySiteS+2)*OnsitePotVec(xSiteS,ySiteS+1)-1.0D0) &
                       *(OnsitePotVec(xSiteS,ySiteS+3)*OnsitePotVec(xSiteS,ySiteS+4)-1.0D0) &
                       -OnsitePotVec(xSiteS,ySiteS+4)*OnsitePotVec(xSiteS,ySiteS+1)
-                 IF( ABS(stub).LT.TINY) THEN           
-                    stub = SIGN(TINY,stub)
-                 ENDIF
+                 IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
                  OnsiteUp = ( OnsitePotVec(xSiteS,ySiteS+2)*OnsitePotVec(xSiteS,ySiteS+3) &
                       *OnsitePotVec(xSiteS,ySiteS+4)-OnsitePotVec(xSiteS,ySiteS+2) &
                       -OnsitePotVec(xSiteS,ySiteS+4))/stub 
@@ -209,9 +191,7 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               stub = (OnsitePotVec(xSiteS,ySiteS+2)*OnsitePotVec(xSiteS,ySiteS+1)-1.0D0) &
                    *(OnsitePotVec(xSiteS,ySiteS+3)*OnsitePotVec(xSiteS,ySiteS+4)-1.0D0) &
                    -OnsitePotVec(xSiteS,ySiteS+4)*OnsitePotVec(xSiteS,ySiteS+1)
-              IF( ABS(stub).LT.TINY) THEN           
-                 stub = SIGN(TINY,stub)
-              ENDIF
+              IF( ABS(stub).LT.TINY) stub = SIGN(TINY,stub)
               OnsiteUp = ( OnsitePotVec(xSiteS,ySiteS+2)*OnsitePotVec(xSiteS,ySiteS+3) &
                    *OnsitePotVec(xSiteS,ySiteS+4)-OnsitePotVec(xSiteS,ySiteS+2) &
                    -OnsitePotVec(xSiteS,ySiteS+4))/stub 
