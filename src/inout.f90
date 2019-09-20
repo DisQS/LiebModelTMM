@@ -1676,3 +1676,62 @@ SUBROUTINE WriteDataR( &
   RETURN
 
 END SUBROUTINE WriteDataR
+
+! --------------------------------------------------------------------
+! DBGWritePsi
+
+SUBROUTINE DBGWritePsi( &
+     PsiA,PsiB,M, iter1,iter2, ilayer, IErr)
+
+  USE MyNumbers
+
+  USE CConstants
+  USE IConstants
+  
+  USE IPara
+  USE DPara
+
+  USE IChannels
+
+  CHARACTER*20 filename
+  INTEGER(KIND=IKIND) M, iter1,iter2, ilayer, IErr
+  REAL(KIND=RKIND) PsiA(M,M), PsiB(M,M)
+
+  INTEGER index, jndex
+
+  PRINT*,"DBGWritePsiAB()"
+
+  ! PsiA
+  
+  WRITE(filename,'(A5,I4.4,A4)') "PsiA-",ilayer,".raw"
+
+  OPEN(UNIT= IChOutPsi, STATUS= 'UNKNOWN',&
+          FILE=filename)!, POSITION='APPEND')
+
+  DO jndex=1,M
+     DO index=1,M
+        WRITE(IChOutPsi,100) ilayer, jndex, index, PsiA(index,jndex)
+100  FORMAT("A",I4.1,I4.1,I4.1,G25.15)
+     END DO
+  END DO
+     
+  CLOSE(IChoutPsi)
+  
+  ! PsiB
+  
+  WRITE(filename,'(A5,I4.4,A4)') "PsiB-",ilayer,".raw"
+
+  OPEN(UNIT= IChOutPsi, STATUS= 'UNKNOWN',&
+          FILE=filename)!, POSITION='APPEND')
+
+  DO jndex=1,M
+     DO index=1,M
+        WRITE(IChOutPsi,200) iter1,iter2,ilayer, jndex, index, PsiB(index,jndex)
+200  FORMAT("B",I4.1,I4.1,I4.1,I4.1,I4.1,G25.15)
+     END DO
+  END DO
+     
+  CLOSE(IChoutPsi)
+  
+  RETURN
+END SUBROUTINE DBGWritePsi
