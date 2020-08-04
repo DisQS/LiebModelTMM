@@ -35,16 +35,53 @@ SUBROUTINE TMMultLieb2DAtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   ! create the new onsite potential
   jSite=1
 
-  DO xSiteS=1,3*M   !label different row
+!!$  DO xSiteS=1,3*M   !label different row
+!!$     SELECT CASE(IRNGFlag)
+!!$     CASE(0)
+!!$        OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+!!$     CASE(1)
+!!$        OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+!!$     CASE(2)
+!!$        OnsitePotVec(xSiteS,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+!!$     END SELECT
+!!$  END DO
+  
+  ! create the new onsite potential
+  !  IRNGFlag=(xy)
+  !  x=0,1,2    presenting the Disorder Case
+  !  y=0,       presenting conditions that all positions are disorder
+  !    1,       presenting conditions that only central positions are disorder
+   
+  
+  DO xSiteS=1,LiebSpacer*M   
      SELECT CASE(IRNGFlag)
-     CASE(0)
+     CASE(00)
         OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
+     CASE(10)
         OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
+     CASE(20)
         OnsitePotVec(xSiteS,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(01)
+        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+           OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        ELSE
+           OnsitePotVec(xSiteS,jSite)= 0.0D0
+        END IF
+     CASE(11)
+        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+           OnsitePotVec(xSiteS,jSite)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        ELSE
+           OnsitePotVec(xSiteS,jSite)= 0.0D0
+        END IF
+      CASE(21)
+        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+           OnsitePotVec(xSiteS,jSite)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        ELSE
+           OnsitePotVec(xSiteS,jSite)= 0.0D0
+        END IF
      END SELECT
   END DO
+
   
   ! to the TMM
   DO xSiteL=1,M  ! lable the the row of A atom.
@@ -167,13 +204,28 @@ SUBROUTINE TMMultLieb2DB2toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO xSite=1,M
      
      ! create the new onsite potential
+!!$     SELECT CASE(IRNGFlag)
+!!$     CASE(0)
+!!$        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+!!$     CASE(1)
+!!$        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+!!$     CASE(2)
+!!$        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+!!$     END SELECT
+
      SELECT CASE(IRNGFlag)
-     CASE(0)
+     CASE(00)
         OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
+     CASE(10)
         OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
+     CASE(20)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(01)
+        OnsitePot= 0.0D0
+     CASE(11)
+        OnsitePot= 0.0D0
+     CASE(21)
+        OnsitePot= 0.0D0
      END SELECT
      
      !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)

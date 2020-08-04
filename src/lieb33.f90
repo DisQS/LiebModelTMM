@@ -36,15 +36,52 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   !PRINT*,"DBG: TMMultLieb3DAtoB()"
      
   ! create the new onsite potential
+!!$  DO xSiteS=1,LiebSpacer*M
+!!$     DO ySiteS=1,LiebSpacer*M
+!!$        SELECT CASE(IRNGFlag)
+!!$        CASE(0)
+!!$           OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+!!$        CASE(1)
+!!$           OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+!!$        CASE(2)
+!!$           OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+!!$        END SELECT
+!!$     END DO
+!!$  END DO
+
+  ! create the new onsite potential
+  !  IRNGFlag=(x,y)
+  !  x=0,1,2    presenting the Disorder Case
+  !  y=0,       presenting conditions that all positions are disorder
+  !    1,       presenting conditions that only central positions are disorder
+   
   DO xSiteS=1,LiebSpacer*M
-     DO ySiteS=1,LiebSpacer*M
+     Do ySiteS=1,LiebSpacer*M
         SELECT CASE(IRNGFlag)
-        CASE(0)
+        CASE(00)
            OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-        CASE(1)
+        CASE(10)
            OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-        CASE(2)
+        CASE(20)
            OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        CASE(01)
+           IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1)THEN
+              OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+           ELSE
+              OnsitePotVec(xSiteS,ySiteS)= 0.0D0
+           END IF
+        CASE(11)
+           IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1)THEN
+              OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+           ELSE
+              OnsitePotVec(xSiteS,ySiteS)= 0.0D0
+           END IF
+        CASE(21)
+           IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1)THEN
+              OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+           ELSE
+              OnsitePotVec(xSiteS,ySiteS)= 0.0D0
+           END IF
         END SELECT
      END DO
   END DO
@@ -243,14 +280,30 @@ SUBROUTINE TMMultLieb3D_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   DO iSite=1,M*M
      
      ! create the new onsite potential
+!!$     SELECT CASE(IRNGFlag)
+!!$     CASE(0)
+!!$        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+!!$     CASE(1)
+!!$        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+!!$     CASE(2)
+!!$        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+!!$     END SELECT
+
      SELECT CASE(IRNGFlag)
-     CASE(0)
+     CASE(00)
         OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
+     CASE(10)
         OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
+     CASE(20)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(01)
+        OnsitePot= 0.0D0
+     CASE(11)
+        OnsitePot= 0.0D0
+     CASE(21)
+        OnsitePot= 0.0D0
      END SELECT
+
      
      !PRINT*,"iS,pL,RndVec", iSite,pLevel,RndVec((pLevel-1)*M+iSite)
      

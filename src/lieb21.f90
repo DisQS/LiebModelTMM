@@ -35,14 +35,38 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   !PRINT*,"DBG: TMMultLieb2DAtoB()"
 
   ! create the new onsite potential
+  !  IRNGFlag=(x,y)
+  !  x=0,1,2    presenting the Disorder Case
+  !  y=0,       presenting conditions that all positions are disorder
+  !    1,       presenting conditions that only central positions are disorder
+   
+  
   DO xSiteS=1,LiebSpacer*M   
      SELECT CASE(IRNGFlag)
-     CASE(0)
+     CASE(00)
         OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
+     CASE(10)
         OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
+     CASE(20)
         OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(01)
+        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+           OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+        ELSE
+           OnsitePotVec(xSiteS)= 0.0D0
+        END IF
+     CASE(11)
+        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+           OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        ELSE
+           OnsitePotVec(xSiteS)= 0.0D0
+        END IF
+     CASE(21)
+        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+           OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+        ELSE
+           OnsitePotVec(xSiteS)= 0.0D0
+        END IF
      END SELECT
   END DO
      
@@ -106,8 +130,12 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
               PRINT*,"TMMultLieb2DAtoB(): IBCFlag=", IBCFlag, " not implemented --- WRNG!"
            END SELECT
         ELSE
-           PsiRight= PSI_A(xSiteL+1,jState)/OnsitePotVec(xSiteS +1)
-           OnsiteRight= 1.D0/OnsitePotVec(xSiteS +1)
+!!$           PsiRight= PSI_A(xSiteL+1,jState)/OnsitePotVec(xSiteS +1)
+!!$           OnsiteRight= 1.D0/OnsitePotVec(xSiteS +1)
+           stub=OnsitePotVec(xSiteS +1)
+           IF( ABS(stub).LT.TINY) stub= SIGN(TINY,stub)
+           PsiRight= PSI_A(xSiteL+1,jState)/stub
+           OnsiteRight= 1.D0/stub
         END IF
         
         new =(( OnsitePot - OnsiteLeft - OnsiteRight ) * PSI_A(xSiteL,jState) &
@@ -171,12 +199,18 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      
      ! create the new onsite potential
      SELECT CASE(IRNGFlag)
-     CASE(0)
+     CASE(00)
         OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(1)
+     CASE(10)
         OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(2)
+     CASE(20)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(01)
+        OnsitePot= 0.0D0
+     CASE(11)
+        OnsitePot= 0.0D0
+     CASE(21)
+        OnsitePot= 0.0D0
      END SELECT
      
      !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
