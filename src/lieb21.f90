@@ -43,25 +43,25 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   
   DO xSiteS=1,LiebSpacer*M   
      SELECT CASE(IRNGFlag)
-     CASE(00)
-        OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(10)
-        OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(20)
-        OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(01)
+        OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+     CASE(02)
+        OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+     CASE(03)
+        OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(10)
         IF(Mod(xSiteS,LiebSpacer)==1)THEN
            OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
         ELSE
            OnsitePotVec(xSiteS)= 0.0D0
         END IF
-     CASE(11)
+     CASE(20)
         IF(Mod(xSiteS,LiebSpacer)==1)THEN
            OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
         ELSE
            OnsitePotVec(xSiteS)= 0.0D0
         END IF
-     CASE(21)
+     CASE(30)
         IF(Mod(xSiteS,LiebSpacer)==1)THEN
            OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         ELSE
