@@ -49,7 +49,7 @@ END MODULE CConstants
 ! Lyapunov exponents, so do not change!
 MODULE IConstants
   INTEGER, PARAMETER :: MAXWidth= 1000, MAXGamma= MAXWidth, MAXIter=2147483646
-  INTEGER, PARAMETER :: MAXKeepFlag= 3, MAXWriteFlag= 4, MAXFluxFlag= 3, MAXRNGFlag=21
+  INTEGER, PARAMETER :: MAXKeepFlag= 3, MAXWriteFlag= 4, MAXFluxFlag= 3, MAXRNGFlag=30
   INTEGER, PARAMETER :: MAXSortFlag=1, MAXBCFlag=2
   INTEGER, PARAMETER :: MINDimenFlag=1, MAXDimenFlag=3
   INTEGER, PARAMETER :: MAXFiles= 5, MINIter=3

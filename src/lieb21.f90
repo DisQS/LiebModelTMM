@@ -35,11 +35,9 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
   !PRINT*,"DBG: TMMultLieb2DAtoB()"
 
   ! create the new onsite potential
-  !  IRNGFlag=(x,y)
-  !  x=0,1,2    presenting the Disorder Case
-  !  y=0,       presenting conditions that all positions are disorder
-  !    1,       presenting conditions that only central positions are disorder
-   
+  !  IRNGFlag=(xy)
+  !  xy=0x      presenting conditions that all positions are disorder
+  !  xy=x0,     presenting conditions that only central positions are disorder   
   
   DO xSiteS=1,LiebSpacer*M   
      SELECT CASE(IRNGFlag)
@@ -50,19 +48,19 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      CASE(03)
         OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(10)
-        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+        IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
         ELSE
            OnsitePotVec(xSiteS)= 0.0D0
         END IF
      CASE(20)
-        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+        IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
         ELSE
            OnsitePotVec(xSiteS)= 0.0D0
         END IF
      CASE(30)
-        IF(Mod(xSiteS,LiebSpacer)==1)THEN
+        IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         ELSE
            OnsitePotVec(xSiteS)= 0.0D0
@@ -199,17 +197,17 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      
      ! create the new onsite potential
      SELECT CASE(IRNGFlag)
-     CASE(00)
-        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
-     CASE(10)
-        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
-     CASE(20)
-        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(01)
+        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+     CASE(02)
+        OnsitePot= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+     CASE(03)
+        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+     CASE(10)
         OnsitePot= 0.0D0
-     CASE(11)
+     CASE(20)
         OnsitePot= 0.0D0
-     CASE(21)
+     CASE(30)
         OnsitePot= 0.0D0
      END SELECT
      
