@@ -51,19 +51,19 @@ SUBROUTINE TMMultLieb2DAtoB(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
         IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
         ELSE
-           OnsitePotVec(xSiteS)= -En + 0.0D0
+           OnsitePotVec(xSiteS)= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)
         END IF
      CASE(20)
         IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
         ELSE
-           OnsitePotVec(xSiteS)= -En + 0.0D0
+           OnsitePotVec(xSiteS)= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
         END IF
      CASE(30)
         IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         ELSE
-           OnsitePotVec(xSiteS)= -En + 0.0D0
+           OnsitePotVec(xSiteS)= -En + GRANDOM(ISeedDummy,0.0D0,SmallDisOnRim)
         END IF
      END SELECT
   END DO
@@ -204,11 +204,11 @@ SUBROUTINE TMMultLieb2DBtoA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      CASE(03)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(10)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(20)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(30)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,SmallDisOnRim)
      END SELECT
      
      !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)

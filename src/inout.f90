@@ -189,6 +189,10 @@ SUBROUTINE Input( IErr )
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) Epsilon
   !PRINT*,"Epsilon      = ", Epsilon
+
+  ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) SmallDisOnRim
+  !PRINT*,"SmallDisOnRim      = ", SmallDisOnRim
   
 10 FORMAT(16X,I15.1)
   ! 10	FORMAT("IMAXIteration= ",I15.1)
@@ -286,7 +290,12 @@ SUBROUTINE Input( IErr )
      PRINT*,"Input(): nonpositive Epsilon"
      IErr= 1
   ENDIF
-  
+
+  IF( SmallDisOnRim.LE.0.0D0) THEN
+     PRINT*,"Input(): nonpositive SmallDisOnRim"
+     IErr= 1
+  ENDIF
+
   RETURN
   
   !	error in OPEN detected
@@ -338,6 +347,7 @@ SUBROUTINE Input( IErr )
   
   PRINT*,"Kappa         = 1.0        ; (24) inter-layer hopping"
   PRINT*,"Epsilon       = 5.0E-2     ; (26) accuracy goal of iteration"
+  PRINT*,"SmallDisOnRim = 0.01       ; (27) small disorder on rim sites of Lieb models to avoid divergence"
   
   IErr= 1
   RETURN
@@ -536,7 +546,10 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
 304  FORMAT("denergy      = ", G18.9, ";")
      
      WRITE(IChList(ICh),310,ERR=20) Epsilon
-310   FORMAT("epsilon      = ", G18.9, ";")
+310  FORMAT("epsilon      = ", G18.9, ";")
+
+     WRITE(IChList(ICh),315,ERR=20) SmallDisOnRim
+315  FORMAT("SmallDisOnRim= ", G18.9, ";")
      
      WRITE(IChList(ICh),400,ERR=20) IWidth
 400  FORMAT("Width        = ", I15.1, ";")

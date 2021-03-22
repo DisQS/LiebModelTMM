@@ -67,19 +67,19 @@ SUBROUTINE TMMultLieb3D_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1) THEN
               OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
            ELSE
-              OnsitePotVec(xSiteS,ySiteS)= -En + 0.0D0
+              OnsitePotVec(xSiteS,ySiteS)= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)
            END IF
         CASE(20)
            IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1) THEN
               OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
            ELSE
-              OnsitePotVec(xSiteS,ySiteS)= -En + 0.0D0
+              OnsitePotVec(xSiteS,ySiteS)= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
            END IF
         CASE(30)
            IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1) THEN
               OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
            ELSE
-              OnsitePotVec(xSiteS,ySiteS)= -En + 0.0D0
+              OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,SmallDisOnRim)
            END IF
         END SELECT
      END DO
@@ -296,11 +296,11 @@ SUBROUTINE TMMultLieb3D_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      CASE(03)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(10)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(20)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + SmallDisOnRim*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(30)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,SmallDisOnRim)
      END SELECT
 
      
