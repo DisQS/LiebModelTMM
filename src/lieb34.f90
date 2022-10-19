@@ -3,12 +3,12 @@
 !
 ! 3D version of TMMult2D. Extra boundary conditions
 
-SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   USE MyNumbers
   USE IPara
   USE RNG
-  USE DPara
+!  USE DPara
   
   ! wave functions:
   !       
@@ -20,13 +20,14 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+       RimDis, CubeConstPoten, LiebConstPoten, &
        En                    ! energy
 
   REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(5*M,5*M)
   
   INTEGER xSiteL,ySiteL, xSiteS,ySiteS, jState, ISeedDummy
   REAL(KIND=RKIND) OnsitePot, OnsiteRight, OnsiteLeft, OnsiteUp, OnsiteDown
-  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown,stub
+  REAL(KIND=RKIND) new, PsiLeft, PsiRight, PsiUp, PsiDown,stub, Kappa
 
   INTEGER, PARAMETER :: LiebSpacer=5
 
@@ -65,21 +66,21 @@ SUBROUTINE TMMultLieb34_AtoD1(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
            OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         CASE(10)
            IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1) THEN
-              OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
+              OnsitePotVec(xSiteS,ySiteS)= -En + CubeConstPoten + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
            ELSE
-              OnsitePotVec(xSiteS,ySiteS)= -En + 0.0D0
+              OnsitePotVec(xSiteS,ySiteS)= -En + LiebConstPoten + RimDis*(DRANDOM(ISeedDummy)-0.5D0)
            END IF
         CASE(20)
            IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1) THEN
-              OnsitePotVec(xSiteS,ySiteS)= -En + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+              OnsitePotVec(xSiteS,ySiteS)= -En + CubeConstPoten + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
            ELSE
-              OnsitePotVec(xSiteS,ySiteS)= -En + 0.0D0
+              OnsitePotVec(xSiteS,ySiteS)= -En + LiebConstPoten + RimDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
            END IF
         CASE(30)
            IF(Mod(xSiteS,LiebSpacer)==1 .AND. Mod(ySiteS,LiebSpacer)==1) THEN
-              OnsitePotVec(xSiteS,ySiteS)= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
+              OnsitePotVec(xSiteS,ySiteS)= -En + CubeConstPoten + GRANDOM(ISeedDummy,0.0D0,DiagDis)
            ELSE
-              OnsitePotVec(xSiteS,ySiteS)= -En + 0.0D0
+              OnsitePotVec(xSiteS,ySiteS)= -En + LiebConstPoten + GRANDOM(ISeedDummy,0.0D0,RimDis)
            END IF
         END SELECT
      END DO
@@ -270,12 +271,12 @@ END SUBROUTINE TMMultLieb34_AtoD1
 !
 ! 3D version of TMMult2D. Extra boundary conditions
 
-SUBROUTINE TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+SUBROUTINE TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   USE MyNumbers
   USE IPara
   USE RNG
-  USE DPara
+!  USE DPara
   
   ! wave functions:
   !       
@@ -287,6 +288,7 @@ SUBROUTINE TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+       RimDis, CubeConstPoten, LiebConstPoten, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
@@ -317,11 +319,11 @@ SUBROUTINE TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
      CASE(03)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(10)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + LiebConstPoten + RimDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(20)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + LiebConstPoten + RimDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(30)
-        OnsitePot= -En + 0.0D0
+        OnsitePot= -En + LiebConstPoten + GRANDOM(ISeedDummy,0.0D0,RimDis)
      END SELECT
 
      
@@ -348,12 +350,12 @@ SUBROUTINE TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
 END SUBROUTINE TMMultLieb34_D1toD2
 
 
-SUBROUTINE TMMultLieb34_D2toD3(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+SUBROUTINE TMMultLieb34_D2toD3(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   USE MyNumbers
   USE IPara
   USE RNG
-  USE DPara
+!  USE DPara
   
   ! wave functions:
   !       
@@ -365,21 +367,22 @@ SUBROUTINE TMMultLieb34_D2toD3(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+       RimDis, CubeConstPoten, LiebConstPoten, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
-  CALL TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+  CALL TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   RETURN
 END SUBROUTINE TMMultLieb34_D2toD3
 
-SUBROUTINE TMMultLieb34_D3toD4(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+SUBROUTINE TMMultLieb34_D3toD4(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   USE MyNumbers
   USE IPara
   USE RNG
-  USE DPara
+!  USE DPara
   
   ! wave functions:
   !       
@@ -391,21 +394,22 @@ SUBROUTINE TMMultLieb34_D3toD4(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+       RimDis, CubeConstPoten, LiebConstPoten, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
-  CALL TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+  CALL TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   RETURN
 END SUBROUTINE TMMultLieb34_D3toD4
 
-SUBROUTINE TMMultLieb34_D4toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+SUBROUTINE TMMultLieb34_D4toA(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   USE MyNumbers
   USE IPara
   USE RNG
-  USE DPara
+!  USE DPara
   
   ! wave functions:
   !       
@@ -417,11 +421,12 @@ SUBROUTINE TMMultLieb34_D4toA(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
+       RimDis, CubeConstPoten, LiebConstPoten, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M*M,M*M), PSI_B(M*M,M*M)
   
-  CALL TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, M )
+  CALL TMMultLieb34_D1toD2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConstPoten, LiebConstPoten, M )
 
   RETURN
 END SUBROUTINE TMMultLieb34_D4toA

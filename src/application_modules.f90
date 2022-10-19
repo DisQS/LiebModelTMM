@@ -67,6 +67,7 @@ END MODULE IPara
 MODULE DPara
   USE MyNumbers
   REAL(KIND=RKIND) :: DiagDis0,DiagDis1,dDiagDis
+  REAL(KIND=RKIND) :: LiebDis, CubeConstPoten, LiebConstPoten
   REAL(KIND=RKIND) :: Energy0,Energy1,dEnergy
   REAL(KIND=RKIND) :: Kappa, Epsilon
   

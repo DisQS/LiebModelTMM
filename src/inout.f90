@@ -93,7 +93,7 @@ SUBROUTINE Input( IErr )
   IErr = 0
   ILine= 0
   
-!!$  OPEN(UNIT= IChInp, ERR= 120, FILE= "tmseLMxD.inp",STATUS= 'OLD')
+!  OPEN(UNIT= IChInp, ERR= 120, FILE= "tmseLMxD.inp",STATUS= 'OLD')
   OPEN(UNIT= IChInp, ERR=120, FILE= "/dev/stdin",STATUS= 'OLD')
   
   ILine= ILine+1
@@ -159,6 +159,10 @@ SUBROUTINE Input( IErr )
   !PRINT*,"dWidth       = ", dWidth
   
   ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) CubeConstPoten
+  !PRINT*,"CubeConstPoten= ", CubeConstPoten
+  
+  ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) DiagDis0
   !PRINT*,"DiagDis0     = ", DiagDis0
   
@@ -169,6 +173,14 @@ SUBROUTINE Input( IErr )
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) dDiagDis
   !PRINT*,"dDiagDis     = ", dDiagDis
+  
+  ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) LiebConstPoten
+  !PRINT*,"LiebConstPoten= ", LiebConstPoten  
+
+  ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) LiebDis
+  !PRINT*,"LiebDis       = ", LiebDis
   
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) Energy0
@@ -309,35 +321,39 @@ SUBROUTINE Input( IErr )
 1000 &
   PRINT*,"Input parameters:          ; explanation:"
   PRINT*,"--------------------------------------------------------------------"
-  PRINT*,"ISeed         = 123456     ; (1) seed"
+  PRINT*,"ISeed          = 123456     ; (1) seed"
   
-  PRINT*,"NOfIter       = 1          ; (2) # steps for SINGLE config."
-  PRINT*,"NOfOrtho      = 10         ; (3) # steps until reorthonormalization"
-  PRINT*,"NOfPrint      = 10         ; (4) # steps until printout"
-  PRINT*,"NOfGamma      = 1          ; (5) # smallest Lyapunov exponents"
+  PRINT*,"NOfIter        = 1          ; (2) # steps for SINGLE config."
+  PRINT*,"NOfOrtho       = 10         ; (3) # steps until reorthonormalization"
+  PRINT*,"NOfPrint       = 10         ; (4) # steps until printout"
+  PRINT*,"NOfGamma       = 1          ; (5) # smallest Lyapunov exponents"
 
-  PRINT*,"IDimenFlag    = 2          ; (8) 2/3 = 2/3 dimensions"
-  PRINT*,"IBCFlag       = 0          ; (9) 0/1/2 = hard wall/periodic/antiperiodic BC"
-  PRINT*,"IRNGFlag      = 0          ; (10) 0/1/2 = uniform/rescaled uniform/Gaussian disorder"
-  PRINT*,"IKeepFlag     = 0          ; (11) 0/1 = yes/no data overwrite"
-  PRINT*,"IWriteFlag    = 1          ; (12) 0/1/2/3/4 = no/log/category/wave fcn/Gamma/RHO output"
-  PRINT*,"ISortFlag     = 0          ; (13) 0/1 = no/yes ReSort()"
-  PRINT*,"IFluxFlag     = 1          ; (14) 0/1 = DiagDis/Energy loop"
+  PRINT*,"IDimenFlag     = 2          ; (8) 2/3 = 2/3 dimensions"
+  PRINT*,"IBCFlag        = 0          ; (9) 0/1/2 = hard wall/periodic/antiperiodic BC"
+  PRINT*,"IRNGFlag       = 0          ; (10) 0/1/2 = uniform/rescaled uniform/Gaussian disorder"
+  PRINT*,"IKeepFlag      = 0          ; (11) 0/1 = yes/no data overwrite"
+  PRINT*,"IWriteFlag     = 1          ; (12) 0/1/2/3/4 = no/log/category/wave fcn/Gamma/RHO output"
+  PRINT*,"ISortFlag      = 0          ; (13) 0/1 = no/yes ReSort()"
+  PRINT*,"IFluxFlag      = 1          ; (14) 0/1 = DiagDis/Energy loop"
   
-  PRINT*,"Width0        = 0          ; (15) minimal width"
-  PRINT*,"Width1        = 0          ; (16) maximal width"
-  PRINT*,"dWidth        = 0          ; (17) width increment"
+  PRINT*,"Width0         = 0          ; (15) minimal width"
+  PRINT*,"Width1         = 0          ; (16) maximal width"
+  PRINT*,"dWidth         = 0          ; (17) width increment"
   
-  PRINT*,"DiagDis0      = 0.         ; (18) minimal diagonal disorder"
-  PRINT*,"DiagDis1      = 5.         ; (19) maximal  diagonal disorder"
-  PRINT*,"dDiagDis      = 0.5        ; (20) increment of diagonal disorder"
+  PRINT*,"DiagDis0       = 0.         ; (18) minimal diagonal disorder"
+  PRINT*,"DiagDis1       = 5.         ; (19) maximal  diagonal disorder"
+  PRINT*,"dDiagDis       = 0.5        ; (20) increment of diagonal disorder"
+
+  PRINT*,"LiebDis         = 0.         ; (27) disorder on Rim/Lieb sites"
+  PRINT*,"CubeConstPoten = 5.         ; (28) potential on Hub/Cube sites"
+  PRINT*,"LiebConstPoten = 0.5        ; (29) potential on Rim/Lieb sites"  
   
-  PRINT*,"Energy0       = 0.         ; (21) minimal energy"
-  PRINT*,"Energy1       = 5.         ; (22) maximal energy"
-  PRINT*,"dEnergy       = 0.5        ; (23) increment of energy"
+  PRINT*,"Energy0        = 0.         ; (21) minimal energy"
+  PRINT*,"Energy1        = 5.         ; (22) maximal energy"
+  PRINT*,"dEnergy        = 0.5        ; (23) increment of energy"
   
-  PRINT*,"Kappa         = 1.0        ; (24) inter-layer hopping"
-  PRINT*,"Epsilon       = 5.0E-2     ; (26) accuracy goal of iteration"
+  PRINT*,"Kappa          = 1.0        ; (24) inter-layer hopping"
+  PRINT*,"Epsilon        = 5.0E-2     ; (26) accuracy goal of iteration"
   
   IErr= 1
   RETURN
@@ -349,38 +365,73 @@ END SUBROUTINE Input
 !
 !	IErr	error code
 
-CHARACTER*50 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal)
+CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstPoten, LiebConstPoten)
   USE MyNumbers
   
   USE CConstants
   USE IConstants
   
   USE IPara
-  USE DPara
+!  USE DPara
 
   INTEGER IWidth
-  REAL(RKIND) fluxVal
+  REAL(KIND=RKIND) fluxVal
   CHARACTER*1 fluxStr
+  REAL(KIND=RKIND) LiebDis, CubeConstPoten, LiebConstPoten
+  CHARACTER*1 SymbolCP,symbolLP
 
-  IF( fluxVal.GE.-1.0D-10 ) THEN
+  IF(CubeConstPoten.GE.0.0D0) Then
+     SymbolCP="+"
+  Else
+     SymbolCP="-"
+  End If
 
-     WRITE(FileNameAvg, 100) &
+  If(LiebConstPoten.GE.0.0D0) Then
+     SymbolLP="+"
+  Else
+     SymbolLP="-"
+  End If
+  
+  If(fluxStr=="E")then
+  
+     IF( fluxVal.GE.-1.0D-10 ) THEN
+
+        WRITE(FileNameAvg, 100) &
+             "L",IDimenFlag,"_",&
+             IWidth,"_",&
+             fluxStr,NINT(100.0D0*ABS(fluxVal)),&
+             "_CP",SymbolCP,NINT(100.0D0*ABS(CubeConstPoten)),&
+             "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConstPoten)),&
+             "_LD",NINT(100.0D0*ABS(LiebDis)),&
+             ".raw"
+100     FORMAT(A1,I2.2,A1,I4.4,A1,A1,I6.6,A3,A1,I6.6,A3,A1,I6.6,A3,I6.6,A4)
+
+     ELSE
+
+        WRITE(FileNameAvg, 200)                         &
+             "L",IDimenFlag,"_",&
+             IWidth,"_",&
+             fluxStr,"-",NINT(100.0D0*ABS(fluxVal)),&
+             "_CP",SymbolCP,NINT(100.0D0*ABS(CubeConstPoten)),&
+             "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConstPoten)),&
+             "_LD",NINT(100.0D0*ABS(LiebDis)),&
+             ".raw"
+200     FORMAT(A1,I2.2,A1,I4.4,A1,A1,A1,I6.6,A3,A1,I6.6,A3,A1,I6.6,A3,I6.6,A4)
+
+     ENDIF
+
+  Else
+     WRITE(FileNameAvg, 300) &
           "L",IDimenFlag,"_",&
           IWidth,"_",&
-          fluxStr,NINT(100.0D0*ABS(fluxVal)),&
+          "CP",SymbolCP,NINT(100.0D0*ABS(CubeConstPoten)), &
+          "_",fluxStr,NINT(100.0D0*ABS(fluxVal)), &
+          "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConstPoten)), &
+          "_LD",NINT(100.0D0*ABS(LiebDis)), &
           ".raw"
-100  FORMAT(A1,I2.2,A1,I4.4,A1,A1,I4.4,A4)
+300  FORMAT(A1,I2.2,A1,I4.4,A1,A2,A1,I6.6,A1,A1,I6.6,A3,A1,I6.6,A3,I6.6,A4)
 
-  ELSE
-
-     WRITE(FileNameAvg, 200)                         &
-          "L",IDimenFlag,"_",&
-          IWidth,"_",&
-          fluxStr,"-",NINT(100.0D0*ABS(fluxVal)),&
-          ".raw"
-200  FORMAT(A1,I2.2,A1,I4.4,A1,A1,A1,I4.4,A4)
-
-  ENDIF
+  End If
 
 END FUNCTION FileNameAvg
 
@@ -402,7 +453,7 @@ SUBROUTINE CheckOutputAvg( filename, IErr )
   USE IChannels
   
   INTEGER IErr
-  CHARACTER*50 filename
+  CHARACTER*100 filename
   
   !	PRINT*,"DBG: CheckOutputAvg()"
   
@@ -453,7 +504,7 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
   USE IChannels
   
   INTEGER IWidth, IErr
-  CHARACTER*50 filename
+  CHARACTER*100 filename
     
   INTEGER ICh, IChList(MAXFiles)
 
@@ -473,73 +524,82 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
 90   FORMAT("(* ",3A," *)")
      
      WRITE(IChList(ICh),100,ERR=20) ISeed
-100  FORMAT("ISeed        = ", I15.1, "; (* + Config *)")
+100  FORMAT("ISeed          = ", I15.1, "; (* + Config *)")
      
      WRITE(IChList(ICh),120,ERR=20) NOfIter
-120  FORMAT("NOfIter      = ", I15.1, ";")
+120  FORMAT("NOfIter        = ", I15.1, ";")
      
      WRITE(IChList(ICh),140,ERR=20) NOfOrtho
-140  FORMAT("NOfOrtho     = ", I15.1, ";")
+140  FORMAT("NOfOrtho       = ", I15.1, ";")
      
      WRITE(IChList(ICh),145,ERR=20) NOfPrint
-145  FORMAT("NOfPrint     = ", I15.1, ";")
+145  FORMAT("NOfPrint       = ", I15.1, ";")
      
      WRITE(IChList(ICh),150,ERR=20) NOfGamma
-150  FORMAT("NOfGamma     = ", I15.1, ";")
+150  FORMAT("NOfGamma       = ", I15.1, ";")
 
      WRITE(IChList(ICh),152,ERR=20) IDimenFlag
-152  FORMAT("IDimenFlag   = ", I15.1, ";")
+152  FORMAT("IDimenFlag     = ", I15.1, ";")
      
      WRITE(IChList(ICh),155,ERR=20) IBCFlag
-155  FORMAT("IBCFlag      = ", I15.1, ";")
+155  FORMAT("IBCFlag        = ", I15.1, ";")
      
      WRITE(IChList(ICh),160,ERR=20) IRNGFlag
-160  FORMAT("IRNGFlag     = ", I15.1, ";")
+160  FORMAT("IRNGFlag       = ", I15.1, ";")
      
      WRITE(IChList(ICh),170,ERR=20) IKeepFlag
-170  FORMAT("IKeepFlag    = ", I15.1, ";")
+170  FORMAT("IKeepFlag      = ", I15.1, ";")
      
      WRITE(IChList(ICh),180,ERR=20) IWriteFlag
-180  FORMAT("IWriteFlag   = ", I15.1, ";")
+180  FORMAT("IWriteFlag     = ", I15.1, ";")
      
      WRITE(IChList(ICh),190,ERR=20) ISortFlag
-190  FORMAT("ISortFlag    = ", I15.1, ";")
+190  FORMAT("ISortFlag      = ", I15.1, ";")
      
      WRITE(IChList(ICh),195,ERR=20) IFluxFlag
-195  FORMAT("IFluxFlag    = ", I15.1, ";")
+195  FORMAT("IFluxFlag      = ", I15.1, ";")
      
      WRITE(IChList(ICh),200,ERR=20) Width0
-200  FORMAT("Width0       = ", I15.1, ";")
+200  FORMAT("Width0         = ", I15.1, ";")
      
      WRITE(IChList(ICh),210,ERR=20) Width1
-210  FORMAT("Width1       = ", I15.1, ";")
+210  FORMAT("Width1         = ", I15.1, ";")
      
      WRITE(IChList(ICh),220,ERR=20) dWidth
-220  FORMAT("dWidth       = ", I15.1, ";")
+220  FORMAT("dWidth         = ", I15.1, ";")
+     
+     WRITE(IChList(ICh),315,ERR=20) CubeConstPoten
+315  FORMAT("CubeConstPoten = ", G18.9, ";")
      
      WRITE(IChList(ICh),290,ERR=20) DiagDis0
-290  FORMAT("DiagDis0     = ", G18.9, ";")
+290  FORMAT("DiagDis0       = ", G18.9, ";")
      
      WRITE(IChList(ICh),293,ERR=20) DiagDis1
-293  FORMAT("DiagDis1     = ", G18.9, ";")
+293  FORMAT("DiagDis1       = ", G18.9, ";")
      
      WRITE(IChList(ICh),296,ERR=20) dDiagDis
-296  FORMAT("dDiagDis     = ", G18.9, ";")
+296  FORMAT("dDiagDis       = ", G18.9, ";")
+
+     WRITE(IChList(ICh),318,ERR=20) LiebConstPoten
+318  FORMAT("LiebConstPoten = ", G18.9, ";")
+     
+     WRITE(IChList(ICh),312,ERR=20) LiebDis
+312  FORMAT("LiebDis        = ", G18.9, ";")
      
      WRITE(IChList(ICh),300,ERR=20) Energy0
-300  FORMAT("energy0      = ", G18.9, ";")
+300  FORMAT("energy0        = ", G18.9, ";")
      
      WRITE(IChList(ICh),302,ERR=20) Energy1
-302  FORMAT("energy1      = ", G18.9, ";")
+302  FORMAT("energy1        = ", G18.9, ";")
      
      WRITE(IChList(ICh),304,ERR=20) dEnergy
-304  FORMAT("denergy      = ", G18.9, ";")
+304  FORMAT("denergy        = ", G18.9, ";")
      
      WRITE(IChList(ICh),310,ERR=20) Epsilon
-310   FORMAT("epsilon      = ", G18.9, ";")
+310  FORMAT("epsilon        = ", G18.9, ";")
      
      WRITE(IChList(ICh),400,ERR=20) IWidth
-400  FORMAT("Width        = ", I15.1, ";")
+400  FORMAT("Width          = ", I15.1, ";")
      
      WRITE(IChList(ICh),500,ERR=20)
 500  FORMAT("data= {")
@@ -579,7 +639,7 @@ SUBROUTINE ReOpenOutputAvg( filename, IErr )
   USE IChannels
   
   INTEGER IErr
-  CHARACTER*50 filename
+  CHARACTER*100 filename
   
   INTEGER ICh, IChList(MAXFiles)
 
@@ -615,6 +675,9 @@ SUBROUTINE WriteOutputAvg(&
      IWidth, 	&
      IConvergence, &
      DiagDis, 	&
+     LiebDis,    &
+     CubeConstPoten, &
+     LiebConstPoten, &     
      Energy,	&
      gam, var, NOfL,  &
      psi,	&
@@ -626,12 +689,13 @@ SUBROUTINE WriteOutputAvg(&
   USE IConstants
   
   USE IPara
-  USE DPara
+!  USE DPara
   
   USE IChannels
   
   INTEGER IWidth, IConvergence, NOfL, IErr
   REAL(KIND=RKIND) DiagDis, Energy,&
+       LiebDis, CubeConstPoten, LiebConstPoten, &
        psi(IWidth,IWidth)
   
   REAL(KIND=RKIND) gam(NOfL), var(NOfL)
@@ -648,11 +712,17 @@ SUBROUTINE WriteOutputAvg(&
      
      WRITE(IChOut,410,ERR=10) &
           iL, &
-          DiagDis, &
           Energy, &
+          CubeConstPoten, &
+          DiagDis, &
+          LiebConstPoten, &
+          LiebDis,  & 
           gam(iL), var(iL), IConvergence
      
 410  FORMAT("{ ", I7.1, &
+          ", ", F15.6, &
+          ", ", F15.6, &
+          ", ", F15.6, &
           ", ", F15.6, &
           ", ", F15.6, &
           ", ", F25.16, ", ", F25.16, &
@@ -1562,7 +1632,7 @@ SUBROUTINE WriteDataC( &
   INTEGER(KIND=IKIND) size, step, IErr
   COMPLEX(KIND=CKIND) data(size)
 
-  CHARACTER*50 filename
+  CHARACTER*100 filename
   INTEGER index
 
   !PRINT*,"WriteDataC()"
@@ -1635,7 +1705,7 @@ SUBROUTINE WriteDataR( &
   INTEGER(KIND=IKIND) size, step, IErr
   REAL(KIND=RKIND) data(size)
 
-  CHARACTER*50 filename
+  CHARACTER*100 filename
   INTEGER index
 
   !PRINT*,"WriteDataR()"
@@ -1693,7 +1763,7 @@ SUBROUTINE DBGWritePsi( &
 
   USE IChannels
 
-  CHARACTER*20 filename
+  CHARACTER*100 filename
   INTEGER(KIND=IKIND) M, iter1,iter2, ilayer, IErr
   REAL(KIND=RKIND) PsiA(M,M), PsiB(M,M)
 
