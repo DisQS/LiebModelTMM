@@ -340,13 +340,13 @@ SUBROUTINE Input( IErr )
   PRINT*,"Width1         = 0          ; (16) maximal width"
   PRINT*,"dWidth         = 0          ; (17) width increment"
   
+  PRINT*,"CubeConPot     = 5.         ; (28) potential on Hub/Cube sites"
   PRINT*,"DiagDis0       = 0.         ; (18) minimal diagonal disorder"
   PRINT*,"DiagDis1       = 5.         ; (19) maximal  diagonal disorder"
   PRINT*,"dDiagDis       = 0.5        ; (20) increment of diagonal disorder"
 
-  PRINT*,"LiebDis        = 0.         ; (27) disorder on Rim/Lieb sites"
-  PRINT*,"CubeConPot     = 5.         ; (28) potential on Hub/Cube sites"
   PRINT*,"LiebConPot     = 0.5        ; (29) potential on Rim/Lieb sites"  
+  PRINT*,"LiebDis        = 0.         ; (27) disorder on Rim/Lieb sites"
   
   PRINT*,"Energy0        = 0.         ; (21) minimal energy"
   PRINT*,"Energy1        = 5.         ; (22) maximal energy"
