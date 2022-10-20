@@ -314,7 +314,7 @@ PROGRAM TMSELMxD
         fluxStr = "D"
         fluxVal = DiagDis0
      ENDIF
-     filename= FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstPoten, LiebConstPoten)
+     filename= FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConPot, LiebConPot)
      !PRINT*,TRIM(filename)
      
      SELECT CASE(IKeepFlag)
@@ -412,7 +412,7 @@ flux_loop: &
         ! protocoll feature
         !--------------------------------------------------------------
         
-2500    WRITE(*,2510) IWidth, DiagDis, LiebDis, CubeConstPoten, LiebConstPoten, Energy,Kappa
+2500    WRITE(*,2510) IWidth, DiagDis, LiebDis, CubeConPot, LiebConPot, Energy,Kappa
 2510    FORMAT("START @ IW= ",I4.1,    &
              ", CubePoten= ", G10.3,   &
              ", DD= ", G10.3,          &
@@ -490,71 +490,71 @@ northo_loop: &
               SELECT CASE(IDimenFlag)
               CASE(21)
                  CALL TMMultLieb2DAtoB( PsiA, PsiB, Ilayer, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb2DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
               CASE (22)
                  CALL TMMultLieb2DAtoB1(  PsiA, PsiB, Ilayer, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb2DB1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb2DB2toA(  PsiA, PsiB, Ilayer+2, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL Swap( PsiA, PsiB, IWidthEffective)
               CASE(23)
                  CALL TMMultLieb2D_AtoB1(  PsiA, PsiB, Ilayer, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb2D_B1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb2D_B2toB3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb2D_B3toA(  PsiB, PsiA, Ilayer+3, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
               CASE(24)
                  CALL TMMultLieb24_AtoB1( PsiA, PsiB, Ilayer, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb24_B1toB2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb24_B2toB3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb24_B3toB4( PsiB, PsiA, Ilayer+3, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb24_B4toA( PsiA, PsiB, Ilayer+4, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL Swap( PsiA, PsiB, IWidthEffective)
               CASE(31)
                  CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, Energy,DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
               CASE(32)
                  CALL TMMultLieb3DAtoB5(  PsiA, PsiB, Ilayer, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb3DB5toB6( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb3DB6toA(  PsiA, PsiB, Ilayer+2, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL Swap( PsiA, PsiB, IWidthEffective)
               CASE(33)
                  CALL TMMultLieb3D_AtoD1(  PsiA, PsiB, Ilayer, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb3D_D1toD2( PsiB, PsiA, Ilayer+1, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb3D_D2toD3( PsiA, PsiB, Ilayer+2, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb3D_D3toA(  PsiB, PsiA, Ilayer+3, Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
               CASE(34)
                  CALL TMMultLieb34_AtoD1( PsiA, PsiB, Ilayer,Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb34_D1toD2( PsiB, PsiA, Ilayer+1,Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb34_D2toD3( PsiA, PsiB, Ilayer+2,Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb34_D3toD4( PsiB, PsiA, Ilayer+3,Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL TMMultLieb34_D4toA( PsiA, PsiB, Ilayer+4,Energy, DiagDis, &
-                      LiebDis, CubeConstPoten, LiebConstPoten, IWidth)
+                      LiebDis, CubeConPot, LiebConPot, IWidth)
                  CALL Swap( PsiA, PsiB, IWidthEffective)
               CASE DEFAULT
                  PRINT*,"tmseLMxD: ERR, IDimenFlag=", IDimenFLag, " is not implemented --- aborting!"
@@ -689,8 +689,8 @@ northo_loop: &
         CALL WriteOutputAvg( IWidth, TMM_CONVERGED, &
              DiagDis,  &
              LiebDis,   &
-             CubeConstPoten, &
-             LiebConstPoten, &
+             CubeConPot, &
+             LiebConPot, &
              Energy, &
              nGamma, acc_variance, &
              NOfG, PsiA, IErr )
@@ -705,8 +705,8 @@ northo_loop: &
         !-------------------------------------------------------------
         
 5000    WRITE(*,5010) Iter1, &
-             CubeConstPoten,DiagDis, &
-             LiebConstPoten,LiebDis, &
+             CubeConPot,DiagDis, &
+             LiebConPot,LiebDis, &
              Energy, Kappa
         WRITE(*,5012) nGamma(1), acc_variance(1)
 

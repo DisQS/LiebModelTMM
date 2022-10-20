@@ -159,8 +159,8 @@ SUBROUTINE Input( IErr )
   !PRINT*,"dWidth       = ", dWidth
   
   ILine= ILine+1
-  READ(IChInp,15,ERR=20,END=30) CubeConstPoten
-  !PRINT*,"CubeConstPoten= ", CubeConstPoten
+  READ(IChInp,15,ERR=20,END=30) CubeConPot
+  !PRINT*,"CubeConPot   = ", CubeConPot
   
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) DiagDis0
@@ -175,12 +175,12 @@ SUBROUTINE Input( IErr )
   !PRINT*,"dDiagDis     = ", dDiagDis
   
   ILine= ILine+1
-  READ(IChInp,15,ERR=20,END=30) LiebConstPoten
-  !PRINT*,"LiebConstPoten= ", LiebConstPoten  
+  READ(IChInp,15,ERR=20,END=30) LiebConPot
+  !PRINT*,"LiebConPot   = ", LiebConPot  
 
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) LiebDis
-  !PRINT*,"LiebDis       = ", LiebDis
+  !PRINT*,"LiebDis      = ", LiebDis
   
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) Energy0
@@ -344,9 +344,9 @@ SUBROUTINE Input( IErr )
   PRINT*,"DiagDis1       = 5.         ; (19) maximal  diagonal disorder"
   PRINT*,"dDiagDis       = 0.5        ; (20) increment of diagonal disorder"
 
-  PRINT*,"LiebDis         = 0.         ; (27) disorder on Rim/Lieb sites"
-  PRINT*,"CubeConstPoten = 5.         ; (28) potential on Hub/Cube sites"
-  PRINT*,"LiebConstPoten = 0.5        ; (29) potential on Rim/Lieb sites"  
+  PRINT*,"LiebDis        = 0.         ; (27) disorder on Rim/Lieb sites"
+  PRINT*,"CubeConPot     = 5.         ; (28) potential on Hub/Cube sites"
+  PRINT*,"LiebConPot     = 0.5        ; (29) potential on Rim/Lieb sites"  
   
   PRINT*,"Energy0        = 0.         ; (21) minimal energy"
   PRINT*,"Energy1        = 5.         ; (22) maximal energy"
@@ -365,7 +365,7 @@ END SUBROUTINE Input
 !
 !	IErr	error code
 
-CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstPoten, LiebConstPoten)
+CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConPot, LiebConPot)
   USE MyNumbers
   
   USE CConstants
@@ -377,16 +377,16 @@ CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstP
   INTEGER IWidth
   REAL(KIND=RKIND) fluxVal
   CHARACTER*1 fluxStr
-  REAL(KIND=RKIND) LiebDis, CubeConstPoten, LiebConstPoten
+  REAL(KIND=RKIND) LiebDis, CubeConPot, LiebConPot
   CHARACTER*1 SymbolCP,symbolLP
 
-  IF(CubeConstPoten.GE.0.0D0) Then
+  IF(CubeConPot.GE.0.0D0) Then
      SymbolCP="+"
   Else
      SymbolCP="-"
   End If
 
-  If(LiebConstPoten.GE.0.0D0) Then
+  If(LiebConPot.GE.0.0D0) Then
      SymbolLP="+"
   Else
      SymbolLP="-"
@@ -400,8 +400,8 @@ CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstP
              "L",IDimenFlag,"_",&
              IWidth,"_",&
              fluxStr,NINT(100.0D0*ABS(fluxVal)),&
-             "_CP",SymbolCP,NINT(100.0D0*ABS(CubeConstPoten)),&
-             "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConstPoten)),&
+             "_CP",SymbolCP,NINT(100.0D0*ABS(CubeConPot)),&
+             "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConPot)),&
              "_LD",NINT(100.0D0*ABS(LiebDis)),&
              ".raw"
 100     FORMAT(A1,I2.2,A1,I4.4,A1,A1,I6.6,A3,A1,I6.6,A3,A1,I6.6,A3,I6.6,A4)
@@ -412,8 +412,8 @@ CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstP
              "L",IDimenFlag,"_",&
              IWidth,"_",&
              fluxStr,"-",NINT(100.0D0*ABS(fluxVal)),&
-             "_CP",SymbolCP,NINT(100.0D0*ABS(CubeConstPoten)),&
-             "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConstPoten)),&
+             "_CP",SymbolCP,NINT(100.0D0*ABS(CubeConPot)),&
+             "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConPot)),&
              "_LD",NINT(100.0D0*ABS(LiebDis)),&
              ".raw"
 200     FORMAT(A1,I2.2,A1,I4.4,A1,A1,A1,I6.6,A3,A1,I6.6,A3,A1,I6.6,A3,I6.6,A4)
@@ -424,9 +424,9 @@ CHARACTER*100 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal, LiebDis, CubeConstP
      WRITE(FileNameAvg, 300) &
           "L",IDimenFlag,"_",&
           IWidth,"_",&
-          "CP",SymbolCP,NINT(100.0D0*ABS(CubeConstPoten)), &
+          "CP",SymbolCP,NINT(100.0D0*ABS(CubeConPot)), &
           "_",fluxStr,NINT(100.0D0*ABS(fluxVal)), &
-          "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConstPoten)), &
+          "_LP",SymbolLP,NINT(100.0D0*ABS(LiebConPot)), &
           "_LD",NINT(100.0D0*ABS(LiebDis)), &
           ".raw"
 300  FORMAT(A1,I2.2,A1,I4.4,A1,A2,A1,I6.6,A1,A1,I6.6,A3,A1,I6.6,A3,I6.6,A4)
@@ -568,8 +568,8 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
      WRITE(IChList(ICh),220,ERR=20) dWidth
 220  FORMAT("dWidth         = ", I15.1, ";")
      
-     WRITE(IChList(ICh),315,ERR=20) CubeConstPoten
-315  FORMAT("CubeConstPoten = ", G18.9, ";")
+     WRITE(IChList(ICh),315,ERR=20) CubeConPot
+315  FORMAT("CubeConPot = ", G18.9, ";")
      
      WRITE(IChList(ICh),290,ERR=20) DiagDis0
 290  FORMAT("DiagDis0       = ", G18.9, ";")
@@ -580,8 +580,8 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
      WRITE(IChList(ICh),296,ERR=20) dDiagDis
 296  FORMAT("dDiagDis       = ", G18.9, ";")
 
-     WRITE(IChList(ICh),318,ERR=20) LiebConstPoten
-318  FORMAT("LiebConstPoten = ", G18.9, ";")
+     WRITE(IChList(ICh),318,ERR=20) LiebConPot
+318  FORMAT("LiebConPot = ", G18.9, ";")
      
      WRITE(IChList(ICh),312,ERR=20) LiebDis
 312  FORMAT("LiebDis        = ", G18.9, ";")
@@ -676,8 +676,8 @@ SUBROUTINE WriteOutputAvg(&
      IConvergence, &
      DiagDis, 	&
      LiebDis,    &
-     CubeConstPoten, &
-     LiebConstPoten, &     
+     CubeConPot, &
+     LiebConPot, &     
      Energy,	&
      gam, var, NOfL,  &
      psi,	&
@@ -695,7 +695,7 @@ SUBROUTINE WriteOutputAvg(&
   
   INTEGER IWidth, IConvergence, NOfL, IErr
   REAL(KIND=RKIND) DiagDis, Energy,&
-       LiebDis, CubeConstPoten, LiebConstPoten, &
+       LiebDis, CubeConPot, LiebConPot, &
        psi(IWidth,IWidth)
   
   REAL(KIND=RKIND) gam(NOfL), var(NOfL)
@@ -713,9 +713,9 @@ SUBROUTINE WriteOutputAvg(&
      WRITE(IChOut,410,ERR=10) &
           iL, &
           Energy, &
-          CubeConstPoten, &
+          CubeConPot, &
           DiagDis, &
-          LiebConstPoten, &
+          LiebConPot, &
           LiebDis,  & 
           gam(iL), var(iL), IConvergence
      
