@@ -3,7 +3,7 @@
 ! giving (PSI_B,PSI_A) so that the structure of the transfer matrix 
 ! can be exploited
 
-SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
+SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, LiebDis, CubeConPot, LiebConPot, M )
 
   USE MyNumbers
   USE IPara
@@ -20,7 +20,7 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConP
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       RimDis, CubeConPot, LiebConPot, &
+       LiebDis, CubeConPot, LiebConPot, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
@@ -63,19 +63,19 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConP
         IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS,jSite)= -En + CubeConPot + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)
         ELSE
-           OnsitePotVec(xSiteS,jSite)= -En + LiebConPot + RimDis*(DRANDOM(ISeedDummy)-0.5D0)
+           OnsitePotVec(xSiteS,jSite)= -En + LiebConPot + LiebDis*(DRANDOM(ISeedDummy)-0.5D0)
         END IF
      CASE(20)
         IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS,jSite)= -En + CubeConPot + DiagDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
         ELSE
-           OnsitePotVec(xSiteS,jSite)= -En + LiebConPot + RimDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+           OnsitePotVec(xSiteS,jSite)= -En + LiebConPot + LiebDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
         END IF
       CASE(30)
         IF(Mod(xSiteS,LiebSpacer)==1) THEN
            OnsitePotVec(xSiteS,jSite)= -En + CubeConPot + GRANDOM(ISeedDummy,0.0D0,DiagDis)
         ELSE
-           OnsitePotVec(xSiteS,jSite)= -En + LiebConPot + GRANDOM(ISeedDummy,0.0D0,RimDis)
+           OnsitePotVec(xSiteS,jSite)= -En + LiebConPot + GRANDOM(ISeedDummy,0.0D0,LiebDis)
         END IF
      END SELECT
   END DO
@@ -157,7 +157,7 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConP
   
 END SUBROUTINE TMMultLieb2D_AtoB1
 
-SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
+SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, LiebDis, CubeConPot, LiebConPot, M )
 
   USE MyNumbers
   USE IPara
@@ -174,7 +174,7 @@ SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeCon
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       RimDis, CubeConPot, LiebConPot, &
+       LiebDis, CubeConPot, LiebConPot, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
@@ -203,11 +203,11 @@ SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeCon
      CASE(03)
         OnsitePot= -En + GRANDOM(ISeedDummy,0.0D0,DiagDis)
      CASE(10)
-        OnsitePot= -En + LiebConPot + RimDis*(DRANDOM(ISeedDummy)-0.5D0)
+        OnsitePot= -En + LiebConPot + LiebDis*(DRANDOM(ISeedDummy)-0.5D0)
      CASE(20)
-        OnsitePot= -En + LiebConPot + RimDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
+        OnsitePot= -En + LiebConPot + LiebDis*(DRANDOM(ISeedDummy)-0.5D0)*SQRT(12.0D0)
      CASE(30)
-        OnsitePot= -En + LiebConPot + GRANDOM(ISeedDummy,0.0D0,RimDis)
+        OnsitePot= -En + LiebConPot + GRANDOM(ISeedDummy,0.0D0,LiebDis)
      END SELECT
 
      !PRINT*,"iS,pL,RndVec", xSite,pLevel,RndVec((pLevel-1)*M+xSite)
@@ -228,7 +228,7 @@ SUBROUTINE TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeCon
 END SUBROUTINE TMMultLieb2D_B1toB2
 
 
-SUBROUTINE TMMultLieb2D_B2toB3(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
+SUBROUTINE TMMultLieb2D_B2toB3(PSI_A,PSI_B, Ilayer, En, DiagDis, LiebDis, CubeConPot, LiebConPot, M )
 
   USE MyNumbers
   USE IPara
@@ -245,19 +245,19 @@ SUBROUTINE TMMultLieb2D_B2toB3(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeCon
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       RimDis, CubeConPot, LiebConPot, &
+       LiebDis, CubeConPot, LiebConPot, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
   !PRINT*,"DBG: TMMultLieb2DB1toB2()"
 
-  CALL TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
+  CALL TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, LiebDis, CubeConPot, LiebConPot, M )
   RETURN
 END SUBROUTINE TMMultLieb2D_B2toB3
 
 
-SUBROUTINE TMMultLieb2D_B3toA(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
+SUBROUTINE TMMultLieb2D_B3toA(PSI_A,PSI_B, Ilayer, En, DiagDis, LiebDis, CubeConPot, LiebConPot, M )
 
   USE MyNumbers
   USE IPara
@@ -274,13 +274,13 @@ SUBROUTINE TMMultLieb2D_B3toA(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConP
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       RimDis, CubeConPot, LiebConPot, &
+       LiebDis, CubeConPot, LiebConPot, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
   
   !PRINT*,"DBG: TMMultLieb2DB1toB2()"
 
-  CALL TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
+  CALL TMMultLieb2D_B1toB2(PSI_A,PSI_B, Ilayer, En, DiagDis, LiebDis, CubeConPot, LiebConPot, M )
   RETURN
 END SUBROUTINE TMMultLieb2D_B3toA
