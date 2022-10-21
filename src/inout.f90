@@ -569,7 +569,7 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
 220  FORMAT("dWidth         = ", I15.1, ";")
      
      WRITE(IChList(ICh),315,ERR=20) CubeConPot
-315  FORMAT("CubeConPot = ", G18.9, ";")
+315  FORMAT("CubeConPot     = ", G18.9, ";")
      
      WRITE(IChList(ICh),290,ERR=20) DiagDis0
 290  FORMAT("DiagDis0       = ", G18.9, ";")
@@ -581,7 +581,7 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
 296  FORMAT("dDiagDis       = ", G18.9, ";")
 
      WRITE(IChList(ICh),318,ERR=20) LiebConPot
-318  FORMAT("LiebConPot = ", G18.9, ";")
+318  FORMAT("LiebConPot     = ", G18.9, ";")
      
      WRITE(IChList(ICh),312,ERR=20) LiebDis
 312  FORMAT("LiebDis        = ", G18.9, ";")

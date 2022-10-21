@@ -3,7 +3,7 @@
 !
 ! 3D version of TMMult2D. Extra boundary conditions
 
-SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConstPoten, M )
+SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
 
   USE MyNumbers
   USE IPara
@@ -20,7 +20,7 @@ SUBROUTINE TMMultLieb3DAtoB5(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPo
        M                     ! strip width
 
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       RimDis, CubeConPot, LiebConstPoten, &
+       RimDis, CubeConPot, LiebConPot, &
        En                    ! energy
 
   REAL(KIND=RKIND) PSI_A(M*M,M*M),PSI_B(M*M,M*M),OnsitePotVec(3*M,3*M)

@@ -3,7 +3,7 @@
 ! giving (PSI_B,PSI_A) so that the structure of the transfer matrix 
 ! can be exploited
 
-SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConstPoten, M )
+SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConPot, LiebConPot, M )
 
   USE MyNumbers
   USE IPara
@@ -20,7 +20,7 @@ SUBROUTINE TMMultLieb2D_AtoB1(PSI_A,PSI_B, Ilayer, En, DiagDis, RimDis, CubeConP
        M                     ! strip width
   
   REAL(KIND=RKIND)  DiagDis,&! diagonal disorder
-       RimDis, CubeConPot, LiebConstPoten, &
+       RimDis, CubeConPot, LiebConPot, &
        En                    ! energy
   
   REAL(KIND=CKIND) PSI_A(M,M), PSI_B(M,M)
