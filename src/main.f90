@@ -96,7 +96,8 @@
 !                      1        YES, sorting is done.
 !
 !      IFluxFlag       0        DiagDis loop
-!                      1        Energy loop
+!                      1        Energy  loop
+!                      2        hopping(tW) loop
 !
 !      Notation:
 !
@@ -134,18 +135,22 @@ PROGRAM TMSELMxD
   
   INTEGER IWidth, IWidthEffective, IWidthRL, Width0_X, &
        index, &
-       Iter1,Iter2, iStep, NOfG,iG, Ilayer, TMM_CONVERGED
+       Iter1,Iter2, iStep, NOfG,iG, Ilayer, TMM_CONVERGED, &
+       ISeedDummy, pos
   
   REAL(KIND=RKIND) flux, flux0,flux1,dflux, &
-       fluxRL,flux0_X, fluxVal
-  REAL(KIND=RKIND) DiagDis, Energy
+       fluxRL,flux0_X, fluxVal0, fluxVal1
+  REAL(KIND=RKIND) DiagDis, Energy, tW
+
+  REAL(KIND=RKIND), parameter :: tHop=1.0
   
   REAL(KIND=RKIND), DIMENSION(:), ALLOCATABLE ::             &
        nGamma, gamma, gamma2, acc_variance
   
   REAL(KIND=RKIND), DIMENSION(:,:), ALLOCATABLE :: PsiA, PsiB
+  REAL(KIND=RKIND), DIMENSION(:), ALLOCATABLE :: tz0
 
-  CHARACTER*1 fluxStr
+  CHARACTER*1 fluxStr0,fluxStr1
   CHARACTER*50 filenameAVG, filename
   EXTERNAL FileNameAvg
   
@@ -226,11 +231,22 @@ PROGRAM TMSELMxD
      flux1     = DiagDis1
      dflux     = dDiagDis
      Energy    = Energy0
-  ELSE
+     tW        = tW0
+  ELSE If(IFluxFlag.EQ.1) Then
      flux0     = Energy0
      flux1     = Energy1
      dflux     = dEnergy
      DiagDis   = DiagDis0
+     tW        = tW0
+  Else If(IFluxFlag.EQ.2) Then
+     flux0     = tW0
+     flux1     = tW1
+     dflux     = dtW
+     Energy    = Energy0
+     DiagDis   = DiagDis0
+  Else
+     Print*,"Don't finish it yet!"
+     Stop
   ENDIF
   
   !--------------------------------------------------------------------
@@ -308,13 +324,24 @@ PROGRAM TMSELMxD
      !--------------------------------------------------------------
 
      IF (IFluxFlag.EQ.0) THEN
-        fluxStr = "E"
-        fluxVal = Energy0
-     ELSE
-        fluxStr = "D"
-        fluxVal = DiagDis0
+        fluxStr0 = "E"
+        fluxVal0 = Energy0
+        fluxStr1 = "H"
+        fluxVal1 = tW0
+     ELSE If(IFluxFlag.EQ.1) THEN
+        fluxStr0 = "D"
+        fluxVal0 = DiagDis0
+        fluxStr1 = "H"
+        fluxVal1 = tW0
+     ELSE If(IFluxFlag.EQ.2) THEN
+        fluxStr0 = "E"
+        fluxVal0 = Energy0
+        fluxStr1=  "D"
+        fluxVal1 = DiagDis0
+     Else
+        Print*,"Don't finish it yet!"
      ENDIF
-     filename= FileNameAvg(IWidth,fluxStr,fluxVal)
+     filename= FileNameAvg(IWidth,fluxStr0,fluxVal0,fluxStr1,fluxVal1)
      !PRINT*,TRIM(filename)
      
      SELECT CASE(IKeepFlag)
@@ -361,6 +388,8 @@ PROGRAM TMSELMxD
      ALLOCATE(gamma(IWidthEffective), STAT = IErr)
      ALLOCATE(gamma2(IWidthEffective), STAT = IErr)
      ALLOCATE(acc_variance(IWidthEffective), STAT = IErr)
+
+     Allocate(tz0(IWidthEffective),STAT = IErr)
      
      !PRINT*, "DBG: IErr=", IErr
      IF( IErr.NE.0 ) THEN
@@ -381,8 +410,10 @@ flux_loop: &
 
         IF (IFluxFlag.EQ.0) THEN
            DiagDis   = flux
-        ELSE
+        ELSE IF(IFluxFlag.EQ.1) THEN 
            Energy    = flux
+        ELSE
+           tW        = flux
         ENDIF
         
         !--------------------------------------------------------------
@@ -400,7 +431,7 @@ flux_loop: &
         !--------------------------------------------------------------
         
         IF(IWriteFlag.GE.3) THEN
-           CALL OpenOutputGamma( IWidth, DiagDis,Energy, IErr )
+           CALL OpenOutputGamma( IWidth, DiagDis, tW, Energy, IErr )
            !PRINT*, "DBG: IErr=", IErr
            IF( IErr.NE.0 ) THEN
               PRINT*,"main: error in OpenOutputGamma()"
@@ -412,9 +443,10 @@ flux_loop: &
         ! protocoll feature
         !--------------------------------------------------------------
         
-2500    WRITE(*,2510) IWidth, DiagDis,Energy,Kappa
+2500    WRITE(*,2510) IWidth, DiagDis,tW, Energy,Kappa
 2510    FORMAT("START @ IW= ",I4.1,    &
              ", DD= ", G10.3,          &
+             ", tW= ", G10.3,          &
              ", En= ", G10.3,          &
              ", Ka= ", G10.3)
         
@@ -433,7 +465,7 @@ flux_loop: &
                    
         DO index=1,IWidthEffective
            PsiA(index,index)= ONE
-        ENDDO   
+        ENDDO
         
         !PRINT *, 'DBG: PsiA=', PsiA
         !PRINT *, 'DBG: PsiB=', PsiB
@@ -444,8 +476,33 @@ flux_loop: &
         ! Disorder in order to make these runs INDIVIDUALLY reprodu-
         ! cible
         !--------------------------------------------------------------
+!!$        tHop=1.0
         
+!!$        Print*,"debug in main.f90"
+!!$        Print*,"tHop=",tHop
+!!$        Pause
+
+               
         CALL SRANDOM(ISeed)
+
+        DO pos=1,IWidthEffective
+           
+           tz0(pos)= tHop*(1.0 + tW*(DRANDOM(ISeedDummy)-0.5D0))
+
+        END DO
+
+        
+!!$        Print*,"debug-------the hopping matrix tz0 generated in main.f90"
+!!$        
+!!$        Index=0 
+!!$        Do pos=1,IWidthEffective
+!!$             
+!!$           Print*,tz0(pos)
+!!$           Index=Index+1
+!!$           If(mod(pos,IWidth)==0) Print*,"-------------------------"
+!!$        End Do
+!!$
+!!$        Pause
         
         !--------------------------------------------------------------
         ! select right size of step in NOrtho loop
@@ -506,8 +563,8 @@ northo_loop: &
                  CALL TMMultLieb24_B4toA( PsiA, PsiB, Ilayer+4, Energy, DiagDis, IWidth)
                  CALL Swap( PsiA, PsiB, IWidthEffective)
               CASE(31)
-                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, Energy,DiagDis, IWidth)
-                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
+                 CALL TMMultLieb3DAtoB( PsiA, PsiB, Ilayer, Energy,DiagDis, IWidth, tz0, tHop, tW)
+                 CALL TMMultLieb3DBtoA( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth, tz0, tHop, tW)
               CASE(32)
                  CALL TMMultLieb3DAtoB5(  PsiA, PsiB, Ilayer, Energy, DiagDis, IWidth)
                  CALL TMMultLieb3DB5toB6( PsiB, PsiA, Ilayer+1, Energy, DiagDis, IWidth)
@@ -656,7 +713,7 @@ northo_loop: &
         !--------------------------------------------------------------
         
         CALL WriteOutputAvg( IWidth, TMM_CONVERGED, &
-             DiagDis,Energy, &
+             DiagDis,tW,Energy, &
              nGamma, acc_variance, &
              NOfG, PsiA, IErr )
         !PRINT*, "DBG: IErr=", IErr
@@ -670,11 +727,11 @@ northo_loop: &
         !-------------------------------------------------------------
         
 5000    WRITE(*,5010) Iter1, &
-             DiagDis,Energy, Kappa
+             DiagDis, tW, Energy, Kappa
         WRITE(*,5012) nGamma(1), acc_variance(1)
 
 5010    FORMAT("END @ ", I8.1, &
-             ",", G15.7, ",", G15.7,",", G15.7)
+             ",", G15.7, ",", G15.7, ",", G15.7,",", G15.7)
 5012    FORMAT("     ", &
              G15.7, ",", G15.7)
         
@@ -723,7 +780,7 @@ northo_loop: &
      ! DEallocate the memory for the TMM, gamma and RND vectors
      !--------------------------------------------------------------
      
-     DEALLOCATE(PsiA,PsiB,nGamma,gamma,gamma2,acc_variance)
+     DEALLOCATE(PsiA,PsiB,nGamma,gamma,gamma2,acc_variance,tz0)
      
      ! --------------------------------------------------
      ! get time at the end of the process
