@@ -47,10 +47,10 @@ F90 = gfortran
 #F90 = gfortran
 
 #F77FLAGS = # For debugging
-F77FLAGS = -fbounds-check -fno-range-check -Warray-bounds  # For optimizing
+F77FLAGS = -fbounds-check -fno-range-check -Warray-bounds   # For optimizing
 #F77FLAGS = # For profiling
 
-F90FLAGS = -g -std=legacy -fbounds-check -fno-range-check -fimplicit-none -Warray-bounds #-Wall # For debugging
+F90FLAGS = -g -std=legacy -fbounds-check -fno-range-check -fimplicit-none -Warray-bounds  #-Wall # For debugging
 #F90FLAGS = -ffree-line-length-none -fbounds-check -fno-range-check -fimplicit-none -fcray-pointer -fexternal-blas # For optimizing
 #F90FLAGS = -fno-range-check # for profling
 

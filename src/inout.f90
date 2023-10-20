@@ -93,8 +93,8 @@ SUBROUTINE Input( IErr )
   IErr = 0
   ILine= 0
   
-!!$  OPEN(UNIT= IChInp, ERR= 120, FILE= "tmseLMxD.inp",STATUS= 'OLD')
-  OPEN(UNIT= IChInp, ERR=120, FILE= "/dev/stdin",STATUS= 'OLD')
+  OPEN(UNIT= IChInp, ERR= 120, FILE= "tmseLMxD.inp",STATUS= 'OLD')
+!!$  OPEN(UNIT= IChInp, ERR=120, FILE= "/dev/stdin",STATUS= 'OLD')
   
   ILine= ILine+1
   READ(IChInp,10,ERR=20,END=30) ISeed
@@ -169,6 +169,18 @@ SUBROUTINE Input( IErr )
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) dDiagDis
   !PRINT*,"dDiagDis     = ", dDiagDis
+
+  ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) tW0
+  !PRINT*,"tW0          = ", tW0
+  
+  ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) tW1
+  !PRINT*,"tW1          = ", tW1
+  
+  ILine= ILine+1
+  READ(IChInp,15,ERR=20,END=30) dtW
+  !PRINT*,"dtW          = ", dtW
   
   ILine= ILine+1
   READ(IChInp,15,ERR=20,END=30) Energy0
@@ -331,6 +343,10 @@ SUBROUTINE Input( IErr )
   PRINT*,"DiagDis0      = 0.         ; (18) minimal diagonal disorder"
   PRINT*,"DiagDis1      = 5.         ; (19) maximal  diagonal disorder"
   PRINT*,"dDiagDis      = 0.5        ; (20) increment of diagonal disorder"
+
+  PRINT*,"tW0           = 0.         ; (18) minimal hopping disorder"
+  PRINT*,"tW1           = 5.         ; (19) maximal hopping disorder"
+  PRINT*,"dtW           = 0.5        ; (20) increment of diagonal disorder"  
   
   PRINT*,"Energy0       = 0.         ; (21) minimal energy"
   PRINT*,"Energy1       = 5.         ; (22) maximal energy"
@@ -349,7 +365,7 @@ END SUBROUTINE Input
 !
 !	IErr	error code
 
-CHARACTER*50 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal)
+CHARACTER*50 FUNCTION FileNameAvg(IWidth, fluxStr0, fluxVal0, fluxStr1, fluxVal1)
   USE MyNumbers
   
   USE CConstants
@@ -359,26 +375,28 @@ CHARACTER*50 FUNCTION FileNameAvg(IWidth, fluxStr, fluxVal)
   USE DPara
 
   INTEGER IWidth
-  REAL(RKIND) fluxVal
-  CHARACTER*1 fluxStr
+  REAL(RKIND) fluxVal0,fluxVal1
+  CHARACTER*1 fluxStr0,fluxStr1
 
-  IF( fluxVal.GE.-1.0D-10 ) THEN
+  IF( fluxVal0.GE.-1.0D-10 ) THEN
 
      WRITE(FileNameAvg, 100) &
           "L",IDimenFlag,"_",&
           IWidth,"_",&
-          fluxStr,NINT(100.0D0*ABS(fluxVal)),&
+          fluxStr0,NINT(100.0D0*ABS(fluxVal0)),"_",&
+          fluxStr1,NINT(100.0D0*ABS(fluxVal1)),&
           ".raw"
-100  FORMAT(A1,I2.2,A1,I4.4,A1,A1,I4.4,A4)
+100  FORMAT(A1,I2.2,A1,I4.4,A1,A1,I4.4,A1,A1,I4.4,A4)
 
   ELSE
 
      WRITE(FileNameAvg, 200)                         &
           "L",IDimenFlag,"_",&
           IWidth,"_",&
-          fluxStr,"-",NINT(100.0D0*ABS(fluxVal)),&
+          fluxStr0,"-",NINT(100.0D0*ABS(fluxVal0)),"_",&
+          fluxStr1,"-",NINT(100.0D0*ABS(fluxVal1)),&
           ".raw"
-200  FORMAT(A1,I2.2,A1,I4.4,A1,A1,A1,I4.4,A4)
+200  FORMAT(A1,I2.2,A1,I4.4,A1,A1,A1,I4.4,A1,A1,A1,I4.4,A4)
 
   ENDIF
 
@@ -525,6 +543,15 @@ SUBROUTINE OpenOutputAvg( filename, IWidth, IErr )
      
      WRITE(IChList(ICh),296,ERR=20) dDiagDis
 296  FORMAT("dDiagDis     = ", G18.9, ";")
+
+     WRITE(IChList(ICh),291,ERR=20) tW0
+291  FORMAT("tW0          = ", G18.9, ";")
+     
+     WRITE(IChList(ICh),292,ERR=20) tW1
+292  FORMAT("tW1          = ", G18.9, ";")
+     
+     WRITE(IChList(ICh),294,ERR=20) dtW
+294  FORMAT("dtW          = ", G18.9, ";")
      
      WRITE(IChList(ICh),300,ERR=20) Energy0
 300  FORMAT("energy0      = ", G18.9, ";")
@@ -615,6 +642,7 @@ SUBROUTINE WriteOutputAvg(&
      IWidth, 	&
      IConvergence, &
      DiagDis, 	&
+     tW,        &
      Energy,	&
      gam, var, NOfL,  &
      psi,	&
@@ -631,7 +659,7 @@ SUBROUTINE WriteOutputAvg(&
   USE IChannels
   
   INTEGER IWidth, IConvergence, NOfL, IErr
-  REAL(KIND=RKIND) DiagDis, Energy,&
+  REAL(KIND=RKIND) DiagDis, Energy, tW,&
        psi(IWidth,IWidth)
   
   REAL(KIND=RKIND) gam(NOfL), var(NOfL)
@@ -648,11 +676,13 @@ SUBROUTINE WriteOutputAvg(&
      
      WRITE(IChOut,410,ERR=10) &
           iL, &
-          DiagDis, &
+          DiagDis,&
+          tW, &
           Energy, &
           gam(iL), var(iL), IConvergence
      
 410  FORMAT("{ ", I7.1, &
+          ", ", F15.6, &
           ", ", F15.6, &
           ", ", F15.6, &
           ", ", F25.16, ", ", F25.16, &
@@ -812,7 +842,7 @@ END SUBROUTINE CloseOutputAvg
 !	IErr	error code
 
 SUBROUTINE OpenOutputGamma( IWidth, 				  &
-     DiagDis, Energy,  &
+     DiagDis, tW, Energy,  &
      IErr )
 
   USE MyNumbers
@@ -826,7 +856,7 @@ SUBROUTINE OpenOutputGamma( IWidth, 				  &
   USE IChannels
 
   INTEGER IWidth, IErr
-  REAL(KIND=RKIND) DiagDis, Energy
+  REAL(KIND=RKIND) DiagDis, Energy, tW
 
   INTEGER ICh
 
@@ -846,8 +876,9 @@ SUBROUTINE OpenOutputGamma( IWidth, 				  &
           "L",IDimenFlag,"_", &
           IWidth,".", &
           NINT(100.0D0*ABS(DiagDis)),".", &
+          NINT(100.0D0*ABS(tW)),".", &
           NINT(100.0D0*ABS(Energy))
-100  FORMAT(A1,I2.2,A1,I4.4,A1,I4.4,A1,I4.4)
+100  FORMAT(A1,I2.2,A1,I4.4,A1,I4.4,A1,I4.4,A1,I4.4)
 
      OPEN(UNIT= ICh, ERR= 10, STATUS= 'UNKNOWN', &
           FILE=CNameP)
@@ -856,9 +887,10 @@ SUBROUTINE OpenOutputGamma( IWidth, 				  &
      WRITE(CNameM, 200) &
           "L",IDimenFlag,"_", &
           IWidth,".", &
-          NINT(100.0D0*ABS(DiagDis)),".-", &
+          NINT(100.0D0*ABS(DiagDis)),".", &
+          NINT(100.0D0*ABS(tW)),".-", &
           NINT(100.0D0*ABS(Energy))
-200  FORMAT(A1,I2.2,A1,I4.4,A1,I4.4,A2,I4.4) 
+200  FORMAT(A1,I2.2,A1,I4.4,A1,I4.4,A1,I4.4,A2,I4.4) 
 
      OPEN(UNIT= ICh, ERR= 10, STATUS= 'UNKNOWN', &
           FILE=CNameM)
